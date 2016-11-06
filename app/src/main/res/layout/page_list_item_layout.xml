@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/page_title_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="10dp"
+        tools:text="Page Title"
+        android:textSize="30sp"
+        />
+
+    <!-- This TextView will be changed based on updated or not updated from "UPDATED (green)" to "NOT UPDATED (red)" -->
+    <TextView
+        android:id="@+id/update_status_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_toRightOf="@id/page_title_text_view"
+        android:layout_toEndOf="@id/page_title_text_view"
+        android:layout_alignTop="@id/page_title_text_view"
+        android:layout_centerVertical="true"
+        tools:text="UPDATED"/>
+    <TextView
+        android:id="@+id/time_of_last_update_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/update_status_text_view"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_toRightOf="@id/page_title_text_view"
+        android:layout_toEndOf="@id/page_title_text_view"
+        android:layout_alignBottom="@id/page_title_text_view"
+        android:textSize="12sp"
+        tools:text="09-17-16 03:35:15"/>
+
+</RelativeLayout>

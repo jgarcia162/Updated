@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center_horizontal">
+
+    <android.support.design.widget.TextInputEditText
+        android:id="@+id/url_input_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="text"
+        android:hint="@string/enter_url_here"/>
+
+    <Button
+        android:id="@+id/add_page_button"
+        android:layout_below="@id/url_input_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/add_page"/>
+    <WebView
+        android:id="@+id/preview_web_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/add_page_button">
+    </WebView>
+    <ImageView
+        android:id="@+id/web_preview_image_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/add_page_button"
+        android:src="@drawable/web_preview_default_image"/>
+
+
+
+</RelativeLayout>

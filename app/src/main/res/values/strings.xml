@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">Updated</string>
+    <string name="track_page">Track This Page</string>
+    <string name="add_page">Track a new page</string>
+    <string name="enter_url_here">Enter URL Here</string>
+</resources>
