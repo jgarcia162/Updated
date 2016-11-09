@@ -3,4 +3,9 @@
     <string name="track_page">Track This Page</string>
     <string name="add_page">Track a new page</string>
     <string name="enter_url_here">Enter URL Here</string>
+    <string name="open_in_browser_button_text">Open In Browser</string>
+    <string name="details_last_updated">Last Updated:</string>
+    <string name="details_url_tv_text">URL</string>
+    <string name="details_copy_url_button_text">Copy URL</string>
+    <string name="details_notes_title_text">Notes</string>
 </resources>

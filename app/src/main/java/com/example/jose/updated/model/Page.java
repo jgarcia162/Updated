@@ -11,7 +11,9 @@ public class Page {
     private String contents;
     private String pageUrl;
     private String nickname;
+    private String notes;
     private long timeOfLastUpdateInMilliSec;
+
 
 
     public Page() {
@@ -43,6 +45,14 @@ public class Page {
 
     public void setNickname(String nickname) {
         this.nickname = nickname;
+    }
+
+    public void setNotes(String notes){
+        this.notes = notes;
+    }
+
+    public String getNotes(){
+        return this.notes;
     }
 
     public String getContents() {
