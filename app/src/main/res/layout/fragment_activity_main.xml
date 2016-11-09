@@ -6,10 +6,11 @@
     tools:context=".view.MainFragmentActivity">
 
 
-    <FrameLayout
-        android:id="@+id/fragment_container"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent">
+    </android.support.v7.widget.RecyclerView>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/floating_action_button"

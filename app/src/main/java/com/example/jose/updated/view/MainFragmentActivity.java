@@ -1,9 +1,11 @@
 package com.example.jose.updated.view;
 
 import android.app.FragmentManager;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
@@ -23,8 +25,6 @@ import java.util.Date;
 import java.util.List;
 
 public class MainFragmentActivity extends FragmentActivity {
-    //TODO implement callback interface for fragment
-    //TODO Set Up webview fragment
     FragmentManager fragmentManager;
     EditText urlInputEditText;
     Button updateButton;
@@ -35,6 +35,7 @@ public class MainFragmentActivity extends FragmentActivity {
     RecyclerView.LayoutManager layoutManager;
     static List<Page> pagesToTrack;
     Date date;
+    Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +47,12 @@ public class MainFragmentActivity extends FragmentActivity {
         updateButton = (Button) findViewById(R.id.add_page_button);
         urlInputEditText = (EditText) findViewById(R.id.url_input_edit_text);
         pagesToTrack = new ArrayList<>();
+        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        layoutManager = new LinearLayoutManager(this);
 
+        adapter = new PageAdapter(this,pagesToTrack);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(layoutManager);
 
 //        updateButton.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -74,11 +80,6 @@ public class MainFragmentActivity extends FragmentActivity {
         reader.close();
 
         return stringBuilder.toString().equals(pageSourceCode);
-    }
-
-    //TODO create a fragment to open webpage when clicked, sends user to browser of choice via ContentProvider
-    private void openPage(Page page){
-
     }
 
     public void showAddPageDialog(View view) {

@@ -10,19 +10,20 @@ public class Page {
     private String title;
     private String contents;
     private String pageUrl;
+    private String nickname;
     private long timeOfLastUpdateInMilliSec;
 
 
-    public Page(){
+    public Page() {
 
     }
 
-    public Page(String title,String pageUrl){
+    public Page(String title, String pageUrl) {
         this.pageUrl = pageUrl;
         this.title = title;
     }
 
-    public Page(String title,String pageUrl,long timeTracked){
+    public Page(String title, String pageUrl, long timeTracked) {
         this.pageUrl = pageUrl;
         this.title = title;
         this.timeOfLastUpdateInMilliSec = timeTracked;
@@ -34,6 +35,14 @@ public class Page {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getNickname() {
+        return this.nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 
     public String getContents() {
