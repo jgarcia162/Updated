@@ -13,6 +13,7 @@ public class Page {
     private String nickname;
     private String notes;
     private long timeOfLastUpdateInMilliSec;
+    private boolean isUpdated;
 
 
 
@@ -84,6 +85,14 @@ public class Page {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(timeOfLastUpdateInMilliSec);
         return formatter.format(calendar.getTime());
+    }
+
+    public boolean isUpdated() {
+        return isUpdated;
+    }
+
+    public void setUpdated(boolean updated) {
+        isUpdated = updated;
     }
 
 }

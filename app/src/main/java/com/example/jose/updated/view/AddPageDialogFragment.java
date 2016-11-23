@@ -60,4 +60,5 @@ public class AddPageDialogFragment extends DialogFragment {
     public void displayPageInPreviewWebView(String url){
         pagePreviewWebView.loadUrl(url);
     }
+
 }

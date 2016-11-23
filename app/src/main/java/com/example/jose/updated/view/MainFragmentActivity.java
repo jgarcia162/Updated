@@ -50,7 +50,7 @@ public class MainFragmentActivity extends FragmentActivity {
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         layoutManager = new LinearLayoutManager(this);
 
-        adapter = new PageAdapter(this,pagesToTrack);
+        adapter = new PageAdapter(pagesToTrack);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(layoutManager);
 
