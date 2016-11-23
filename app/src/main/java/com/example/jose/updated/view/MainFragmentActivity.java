@@ -1,7 +1,6 @@
 package com.example.jose.updated.view;
 
 import android.app.FragmentManager;
-import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -35,7 +34,6 @@ public class MainFragmentActivity extends FragmentActivity {
     RecyclerView.LayoutManager layoutManager;
     static List<Page> pagesToTrack;
     Date date;
-    Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,21 +51,9 @@ public class MainFragmentActivity extends FragmentActivity {
         adapter = new PageAdapter(pagesToTrack);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(layoutManager);
-
-//        updateButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                if(!urlInputEditText.getText().toString().equalsIgnoreCase("")){
-//                    pagesToTrack.add(new Page("New Page",urlInputEditText.getText().toString(),date.getTime()));
-//                    adapter.notifyDataSetChanged();
-//                }
-//                //new DownloadTask().execute(newPage.getPageUrl());
-//            }
-//        });
-
-
     }
 
+    //TODO Finish this method to find if page is updated
     private boolean isPageUpdated(String pageSourceCode) throws Exception{
         URL urlToCheckFor = new URL(URL_TO_UPDATE);
         HttpURLConnection connection = (HttpURLConnection) urlToCheckFor.openConnection();

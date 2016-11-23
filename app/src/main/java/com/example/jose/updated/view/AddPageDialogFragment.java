@@ -45,6 +45,7 @@ public class AddPageDialogFragment extends DialogFragment {
         addPageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //TODO add a page nickname field
                 Page newPage = new Page(urlInputEditText.getText().toString(), urlInputEditText.getText().toString());
                 MainFragmentActivity.pagesToTrack.add(newPage);
                 previewImage.setVisibility(View.INVISIBLE);

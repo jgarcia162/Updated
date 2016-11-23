@@ -39,6 +39,7 @@ public class PageViewHolder extends RecyclerView.ViewHolder {
         itemLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //TODO change this to implicit intent
                 Intent intent = new Intent(Intent.ACTION_VIEW, pageUri);
                 context.startActivity(intent);
             }
