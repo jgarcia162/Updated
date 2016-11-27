@@ -37,7 +37,7 @@ public class MainFragmentActivity extends FragmentActivity {
     RecyclerView.LayoutManager layoutManager;
     public static List<Page> pagesToTrack;
     public static Map<String,String> pageShaMap;
-    Date date;
+    private List<Page> updatedPages;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,10 +45,10 @@ public class MainFragmentActivity extends FragmentActivity {
         setContentView(R.layout.fragment_activity_main);
 
         fragmentManager = getFragmentManager();
-        date = new Date();
         updateButton = (Button) findViewById(R.id.track_page_button);
         urlInputEditText = (EditText) findViewById(R.id.url_input_edit_text);
         pagesToTrack = new ArrayList<>();
+        updatedPages = new ArrayList<>();
         pageShaMap = new HashMap<>();
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         layoutManager = new LinearLayoutManager(this);
@@ -61,18 +61,24 @@ public class MainFragmentActivity extends FragmentActivity {
 
 
     public void refresh(View view){
+        for(Page page : pagesToTrack)
         try {
-            if(isPageUpdated(pagesToTrack.get(0))){
-                Toast.makeText(this, "page was updated!", Toast.LENGTH_SHORT).show();
+            if(isPageUpdated(page)){
+                updatedPages.add(page);
+                page.setTimeOfLastUpdateInMilliSec(new Date().getTime());
+                adapter.notifyDataSetChanged();
+                Toast.makeText(this, page.getTitle() + " was updated!", Toast.LENGTH_SHORT).show();
             }else{
-                Toast.makeText(this, "not yet", Toast.LENGTH_SHORT).show();
+                if(updatedPages.contains(page)){
+                    updatedPages.remove(page);
+                }
+                Toast.makeText(this, page.getTitle()+" not yet", Toast.LENGTH_SHORT).show();
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    //TODO Finish this method to find if page is updated
     private boolean isPageUpdated(Page page) throws Exception{
         String hmtlToCheck = downloadHtml(page);
         return hmtlToCheck.equals(pageShaMap.get(page.getPageUrl()));
