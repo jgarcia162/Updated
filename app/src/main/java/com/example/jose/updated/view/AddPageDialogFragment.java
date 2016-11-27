@@ -17,6 +17,7 @@ import com.example.jose.updated.R;
 import com.example.jose.updated.controller.PageAdapter;
 import com.example.jose.updated.model.Page;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -86,7 +87,7 @@ public class AddPageDialogFragment extends DialogFragment {
         if(newPage == null){
             if(!urlText.equals("")){
                 if(!titleText.equals("")){
-                    newPage = new Page(titleText, urlText);
+                    newPage = new Page(titleText, urlText, new Date().getTime());
                     pagesToTrack.add(newPage);
                     adapter.notifyDataSetChanged();
                     titleInputEditText.setText("");
@@ -95,7 +96,7 @@ public class AddPageDialogFragment extends DialogFragment {
                     pageShaMap.put(newPage.getPageUrl(), MainFragmentActivity.downloadHtml(newPage));
                     newPage = null;
                 }else{
-                    newPage = new Page("untitled", urlText);
+                    newPage = new Page("untitled", urlText, new Date().getTime());
                     pagesToTrack.add(newPage);
                     adapter.notifyDataSetChanged();
                     titleInputEditText.setText("");
@@ -125,11 +126,11 @@ public class AddPageDialogFragment extends DialogFragment {
     private void onClickPreviewButton() {
         if(!urlInputEditText.getText().toString().equals("")){
             if(!titleInputEditText.getText().toString().equals("")){
-                newPage = new Page(titleInputEditText.getText().toString(), urlInputEditText.getText().toString());
+                newPage = new Page(titleInputEditText.getText().toString(), urlInputEditText.getText().toString(), new Date().getTime());
                 displayPageInPreviewWebView(newPage.getPageUrl());
                 previewImage.setVisibility(View.INVISIBLE);
             }else{
-                newPage = new Page("untitled", urlInputEditText.getText().toString());
+                newPage = new Page("untitled", urlInputEditText.getText().toString(), new Date().getTime());
                 displayPageInPreviewWebView(newPage.getPageUrl());
                 previewImage.setVisibility(View.INVISIBLE);
             }

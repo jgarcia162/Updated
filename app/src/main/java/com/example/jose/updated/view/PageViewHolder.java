@@ -36,9 +36,12 @@ public class PageViewHolder extends RecyclerView.ViewHolder {
         pageTitleTextView.setText(page.getTitle());
         pageUrlTextView.setText(page.getPageUrl());
 
-//        if(page.isUpdated()){
-//        }
+        if(MainFragmentActivity.updatedPages.contains(page)){
             updatedStatusTextView.setText(R.string.page_updated);
+        }else{
+            updatedStatusTextView.setText(R.string.not_updated);
+        }
+
         timeOfLastUpdateTextView.setText(page.getFormattedTimeOfLastUpdate());
         itemLayout.setOnClickListener(new View.OnClickListener() {
             @Override

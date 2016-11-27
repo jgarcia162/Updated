@@ -35,9 +35,9 @@ public class MainFragmentActivity extends FragmentActivity {
     public static PageAdapter adapter;
     RecyclerView recyclerView;
     RecyclerView.LayoutManager layoutManager;
-    public static List<Page> pagesToTrack;
+    public static List<Page> pagesToTrack,updatedPages;
     public static Map<String,String> pageShaMap;
-    private List<Page> updatedPages;
+    private Page nike,twitter,inward;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +48,7 @@ public class MainFragmentActivity extends FragmentActivity {
         updateButton = (Button) findViewById(R.id.track_page_button);
         urlInputEditText = (EditText) findViewById(R.id.url_input_edit_text);
         pagesToTrack = new ArrayList<>();
+        //TODO create notification for updatedpages
         updatedPages = new ArrayList<>();
         pageShaMap = new HashMap<>();
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
@@ -57,26 +58,41 @@ public class MainFragmentActivity extends FragmentActivity {
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(layoutManager);
 
+        nike = new Page("Nike","https://www.nike.com/us/en_us/", new Date().getTime());
+        twitter = new Page("Twitter","https://twitter.com/AyoJoanks", new Date().getTime());
+        inward = new Page("Inward","https://inwardmovement.wordpress.com",new Date().getTime());
+
+        //for testing
+        pagesToTrack.add(twitter);
+        pagesToTrack.add(inward);
+        pagesToTrack.add(nike);
+
     }
 
 
+    //TODO html contents not accurate, updates not being recognized
     public void refresh(View view){
-        for(Page page : pagesToTrack)
-        try {
-            if(isPageUpdated(page)){
-                updatedPages.add(page);
-                page.setTimeOfLastUpdateInMilliSec(new Date().getTime());
-                adapter.notifyDataSetChanged();
-                Toast.makeText(this, page.getTitle() + " was updated!", Toast.LENGTH_SHORT).show();
-            }else{
-                if(updatedPages.contains(page)){
-                    updatedPages.remove(page);
+        for(Page page : pagesToTrack){
+            try {
+                if(isPageUpdated(page) && !updatedPages.contains(page)){
+                    updatedPages.add(page);
+                    page.setTimeOfLastUpdateInMilliSec(new Date().getTime());
+                    adapter.notifyDataSetChanged();
+                    Toast.makeText(this, page.getTitle() + " was updated!", Toast.LENGTH_SHORT).show();
+                }else{
+                    if(updatedPages.contains(page)){
+                        updatedPages.remove(page);
+                        adapter.notifyDataSetChanged();
+                    }
+                    Toast.makeText(this, page.getTitle()+" not yet", Toast.LENGTH_SHORT).show();
                 }
-                Toast.makeText(this, page.getTitle()+" not yet", Toast.LENGTH_SHORT).show();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
+        Log.i("NIKE HTML SIZE",nike.getContents().length() +"");
+        Log.i("TWITTER HTML SIZE",twitter.getContents().length() +"");
+        Log.i("INWARD HTML SIZE",inward.getContents().length() +"");
     }
 
     private boolean isPageUpdated(Page page) throws Exception{
@@ -87,7 +103,7 @@ public class MainFragmentActivity extends FragmentActivity {
     public static String downloadHtml(Page page) throws Exception {
         DownloadTask task = new DownloadTask();
         task.execute(page.getPageUrl());
-        Log.i("TASK ",task.get());
+        page.setContents(task.get());
         return task.get();
     }
 
