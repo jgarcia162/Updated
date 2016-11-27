@@ -7,7 +7,7 @@ import java.util.Locale;
 
 public class Page {
 
-    private String title;
+    private String title = "";
     private String contents;
     private String pageUrl;
     private String nickname;

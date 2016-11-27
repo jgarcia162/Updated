@@ -9,4 +9,7 @@
     <string name="details_copy_url_button_text">Copy URL</string>
     <string name="details_notes_title_text">Notes</string>
     <string name="page_updated">UPDATED</string>
+    <string name="chooser_title">Open this page with:</string>
+    <string name="enter_title_here">Enter Title Here</string>
+    <string name="preview_page">PAGE PREVIEW</string>
 </resources>

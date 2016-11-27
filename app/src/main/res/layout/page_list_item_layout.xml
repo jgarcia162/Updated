@@ -7,14 +7,27 @@
 
     <TextView
         android:id="@+id/page_title_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="150dp"
+        android:layout_height="30dp"
         android:layout_marginStart="20dp"
         android:layout_marginLeft="20dp"
         android:layout_marginTop="10dp"
         tools:text="Page Title"
-        android:textSize="30sp"
-        />
+        android:textSize="25sp"
+        android:textStyle="bold"
+        android:textIsSelectable="true"
+        android:maxLength="20"/>
+    <TextView
+        android:id="@+id/page_url_text_view"
+        android:layout_width="150dp"
+        android:layout_height="30dp"
+        android:layout_below="@id/page_title_text_view"
+        android:layout_marginStart="20dp"
+        android:layout_marginLeft="20dp"
+        tools:text="Page URL"
+        android:textSize="15sp"
+        android:textStyle="italic"
+        android:textIsSelectable="true"/>
 
     <!-- This TextView will be changed based on updated or not updated from "UPDATED (green)" to "NOT UPDATED (red)" -->
     <TextView
@@ -25,9 +38,10 @@
         android:layout_marginStart="10dp"
         android:layout_toRightOf="@id/page_title_text_view"
         android:layout_toEndOf="@id/page_title_text_view"
-        android:layout_alignTop="@id/page_title_text_view"
+        android:layout_alignBottom="@id/page_title_text_view"
         android:layout_centerVertical="true"
-        tools:text="UPDATED"/>
+        tools:text="UPDATED"
+        android:textIsSelectable="true"/>
     <TextView
         android:id="@+id/time_of_last_update_text_view"
         android:layout_width="wrap_content"
@@ -37,8 +51,9 @@
         android:layout_marginStart="10dp"
         android:layout_toRightOf="@id/page_title_text_view"
         android:layout_toEndOf="@id/page_title_text_view"
-        android:layout_alignBottom="@id/page_title_text_view"
+        android:layout_alignTop="@id/page_url_text_view"
         android:textSize="12sp"
-        tools:text="09-17-16 03:35:15"/>
+        tools:text="09-17-16 03:35:15"
+        android:textIsSelectable="true"/>
 
 </RelativeLayout>
