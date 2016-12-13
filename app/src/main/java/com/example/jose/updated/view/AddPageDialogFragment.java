@@ -14,11 +14,11 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.jose.updated.R;
+import com.example.jose.updated.controller.NotificationService;
 import com.example.jose.updated.controller.PageAdapter;
 import com.example.jose.updated.model.Page;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -31,8 +31,7 @@ public class AddPageDialogFragment extends DialogFragment {
     ImageView previewImage;
     Page newPage;
     private PageAdapter adapter = MainFragmentActivity.adapter;
-    private List<Page> pagesToTrack = MainFragmentActivity.pagesToTrack;
-    private Map<String,String> pageShaMap = MainFragmentActivity.pageShaMap;
+    private Map<String,String> pageHtmlMap;
 
     public AddPageDialogFragment(){
 
@@ -86,35 +85,30 @@ public class AddPageDialogFragment extends DialogFragment {
     private void onClickAddButton(String urlText, String titleText) throws Exception {
         if(newPage == null){
             if(!urlText.equals("")){
-                if(!titleText.equals("")){
-                    newPage = new Page(titleText, urlText, new Date().getTime());
-                    pagesToTrack.add(newPage);
-                    adapter.notifyDataSetChanged();
-                    titleInputEditText.setText("");
-                    urlInputEditText.setText("");
-                    Toast.makeText(getActivity(),"Page Added", Toast.LENGTH_SHORT).show();
-                    pageShaMap.put(newPage.getPageUrl(), MainFragmentActivity.downloadHtml(newPage));
-                    newPage = null;
-                }else{
-                    newPage = new Page("untitled", urlText, new Date().getTime());
-                    pagesToTrack.add(newPage);
-                    adapter.notifyDataSetChanged();
-                    titleInputEditText.setText("");
-                    urlInputEditText.setText("");
-                    Toast.makeText(getActivity(),"Page Added", Toast.LENGTH_SHORT).show();
-                    pageShaMap.put(newPage.getPageUrl(), MainFragmentActivity.downloadHtml(newPage));
-                    newPage = null;
+                if(!urlText.substring(0,3).equals("http")){
+                    urlText = "https://" + urlText;
                 }
+                if(titleText.equals("")){
+                    newPage = new Page("untitled", urlText, new Date().getTime());
+                }
+                newPage = new Page(titleText, urlText, new Date().getTime());
+                NotificationService.addPageToTrack(newPage);
+                adapter.notifyDataSetChanged();
+                titleInputEditText.setText("");
+                urlInputEditText.setText("");
+                Toast.makeText(getActivity(),"Page Added", Toast.LENGTH_SHORT).show();
+                pageHtmlMap.put(newPage.getPageUrl(), MainFragmentActivity.downloadHtml(newPage));
+                newPage = null;
             }else{
                 Toast.makeText(getActivity(), "Please enter a URL!", Toast.LENGTH_SHORT).show();
             }
         }else{
             try {
-                pagesToTrack.add(newPage);
+                NotificationService.addPageToTrack(newPage);
                 adapter.notifyDataSetChanged();
                 titleInputEditText.setText("");
                 urlInputEditText.setText("");
-                pageShaMap.put(newPage.getPageUrl(), MainFragmentActivity.downloadHtml(newPage));
+                pageHtmlMap.put(newPage.getPageUrl(), MainFragmentActivity.downloadHtml(newPage));
                 newPage = null;
                 Toast.makeText(getActivity(),"Page Added", Toast.LENGTH_SHORT).show();
             } catch (Exception e) {

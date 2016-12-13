@@ -1,13 +1,16 @@
 package com.example.jose.updated.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
 
-public class Page {
+public class Page implements Parcelable{
 
-    private String title = "";
+    private String title;
     private String contents;
     private String pageUrl;
     private String nickname;
@@ -31,6 +34,28 @@ public class Page {
         this.title = title;
         this.timeOfLastUpdateInMilliSec = timeTracked;
     }
+
+    public Page(Parcel in) {
+        title = in.readString();
+        contents = in.readString();
+        pageUrl = in.readString();
+        nickname = in.readString();
+        notes = in.readString();
+        timeOfLastUpdateInMilliSec = in.readLong();
+        isUpdated = in.readByte() != 0;
+    }
+
+    public static final Creator<Page> CREATOR = new Creator<Page>() {
+        @Override
+        public Page createFromParcel(Parcel in) {
+            return new Page(in);
+        }
+
+        @Override
+        public Page[] newArray(int size) {
+            return new Page[size];
+        }
+    };
 
     public String getTitle() {
         return title;
@@ -95,4 +120,19 @@ public class Page {
         isUpdated = updated;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(title);
+        dest.writeString(contents);
+        dest.writeString(pageUrl);
+        dest.writeString(nickname);
+        dest.writeString(notes);
+        dest.writeLong(timeOfLastUpdateInMilliSec);
+        dest.writeByte((byte) (isUpdated ? 1 : 0));
+    }
 }

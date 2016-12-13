@@ -13,4 +13,5 @@
     <string name="enter_title_here">Enter Title Here</string>
     <string name="preview_page">PAGE PREVIEW</string>
     <string name="not_updated">NOT UPDATED</string>
+    <string name="notification_title">Updated Pages</string>
 </resources>

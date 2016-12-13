@@ -31,21 +31,28 @@ public class PageViewHolder extends RecyclerView.ViewHolder {
         packageManager = context.getPackageManager();
     }
 
-    public void bind(Page page){
+    public void bind(final Page page){
         pageUri = Uri.parse(page.getPageUrl());
         pageTitleTextView.setText(page.getTitle());
         pageUrlTextView.setText(page.getPageUrl());
 
         if(MainFragmentActivity.updatedPages.contains(page)){
             updatedStatusTextView.setText(R.string.page_updated);
+            page.setUpdated(true);
         }else{
             updatedStatusTextView.setText(R.string.not_updated);
+            page.setUpdated(false);
         }
 
         timeOfLastUpdateTextView.setText(page.getFormattedTimeOfLastUpdate());
         itemLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(page.isUpdated()){
+                    updatedStatusTextView.setText(R.string.not_updated);
+                    page.setUpdated(false);
+                    MainFragmentActivity.updatedPages.remove(page);
+                }
                 //URL only works with full URL "http..."
                 Intent intent = new Intent(Intent.ACTION_VIEW, pageUri);
                 String title = v.getResources().getString(R.string.chooser_title);
