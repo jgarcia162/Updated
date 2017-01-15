@@ -36,7 +36,7 @@ public class PageViewHolder extends RecyclerView.ViewHolder {
         pageTitleTextView.setText(page.getTitle());
         pageUrlTextView.setText(page.getPageUrl());
 
-        if(MainFragmentActivity.updatedPages.contains(page)){
+        if(MainActivity.updatedPages.contains(page)){
             updatedStatusTextView.setText(R.string.page_updated);
             page.setUpdated(true);
         }else{
@@ -51,7 +51,7 @@ public class PageViewHolder extends RecyclerView.ViewHolder {
                 if(page.isUpdated()){
                     updatedStatusTextView.setText(R.string.not_updated);
                     page.setUpdated(false);
-                    MainFragmentActivity.updatedPages.remove(page);
+                    MainActivity.updatedPages.remove(page);
                 }
                 //URL only works with full URL "http..."
                 Intent intent = new Intent(Intent.ACTION_VIEW, pageUri);

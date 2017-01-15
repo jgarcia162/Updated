@@ -1,12 +1,12 @@
 package com.example.jose.updated.view;
 
+import android.app.Activity;
 import android.app.FragmentManager;
-import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.NotificationCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MainFragmentActivity extends FragmentActivity {
+public class MainActivity extends Activity {
     private FragmentManager fragmentManager;
     private EditText urlInputEditText;
     private Button updateButton;
@@ -36,7 +36,6 @@ public class MainFragmentActivity extends FragmentActivity {
     private RecyclerView.LayoutManager layoutManager;
     public static  List<Page> pagesToTrack,updatedPages;
     public static Map<String,String> pageHtmlMap;
-    private Page nike,twitter,inward;
     private AddPageDialogFragment addPageDialogFragment;
 
     @Override
@@ -59,7 +58,7 @@ public class MainFragmentActivity extends FragmentActivity {
         adapter = new PageAdapter(pagesToTrack);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(layoutManager);
-
+        Page nike,twitter,inward;
         nike = new Page("Nike","https://www.nike.com/us/en_us/", new Date().getTime());
         twitter = new Page("Twitter","https://twitter.com/AyoJoanks", new Date().getTime());
         inward = new Page("Inward","https://inwardmovement.wordpress.com",new Date().getTime());
@@ -72,7 +71,6 @@ public class MainFragmentActivity extends FragmentActivity {
         Intent serviceIntent = new Intent(this,NotificationService.class);
         serviceIntent.putExtra("pages to track", (ArrayList<? extends Parcelable>) pagesToTrack);
         startService(serviceIntent);
-
     }
 
     public void refresh(View view){
@@ -95,12 +93,13 @@ public class MainFragmentActivity extends FragmentActivity {
         addPageDialogFragment.show(fragmentManager,"addPageFragment");
     }
 
-    public void createNotification(String namesOfUpdatedPages) {
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this).setSmallIcon(R.drawable.default_photo).setContentTitle(getString(R.string.notification_title)).setContentText(namesOfUpdatedPages);
-        notificationBuilder.setAutoCancel(true);
-        Intent notificationIntent = new Intent(this,MainFragmentActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this,0,notificationIntent,PendingIntent.FLAG_UPDATE_CURRENT);
-        notificationBuilder.setContentIntent(pendingIntent);
+    public static void notifyAdapterDataSetChange(){
+        adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public Intent registerReceiver(BroadcastReceiver receiver, IntentFilter filter) {
+        return super.registerReceiver(receiver, filter);
     }
 }
 

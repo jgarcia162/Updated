@@ -1,10 +1,17 @@
 package com.example.jose.updated.controller;
 
 import android.app.IntentService;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Handler;
+import android.os.Parcelable;
+import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
+import com.example.jose.updated.R;
 import com.example.jose.updated.model.Page;
+import com.example.jose.updated.view.MainActivity;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -24,6 +31,8 @@ public class NotificationService extends IntentService implements UpdatedCallbac
     private TimerTask updateTimerTask;
     private long currentTime;
     private long fourtyEightHours = 60*60*48*1000;
+    private NotificationManager notificationManager;
+    public static final int NOTIFICATION_ID = 1;
 
     private Handler handler;
 
@@ -43,6 +52,7 @@ public class NotificationService extends IntentService implements UpdatedCallbac
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         handler = new Handler();
+        notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -59,6 +69,12 @@ public class NotificationService extends IntentService implements UpdatedCallbac
 
     }
 
+    //TODO create broadcastreceiver to handle update changes and notify data set in adapter
+    @Override
+    public void sendBroadcast(Intent intent) {
+        super.sendBroadcast(intent);
+    }
+
     private void setUpTimer(TimerTask task) {
         Timer timer = new Timer();
         timer.scheduleAtFixedRate(task,0,5000);
@@ -69,14 +85,17 @@ public class NotificationService extends IntentService implements UpdatedCallbac
             @Override
             public void run() {
                 refresh();
+                Log.i("TIMER TASK","SERVICE RUNNING");
             }
         };
     }
 
-
     //This method will be called periodically
     public void refresh(){
         UpdateRefresher.refreshUpdate(pagesToTrack,updatedPages);
+        if(updatedPages.size() > 0){
+            onUpdateDetected(updatedPages);
+        }
     }
 
     public static void addPageToTrack(Page page){
@@ -99,6 +118,20 @@ public class NotificationService extends IntentService implements UpdatedCallbac
             namesOfUpdatedPages+= p.getTitle() + ", ";
         }
         namesOfUpdatedPages += " have been updated!";
+        Log.i("NAMES OF PAGES ",namesOfUpdatedPages);
+        createNotification(namesOfUpdatedPages);
+        Intent broadcastIntent = new Intent();
+        broadcastIntent.putParcelableArrayListExtra("updated pages", (ArrayList<? extends Parcelable>) updatedPages);
+        sendBroadcast(broadcastIntent);
+    }
+
+    public void createNotification(String namesOfUpdatedPages) {
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this).setSmallIcon(R.drawable.default_photo).setContentTitle(getString(R.string.notification_title)).setContentText(namesOfUpdatedPages);
+        notificationBuilder.setAutoCancel(true);
+        Intent notificationIntent = new Intent(this,MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this,0,notificationIntent,PendingIntent.FLAG_UPDATE_CURRENT);
+        notificationBuilder.setContentIntent(pendingIntent);
+        notificationManager.notify(NOTIFICATION_ID,notificationBuilder.build());
     }
 
 

@@ -15,7 +15,6 @@ import android.widget.Toast;
 
 import com.example.jose.updated.R;
 import com.example.jose.updated.controller.NotificationService;
-import com.example.jose.updated.controller.PageAdapter;
 import com.example.jose.updated.model.Page;
 
 import java.util.Date;
@@ -30,7 +29,6 @@ public class AddPageDialogFragment extends DialogFragment {
     TextInputEditText urlInputEditText, titleInputEditText;
     ImageView previewImage;
     Page newPage;
-    private PageAdapter adapter = MainFragmentActivity.adapter;
     private Map<String,String> pageHtmlMap;
 
     public AddPageDialogFragment(){
@@ -40,6 +38,7 @@ public class AddPageDialogFragment extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        pageHtmlMap = MainActivity.pageHtmlMap;
 
     }
 
@@ -93,24 +92,26 @@ public class AddPageDialogFragment extends DialogFragment {
                 }
                 newPage = new Page(titleText, urlText, new Date().getTime());
                 NotificationService.addPageToTrack(newPage);
-                adapter.notifyDataSetChanged();
+                MainActivity.notifyAdapterDataSetChange();
                 titleInputEditText.setText("");
                 urlInputEditText.setText("");
-                Toast.makeText(getActivity(),"Page Added", Toast.LENGTH_SHORT).show();
-                pageHtmlMap.put(newPage.getPageUrl(), MainFragmentActivity.downloadHtml(newPage));
+                Toast.makeText(getActivity(),newPage.getTitle()+" Added", Toast.LENGTH_SHORT).show();
+                pageHtmlMap.put(newPage.getPageUrl(), MainActivity.downloadHtml(newPage));
                 newPage = null;
+                this.dismiss();
             }else{
                 Toast.makeText(getActivity(), "Please enter a URL!", Toast.LENGTH_SHORT).show();
             }
         }else{
             try {
                 NotificationService.addPageToTrack(newPage);
-                adapter.notifyDataSetChanged();
+                MainActivity.notifyAdapterDataSetChange();
                 titleInputEditText.setText("");
                 urlInputEditText.setText("");
-                pageHtmlMap.put(newPage.getPageUrl(), MainFragmentActivity.downloadHtml(newPage));
+                pageHtmlMap.put(newPage.getPageUrl(), MainActivity.downloadHtml(newPage));
+                Toast.makeText(getActivity(),newPage.getTitle()+" Added", Toast.LENGTH_SHORT).show();
                 newPage = null;
-                Toast.makeText(getActivity(),"Page Added", Toast.LENGTH_SHORT).show();
+                this.dismiss();
             } catch (Exception e) {
                 e.printStackTrace();
             }

@@ -3,7 +3,7 @@ package com.example.jose.updated.controller;
 import android.util.Log;
 
 import com.example.jose.updated.model.Page;
-import com.example.jose.updated.view.MainFragmentActivity;
+import com.example.jose.updated.view.MainActivity;
 
 import java.util.Date;
 import java.util.List;
@@ -11,7 +11,6 @@ import java.util.List;
 
 
 public class UpdateRefresher {
-    private static PageAdapter adapter = MainFragmentActivity.adapter;
 
     public static void refreshUpdate(List<Page> pagesToTrack,List<Page> updated){
         List<Page> pages;
@@ -21,11 +20,11 @@ public class UpdateRefresher {
                 if(page.isUpdated() && !updated.contains(page)){
                     updated.add(page);
                     page.setTimeOfLastUpdateInMilliSec(new Date().getTime());
-                    adapter.notifyDataSetChanged();
+                    MainActivity.notifyAdapterDataSetChange();
                 }else{
                     if(updated.contains(page)){
                         updated.remove(page);
-                        adapter.notifyDataSetChanged();
+                        MainActivity.notifyAdapterDataSetChange();
                     }
                 }
             } catch (Exception e) {

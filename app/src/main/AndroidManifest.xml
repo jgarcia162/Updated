@@ -10,7 +10,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".view.MainFragmentActivity">
+        <activity android:name=".view.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -18,6 +18,13 @@
             </intent-filter>
         </activity>
         <service android:name=".controller.NotificationService"/>
+        <receiver android:name=".controller.UpdateBroadcastReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.example.jose.updated.controller.UpdateReceiver"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
