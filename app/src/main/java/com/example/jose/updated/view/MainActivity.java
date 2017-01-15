@@ -6,7 +6,6 @@ import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -19,8 +18,8 @@ import com.example.jose.updated.controller.NotificationService;
 import com.example.jose.updated.controller.PageAdapter;
 import com.example.jose.updated.controller.UpdateRefresher;
 import com.example.jose.updated.model.Page;
+import com.example.jose.updated.model.PagesHolder;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -34,9 +33,11 @@ public class MainActivity extends Activity {
     public static PageAdapter adapter;
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
-    public static  List<Page> pagesToTrack,updatedPages;
+    public static  List<Page> pagesToTrack;
+    public static  List<Page> updatedPages;
     public static Map<String,String> pageHtmlMap;
     private AddPageDialogFragment addPageDialogFragment;
+    private PagesHolder pagesHolder = PagesHolder.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,16 +47,15 @@ public class MainActivity extends Activity {
         fragmentManager = getFragmentManager();
         updateButton = (Button) findViewById(R.id.track_page_button);
         urlInputEditText = (EditText) findViewById(R.id.url_input_edit_text);
-        pagesToTrack = new ArrayList<>();
-        updatedPages = new ArrayList<>();
-        //updatedPages = NotificationService.updatedPages;
+        pagesToTrack = pagesHolder.getPagesToTrack();
+        updatedPages = pagesHolder.getUpdatedPages();
         pageHtmlMap = new HashMap<>();
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         layoutManager = new LinearLayoutManager(this);
         addPageDialogFragment = new AddPageDialogFragment();
 
 
-        adapter = new PageAdapter(pagesToTrack);
+        adapter = new PageAdapter();
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(layoutManager);
         Page nike,twitter,inward;
@@ -69,12 +69,11 @@ public class MainActivity extends Activity {
         pagesToTrack.add(nike);
 
         Intent serviceIntent = new Intent(this,NotificationService.class);
-        serviceIntent.putExtra("pages to track", (ArrayList<? extends Parcelable>) pagesToTrack);
         startService(serviceIntent);
     }
 
     public void refresh(View view){
-        UpdateRefresher.refreshUpdate(pagesToTrack,updatedPages);
+        UpdateRefresher.refreshUpdate();
     }
 
     private boolean isPageUpdated(Page page) throws Exception{

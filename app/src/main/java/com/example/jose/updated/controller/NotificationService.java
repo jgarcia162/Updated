@@ -11,6 +11,7 @@ import android.util.Log;
 
 import com.example.jose.updated.R;
 import com.example.jose.updated.model.Page;
+import com.example.jose.updated.model.PagesHolder;
 import com.example.jose.updated.view.MainActivity;
 
 import java.util.ArrayList;
@@ -35,6 +36,7 @@ public class NotificationService extends IntentService implements UpdatedCallbac
     public static final int NOTIFICATION_ID = 1;
 
     private Handler handler;
+    private PagesHolder pagesHolder;
 
     /**
      * Creates an IntentService.  Invoked by your subclass's constructor.
@@ -51,20 +53,20 @@ public class NotificationService extends IntentService implements UpdatedCallbac
     }
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        pagesHolder = PagesHolder.getInstance();
         handler = new Handler();
         notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        currentTime = new Date().getTime();
         return super.onStartCommand(intent, flags, startId);
     }
 
 
-    //TODO create intent service to check for updates in background and send push notification
     @Override
     protected void onHandleIntent(Intent intent) {
         setStarted(true);
-        pagesToTrack = intent.getParcelableArrayListExtra("pages to track");
-        updatedPages = new ArrayList<>();
+        pagesToTrack = pagesHolder.getPagesToTrack();
+        updatedPages = pagesHolder.getUpdatedPages();
         createTimerTask();
-        currentTime = new Date().getTime();
         setUpTimer(updateTimerTask);
 
     }
@@ -92,7 +94,7 @@ public class NotificationService extends IntentService implements UpdatedCallbac
 
     //This method will be called periodically
     public void refresh(){
-        UpdateRefresher.refreshUpdate(pagesToTrack,updatedPages);
+        UpdateRefresher.refreshUpdate();
         if(updatedPages.size() > 0){
             onUpdateDetected(updatedPages);
         }
@@ -101,6 +103,7 @@ public class NotificationService extends IntentService implements UpdatedCallbac
     public static void addPageToTrack(Page page){
         page.setUpdated(true);
         pagesToTrack.add(page);
+        MainActivity.notifyAdapterDataSetChange();
     }
 
     public void setStarted(boolean n){

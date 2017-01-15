@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 import com.example.jose.updated.R;
 import com.example.jose.updated.model.Page;
+import com.example.jose.updated.model.PagesHolder;
 import com.example.jose.updated.view.PageViewHolder;
 
 import java.util.List;
@@ -14,8 +15,9 @@ import java.util.List;
 public class PageAdapter extends RecyclerView.Adapter<PageViewHolder>{
     private List<Page> listOfPages;
 
-    public PageAdapter(List<Page> listOfPages){
-        this.listOfPages = listOfPages;
+    public PageAdapter(){
+        PagesHolder pagesHolder = PagesHolder.getInstance();
+        this.listOfPages = pagesHolder.getPagesToTrack();
     }
 
     @Override

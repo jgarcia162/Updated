@@ -14,8 +14,8 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.jose.updated.R;
-import com.example.jose.updated.controller.NotificationService;
 import com.example.jose.updated.model.Page;
+import com.example.jose.updated.model.PagesHolder;
 
 import java.util.Date;
 import java.util.Map;
@@ -91,7 +91,7 @@ public class AddPageDialogFragment extends DialogFragment {
                     newPage = new Page("untitled", urlText, new Date().getTime());
                 }
                 newPage = new Page(titleText, urlText, new Date().getTime());
-                NotificationService.addPageToTrack(newPage);
+                PagesHolder.getInstance().getPagesToTrack().add(newPage);
                 MainActivity.notifyAdapterDataSetChange();
                 titleInputEditText.setText("");
                 urlInputEditText.setText("");
@@ -104,7 +104,7 @@ public class AddPageDialogFragment extends DialogFragment {
             }
         }else{
             try {
-                NotificationService.addPageToTrack(newPage);
+                PagesHolder.getInstance().getPagesToTrack().add(newPage);
                 MainActivity.notifyAdapterDataSetChange();
                 titleInputEditText.setText("");
                 urlInputEditText.setText("");
