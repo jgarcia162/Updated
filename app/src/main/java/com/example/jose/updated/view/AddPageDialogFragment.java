@@ -20,15 +20,12 @@ import com.example.jose.updated.model.PagesHolder;
 import java.util.Date;
 import java.util.Map;
 
-/**
- * Created by Joe on 9/28/16.
- */
 public class AddPageDialogFragment extends DialogFragment {
-    Button addPageButton, previewButton;
-    WebView pagePreviewWebView;
-    TextInputEditText urlInputEditText, titleInputEditText;
-    ImageView previewImage;
-    Page newPage;
+    private Button addPageButton, previewButton;
+    private WebView pagePreviewWebView;
+    private TextInputEditText urlInputEditText, titleInputEditText;
+    private ImageView previewImage;
+    private Page newPage;
     private Map<String,String> pageHtmlMap;
 
     public AddPageDialogFragment(){
@@ -39,7 +36,6 @@ public class AddPageDialogFragment extends DialogFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         pageHtmlMap = MainActivity.pageHtmlMap;
-
     }
 
     @Nullable
@@ -52,7 +48,6 @@ public class AddPageDialogFragment extends DialogFragment {
             @Override
             public void onClick(View v) {
                 onClickPreviewButton();
-
             }
         });
 
@@ -82,6 +77,7 @@ public class AddPageDialogFragment extends DialogFragment {
     }
 
     private void onClickAddButton(String urlText, String titleText) throws Exception {
+        PagesHolder pagesHolder = PagesHolder.getInstance();
         if(newPage == null){
             if(!urlText.equals("")){
                 if(!urlText.substring(0,3).equals("http")){
@@ -91,7 +87,7 @@ public class AddPageDialogFragment extends DialogFragment {
                     newPage = new Page("untitled", urlText, new Date().getTime());
                 }
                 newPage = new Page(titleText, urlText, new Date().getTime());
-                PagesHolder.getInstance().getPagesToTrack().add(newPage);
+                pagesHolder.getPagesToTrack().add(newPage);
                 MainActivity.notifyAdapterDataSetChange();
                 titleInputEditText.setText("");
                 urlInputEditText.setText("");
@@ -104,7 +100,7 @@ public class AddPageDialogFragment extends DialogFragment {
             }
         }else{
             try {
-                PagesHolder.getInstance().getPagesToTrack().add(newPage);
+                pagesHolder.getPagesToTrack().add(newPage);
                 MainActivity.notifyAdapterDataSetChange();
                 titleInputEditText.setText("");
                 urlInputEditText.setText("");
