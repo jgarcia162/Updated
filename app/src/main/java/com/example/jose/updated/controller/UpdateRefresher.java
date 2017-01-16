@@ -19,6 +19,7 @@ public class UpdateRefresher {
         for(Page page : pagesToTrack){
             try {
                 if(page.isUpdated() && !updatedPages.contains(page)){
+                    page.setUpdated(true);
                     updatedPages.add(page);
                     page.setTimeOfLastUpdateInMilliSec(new Date().getTime());
                     MainActivity.notifyAdapterDataSetChange();

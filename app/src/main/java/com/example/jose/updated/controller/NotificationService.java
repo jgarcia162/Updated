@@ -4,9 +4,11 @@ import android.app.IntentService;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.Parcelable;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.example.jose.updated.R;
@@ -24,19 +26,21 @@ import java.util.TimerTask;
  * Created by Joe on 12/3/16.
  */
 
-public class NotificationService extends IntentService implements UpdatedCallback{
+public class NotificationService extends IntentService implements UpdatedCallback {
     private static List<Page> pagesToTrack;
     public static List<Page> updatedPages;
     private boolean started = false;
     private Timer updateTimer;
     private TimerTask updateTimerTask;
     private long currentTime;
-    private long fourtyEightHours = 60*60*48*1000;
+    private long fourtyEightHours = 60 * 60 * 48 * 1000;
     private NotificationManager notificationManager;
     public static final int NOTIFICATION_ID = 1;
 
     private Handler handler;
     private PagesHolder pagesHolder;
+    LocalBroadcastManager localBroadcastManager;
+
 
     /**
      * Creates an IntentService.  Invoked by your subclass's constructor.
@@ -47,16 +51,19 @@ public class NotificationService extends IntentService implements UpdatedCallbac
         super(name);
     }
 
-    NotificationService(){
+    NotificationService() {
         super("NotificationService");
 
     }
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         pagesHolder = PagesHolder.getInstance();
         handler = new Handler();
+        localBroadcastManager = LocalBroadcastManager.getInstance(this);
         notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         currentTime = new Date().getTime();
+        localBroadcastManager.registerReceiver(new UpdateBroadcastReceiver(), new IntentFilter("com.example.jose.updated.controller.CUSTOM_INTENT"));
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -71,15 +78,9 @@ public class NotificationService extends IntentService implements UpdatedCallbac
 
     }
 
-    //TODO create broadcastreceiver to handle update changes and notify data set in adapter
-    @Override
-    public void sendBroadcast(Intent intent) {
-        super.sendBroadcast(intent);
-    }
-
     private void setUpTimer(TimerTask task) {
         Timer timer = new Timer();
-        timer.scheduleAtFixedRate(task,0,5000);
+        timer.scheduleAtFixedRate(task, 0, 5000);
     }
 
     private void createTimerTask() {
@@ -87,54 +88,54 @@ public class NotificationService extends IntentService implements UpdatedCallbac
             @Override
             public void run() {
                 refresh();
-                Log.i("TIMER TASK","SERVICE RUNNING");
+                Log.i("TIMER TASK", "SERVICE RUNNING");
             }
         };
     }
 
-    //This method will be called periodically
-    public void refresh(){
+    public void refresh() {
         UpdateRefresher.refreshUpdate();
-        if(updatedPages.size() > 0){
+        if (updatedPages.size() > 0) {
             onUpdateDetected(updatedPages);
         }
     }
 
-    public static void addPageToTrack(Page page){
+    public static void addPageToTrack(Page page) {
         page.setUpdated(true);
         pagesToTrack.add(page);
         MainActivity.notifyAdapterDataSetChange();
     }
 
-    public void setStarted(boolean n){
+    public void setStarted(boolean n) {
         started = n;
     }
 
-    public boolean isStarted(){
+    public boolean isStarted() {
         return started;
     }
 
     @Override
     public void onUpdateDetected(List<Page> updatedPagesList) {
         String namesOfUpdatedPages = "";
-        for(Page p :updatedPagesList){
-            namesOfUpdatedPages+= p.getTitle() + ", ";
+        for (Page p : updatedPagesList) {
+            namesOfUpdatedPages += p.getTitle() + ", ";
         }
         namesOfUpdatedPages += " have been updated!";
-        Log.i("NAMES OF PAGES ",namesOfUpdatedPages);
+        Log.i("NAMES OF PAGES ", namesOfUpdatedPages);
         createNotification(namesOfUpdatedPages);
         Intent broadcastIntent = new Intent();
         broadcastIntent.putParcelableArrayListExtra("updated pages", (ArrayList<? extends Parcelable>) updatedPages);
-        sendBroadcast(broadcastIntent);
+        broadcastIntent.setAction("com.example.jose.updated.controller.CUSTOM_INTENT");
+        localBroadcastManager.sendBroadcast(broadcastIntent);
     }
 
     public void createNotification(String namesOfUpdatedPages) {
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this).setSmallIcon(R.drawable.default_photo).setContentTitle(getString(R.string.notification_title)).setContentText(namesOfUpdatedPages);
         notificationBuilder.setAutoCancel(true);
-        Intent notificationIntent = new Intent(this,MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this,0,notificationIntent,PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent notificationIntent = new Intent(this, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         notificationBuilder.setContentIntent(pendingIntent);
-        notificationManager.notify(NOTIFICATION_ID,notificationBuilder.build());
+        notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
     }
 
 
