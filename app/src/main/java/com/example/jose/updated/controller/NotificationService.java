@@ -39,7 +39,7 @@ public class NotificationService extends IntentService implements UpdatedCallbac
 
     private Handler handler;
     private PagesHolder pagesHolder;
-    LocalBroadcastManager localBroadcastManager;
+    private LocalBroadcastManager localBroadcastManager;
 
 
     /**
@@ -75,7 +75,6 @@ public class NotificationService extends IntentService implements UpdatedCallbac
         updatedPages = pagesHolder.getUpdatedPages();
         createTimerTask();
         setUpTimer(updateTimerTask);
-
     }
 
     private void setUpTimer(TimerTask task) {
@@ -88,7 +87,6 @@ public class NotificationService extends IntentService implements UpdatedCallbac
             @Override
             public void run() {
                 refresh();
-                Log.i("TIMER TASK", "SERVICE RUNNING");
             }
         };
     }

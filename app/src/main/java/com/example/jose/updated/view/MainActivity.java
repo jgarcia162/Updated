@@ -58,15 +58,20 @@ public class MainActivity extends Activity {
         adapter = new PageAdapter();
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(layoutManager);
-        Page nike,twitter,inward;
-        nike = new Page("Nike","https://www.nike.com/us/en_us/", new Date().getTime());
-        twitter = new Page("Twitter","https://twitter.com/AyoJoanks", new Date().getTime());
-        inward = new Page("Inward","https://inwardmovement.wordpress.com",new Date().getTime());
+        Page nike = new Page("Nike","https://www.nike.com/us/en_us/", new Date().getTime());
+        Page twitter = new Page("Twitter","https://twitter.com/AyoJoanks", new Date().getTime());
+        Page inward = new Page("Inward","https://inwardmovement.wordpress.com",new Date().getTime());
+        Page adidas = new Page("Adidas","https://www.adidas.com",new Date().getTime());
+        Page mlb = new Page("MLB","https://www.mlb.com",new Date().getTime());
+        Page espn = new Page("ESPN","https://www.espn.com",new Date().getTime());
 
         //for testing
         pagesToTrack.add(twitter);
         pagesToTrack.add(inward);
         pagesToTrack.add(nike);
+        pagesToTrack.add(adidas);
+        pagesToTrack.add(mlb);
+        pagesToTrack.add(espn);
 
         Intent serviceIntent = new Intent(this,NotificationService.class);
         startService(serviceIntent);

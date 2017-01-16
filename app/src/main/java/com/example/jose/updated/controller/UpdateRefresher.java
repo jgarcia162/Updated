@@ -15,11 +15,11 @@ public class UpdateRefresher {
     private static List<Page> pagesToTrack = PagesHolder.getInstance().getPagesToTrack();
     private static List<Page> updatedPages = PagesHolder.getInstance().getUpdatedPages();
 
+    //TODO check logic for checking if a page is updated
     public static void refreshUpdate(){
         for(Page page : pagesToTrack){
             try {
                 if(page.isUpdated() && !updatedPages.contains(page)){
-                    page.setUpdated(true);
                     updatedPages.add(page);
                     page.setTimeOfLastUpdateInMilliSec(new Date().getTime());
                     MainActivity.notifyAdapterDataSetChange();
