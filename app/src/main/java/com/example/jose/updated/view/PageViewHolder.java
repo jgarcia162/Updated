@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.example.jose.updated.R;
 import com.example.jose.updated.model.Page;
+import com.example.jose.updated.model.PagesHolder;
 
 public class PageViewHolder extends RecyclerView.ViewHolder {
 
@@ -29,6 +30,7 @@ public class PageViewHolder extends RecyclerView.ViewHolder {
         itemLayout = (RelativeLayout) view.findViewById(R.id.item_layout);
         context = view.getContext();
         packageManager = context.getPackageManager();
+
     }
 
     public void bind(final Page page){
@@ -36,7 +38,7 @@ public class PageViewHolder extends RecyclerView.ViewHolder {
         pageTitleTextView.setText(page.getTitle());
         pageUrlTextView.setText(page.getPageUrl());
 
-        if(MainActivity.updatedPages.contains(page)){
+        if(PagesHolder.getInstance().getUpdatedPages().contains(page)){
             updatedStatusTextView.setText(R.string.page_updated);
             page.setUpdated(true);
         }else{
@@ -51,7 +53,7 @@ public class PageViewHolder extends RecyclerView.ViewHolder {
                 if(page.isUpdated()){
                     updatedStatusTextView.setText(R.string.not_updated);
                     page.setUpdated(false);
-                    MainActivity.updatedPages.remove(page);
+                    PagesHolder.getInstance().removeFromUpdatedPages(page);
                 }
                 //URL only works with full URL "http..."
                 Intent intent = new Intent(Intent.ACTION_VIEW, pageUri);

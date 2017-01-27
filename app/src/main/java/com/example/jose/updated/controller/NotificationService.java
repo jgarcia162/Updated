@@ -22,13 +22,9 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-/**
- * Created by Joe on 12/3/16.
- */
-
 public class NotificationService extends IntentService implements UpdatedCallback {
     private static List<Page> pagesToTrack;
-    public static List<Page> updatedPages;
+    private static List<Page> updatedPages;
     private boolean started = false;
     private Timer updateTimer;
     private TimerTask updateTimerTask;
@@ -86,22 +82,20 @@ public class NotificationService extends IntentService implements UpdatedCallbac
         updateTimerTask = new TimerTask() {
             @Override
             public void run() {
-                refresh();
+                try {
+                    refresh();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         };
     }
 
-    public void refresh() {
+    public void refresh() throws Exception {
         UpdateRefresher.refreshUpdate();
         if (updatedPages.size() > 0) {
             onUpdateDetected(updatedPages);
         }
-    }
-
-    public static void addPageToTrack(Page page) {
-        page.setUpdated(true);
-        pagesToTrack.add(page);
-        MainActivity.notifyAdapterDataSetChange();
     }
 
     public void setStarted(boolean n) {

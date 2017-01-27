@@ -1,40 +1,41 @@
 package com.example.jose.updated.controller;
 
-import android.util.Log;
-
 import com.example.jose.updated.model.Page;
 import com.example.jose.updated.model.PagesHolder;
 import com.example.jose.updated.view.MainActivity;
 
 import java.util.Date;
-import java.util.List;
 
 
 
 public class UpdateRefresher {
-    private static List<Page> pagesToTrack = PagesHolder.getInstance().getPagesToTrack();
-    private static List<Page> updatedPages = PagesHolder.getInstance().getUpdatedPages();
+    private static PagesHolder pagesHolder = PagesHolder.getInstance();
 
-    //TODO check logic for checking if a page is updated
-    public static void refreshUpdate(){
-        for(Page page : pagesToTrack){
-            try {
-                if(page.isUpdated() && !updatedPages.contains(page)){
-                    updatedPages.add(page);
+    public static void refreshUpdate() throws Exception {
+        for(Page page : pagesHolder.getPagesToTrack()){
+            page.setUpdated(isPageUpdated(page));
+                if(page.isUpdated() && !pagesHolder.getUpdatedPages().contains(page)){
+                    pagesHolder.addToUpdatedPages(page);
                     page.setTimeOfLastUpdateInMilliSec(new Date().getTime());
                     MainActivity.notifyAdapterDataSetChange();
                 }else{
-                    if(updatedPages.contains(page)){
-                        updatedPages.remove(page);
+                    if(pagesHolder.getUpdatedPages().contains(page)){
+                        pagesHolder.removeFromUpdatedPages(page);
                         MainActivity.notifyAdapterDataSetChange();
                     }
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
         }
-        if(updatedPages.size()>0){
-            Log.i("PAGES UPDATED ", updatedPages.size() + " pages have been udpated");
-        }
+    }
+
+    private static boolean isPageUpdated(Page page) throws Exception{
+        String htmlToCheck = downloadHtml(page);
+        return htmlToCheck.equals(pagesHolder.getPageHtmlMap().get(page.getPageUrl()));
+    }
+
+    public static String downloadHtml(Page page) throws Exception {
+        DownloadTask task = new DownloadTask();
+        task.execute(page.getPageUrl());
+        page.setContents(task.get());
+        return task.get();
     }
 }

@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.jose.updated.R;
+import com.example.jose.updated.controller.UpdateRefresher;
 import com.example.jose.updated.model.Page;
 import com.example.jose.updated.model.PagesHolder;
 
@@ -27,6 +28,7 @@ public class AddPageDialogFragment extends DialogFragment {
     private ImageView previewImage;
     private Page newPage;
     private Map<String,String> pageHtmlMap;
+    private PagesHolder pagesHolder = PagesHolder.getInstance();
 
     public AddPageDialogFragment(){
 
@@ -35,7 +37,7 @@ public class AddPageDialogFragment extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        pageHtmlMap = MainActivity.pageHtmlMap;
+        pageHtmlMap = pagesHolder.getPageHtmlMap();
     }
 
     @Nullable
@@ -87,12 +89,14 @@ public class AddPageDialogFragment extends DialogFragment {
                     newPage = new Page("untitled", urlText, new Date().getTime());
                 }
                 newPage = new Page(titleText, urlText, new Date().getTime());
-                pagesHolder.getPagesToTrack().add(newPage);
-                MainActivity.notifyAdapterDataSetChange();
                 titleInputEditText.setText("");
                 urlInputEditText.setText("");
                 Toast.makeText(getActivity(),newPage.getTitle()+" Added", Toast.LENGTH_SHORT).show();
-                pageHtmlMap.put(newPage.getPageUrl(), MainActivity.downloadHtml(newPage));
+                newPage.setContents(UpdateRefresher.downloadHtml(newPage));
+                pagesHolder.addPageHtmlToMap(newPage);
+                newPage.setTimeOfLastUpdateInMilliSec(new Date().getTime());
+                pagesHolder.addToPagesToTrack(newPage);
+                MainActivity.notifyAdapterDataSetChange();
                 newPage = null;
                 this.dismiss();
             }else{
@@ -100,11 +104,13 @@ public class AddPageDialogFragment extends DialogFragment {
             }
         }else{
             try {
-                pagesHolder.getPagesToTrack().add(newPage);
-                MainActivity.notifyAdapterDataSetChange();
                 titleInputEditText.setText("");
                 urlInputEditText.setText("");
-                pageHtmlMap.put(newPage.getPageUrl(), MainActivity.downloadHtml(newPage));
+                newPage.setContents(UpdateRefresher.downloadHtml(newPage));
+                pagesHolder.addPageHtmlToMap(newPage);
+                newPage.setTimeOfLastUpdateInMilliSec(new Date().getTime());
+                pagesHolder.addToPagesToTrack(newPage);
+                MainActivity.notifyAdapterDataSetChange();
                 Toast.makeText(getActivity(),newPage.getTitle()+" Added", Toast.LENGTH_SHORT).show();
                 newPage = null;
                 this.dismiss();

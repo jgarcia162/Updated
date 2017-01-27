@@ -1,7 +1,9 @@
 package com.example.jose.updated.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Joe on 1/14/17.
@@ -11,10 +13,12 @@ public class PagesHolder {
     private static PagesHolder instance;
     private List<Page> pagesToTrack;
     private List<Page> updatedPages;
+    private Map<String,String> pageHtmlMap;
 
     private PagesHolder(){
         pagesToTrack = new ArrayList<>();
         updatedPages = new ArrayList<>();
+        pageHtmlMap = new HashMap<>();
     }
 
     public static PagesHolder getInstance() {
@@ -38,5 +42,33 @@ public class PagesHolder {
 
     public void setUpdatedPages(List<Page> updatedPages) {
         this.updatedPages = updatedPages;
+    }
+
+    public Map<String,String> getPageHtmlMap(){
+        return pageHtmlMap;
+    }
+
+    public void setPageHtmlMap(Map<String,String> pageHtmlMap){
+        this.pageHtmlMap = pageHtmlMap;
+    }
+
+    public void addToUpdatedPages(Page page){
+        updatedPages.add(page);
+    }
+
+    public void addToPagesToTrack(Page page){
+        pagesToTrack.add(page);
+    }
+
+    public void removeFromUpdatedPages(Page page) {
+        updatedPages.remove(page);
+    }
+
+    public void removeFromPagesToTrack(Page page) {
+        pagesToTrack.remove(page);
+    }
+
+    public void addPageHtmlToMap(Page page) {
+        pageHtmlMap.put(page.getPageUrl(),page.getContents());
     }
 }
