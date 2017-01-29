@@ -5,7 +5,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Handler;
 import android.os.Parcelable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -17,23 +16,19 @@ import com.example.jose.updated.model.PagesHolder;
 import com.example.jose.updated.view.MainActivity;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class NotificationService extends IntentService implements UpdatedCallback {
+public class NotificationService extends IntentService implements UpdateBroadcastReceiver.UpdatedCallback {
     private static List<Page> pagesToTrack;
     private static List<Page> updatedPages;
     private boolean started = false;
     private Timer updateTimer;
     private TimerTask updateTimerTask;
-    private long currentTime;
-    private long fourtyEightHours = 60 * 60 * 48 * 1000;
     private NotificationManager notificationManager;
     public static final int NOTIFICATION_ID = 1;
 
-    private Handler handler;
     private PagesHolder pagesHolder;
     private LocalBroadcastManager localBroadcastManager;
 
@@ -43,6 +38,7 @@ public class NotificationService extends IntentService implements UpdatedCallbac
      *
      * @param name Used to name the worker thread, important only for debugging.
      */
+
     public NotificationService(String name) {
         super(name);
     }
@@ -55,14 +51,11 @@ public class NotificationService extends IntentService implements UpdatedCallbac
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         pagesHolder = PagesHolder.getInstance();
-        handler = new Handler();
         localBroadcastManager = LocalBroadcastManager.getInstance(this);
         notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        currentTime = new Date().getTime();
         localBroadcastManager.registerReceiver(new UpdateBroadcastReceiver(), new IntentFilter("com.example.jose.updated.controller.CUSTOM_INTENT"));
         return super.onStartCommand(intent, flags, startId);
     }
-
 
     @Override
     protected void onHandleIntent(Intent intent) {

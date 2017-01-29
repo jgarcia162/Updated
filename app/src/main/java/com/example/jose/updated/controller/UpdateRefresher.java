@@ -13,17 +13,14 @@ public class UpdateRefresher {
 
     public static void refreshUpdate() throws Exception {
         for(Page page : pagesHolder.getPagesToTrack()){
-            page.setUpdated(isPageUpdated(page));
-                if(page.isUpdated() && !pagesHolder.getUpdatedPages().contains(page)){
+            if(isPageUpdated(page)) {
+                page.setUpdated(true);
+                if (!pagesHolder.getUpdatedPages().contains(page)) {
                     pagesHolder.addToUpdatedPages(page);
                     page.setTimeOfLastUpdateInMilliSec(new Date().getTime());
                     MainActivity.notifyAdapterDataSetChange();
-                }else{
-                    if(pagesHolder.getUpdatedPages().contains(page)){
-                        pagesHolder.removeFromUpdatedPages(page);
-                        MainActivity.notifyAdapterDataSetChange();
-                    }
                 }
+            }
         }
     }
 

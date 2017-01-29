@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.example.jose.updated.R;
 import com.example.jose.updated.controller.NotificationService;
 import com.example.jose.updated.controller.PageAdapter;
+import com.example.jose.updated.controller.UpdateBroadcastReceiver;
 import com.example.jose.updated.controller.UpdateRefresher;
 import com.example.jose.updated.model.Page;
 import com.example.jose.updated.model.PagesHolder;
@@ -25,7 +26,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements UpdateBroadcastReceiver.UpdatedCallback {
     private FragmentManager fragmentManager;
     private EditText urlInputEditText;
     private Button updateButton;
@@ -33,14 +34,17 @@ public class MainActivity extends Activity {
     public static PageAdapter adapter;
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
-    public static  List<Page> pagesToTrack;
+    public static List<Page> pagesToTrack;
     private AddPageDialogFragment addPageDialogFragment;
     private PagesHolder pagesHolder = PagesHolder.getInstance();
+    static Activity activity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_activity_main);
+        activity = this;
+        UpdateBroadcastReceiver receiver = new UpdateBroadcastReceiver();
 
         fragmentManager = getFragmentManager();
         updateButton = (Button) findViewById(R.id.track_page_button);
@@ -51,42 +55,37 @@ public class MainActivity extends Activity {
         addPageDialogFragment = new AddPageDialogFragment();
         pagesHolder = PagesHolder.getInstance();
 
-
         adapter = new PageAdapter();
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(layoutManager);
-        Page nike = new Page("Nike","https://www.nike.com/us/en_us/", new Date().getTime());
-        Page twitter = new Page("Twitter","https://twitter.com/AyoJoanks", new Date().getTime());
-        Page inward = new Page("Inward","https://inwardmovement.wordpress.com",new Date().getTime());
-        Page adidas = new Page("Adidas","https://www.adidas.com",new Date().getTime());
-        Page espn = new Page("ESPN","https://www.espn.com",new Date().getTime());
+        createTestData();
 
-        //for testing
-        pagesToTrack.add(twitter);
-        pagesToTrack.add(inward);
-        pagesToTrack.add(nike);
-        pagesToTrack.add(adidas);
-        pagesToTrack.add(espn);
+        for (Page page : pagesToTrack) {
+            try {
+                UpdateRefresher.downloadHtml(page);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            pagesHolder.addToPagesToTrack(page);
+            pagesHolder.addPageHtmlToMap(page);
+            Log.d("MAP SIZE", pagesHolder.getPageHtmlMap().size() + "");
+        }
 
 
+        Intent serviceIntent = new Intent(this, NotificationService.class);
+        startService(serviceIntent);
     }
+
+    @Override
+    public Intent registerReceiver(BroadcastReceiver receiver, IntentFilter filter) {
+        return super.registerReceiver(receiver, filter);
+    }
+
 
     @Override
     protected void onResume() {
         super.onResume();
-        for(Page page: pagesToTrack){
-            try {
-                UpdateRefresher.downloadHtml(page);
-                pagesHolder.addToPagesToTrack(page);
-                pagesHolder.addPageHtmlToMap(page);
-                Log.d("MAP SIZE", pagesHolder.getPageHtmlMap().size()+"");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
 
-        Intent serviceIntent = new Intent(this,NotificationService.class);
-        startService(serviceIntent);
     }
 
     public void refresh(View view) throws Exception {
@@ -95,16 +94,39 @@ public class MainActivity extends Activity {
     }
 
     public void showAddPageDialog(View view) {
-        addPageDialogFragment.show(fragmentManager,"addPageFragment");
+        addPageDialogFragment.show(fragmentManager, "addPageFragment");
     }
 
-    public static void notifyAdapterDataSetChange(){
-        adapter.notifyDataSetChanged();
+    public static void notifyAdapterDataSetChange() {
+//        adapter.notifyDataSetChanged();
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                adapter.notifyDataSetChanged();
+            }
+        });
+    }
+
+    private void createTestData() {
+        Page nike = new Page("Nike", "https://www.nike.com/us/en_us/", new Date().getTime());
+        Page twitter = new Page("Twitter", "https://twitter.com/AyoJoanks", new Date().getTime());
+        Page inward = new Page("Inward", "https://inwardmovement.wordpress.com", new Date().getTime());
+        Page adidas = new Page("Adidas", "https://www.adidas.com", new Date().getTime());
+        Page espn = new Page("ESPN", "https://www.espn.com", new Date().getTime());
+
+        //for testing
+        pagesToTrack.clear();
+        pagesToTrack.add(twitter);
+        pagesToTrack.add(espn);
+        pagesToTrack.add(adidas);
+        pagesToTrack.add(nike);
+        pagesToTrack.add(inward);
+
     }
 
     @Override
-    public Intent registerReceiver(BroadcastReceiver receiver, IntentFilter filter) {
-        return super.registerReceiver(receiver, filter);
+    public void onUpdateDetected(List<Page> updatedPagesList) {
+        adapter.notifyDataSetChanged();
     }
 }
 

@@ -68,6 +68,10 @@ public class PagesHolder {
         pagesToTrack.remove(page);
     }
 
+    public boolean isTrackingPage(Page page){
+        return pagesToTrack.contains(page);
+    }
+
     public void addPageHtmlToMap(Page page) {
         pageHtmlMap.put(page.getPageUrl(),page.getContents());
     }
