@@ -4,7 +4,6 @@ import android.content.Context;
 
 import com.example.jose.updated.model.Page;
 import com.example.jose.updated.model.PagesHolder;
-import com.example.jose.updated.view.MainActivity;
 
 import java.util.Date;
 
@@ -20,7 +19,7 @@ public class UpdateRefresher {
                 if (!pagesHolder.getUpdatedPages().contains(page)) {
                     pagesHolder.addToUpdatedPages(page);
                     page.setTimeOfLastUpdateInMilliSec(new Date().getTime());
-                    MainActivity.notifyAdapterDataSetChange(context);
+                    //MainActivity.notifyAdapterDataSetChange(context);
                 }
             }
         }

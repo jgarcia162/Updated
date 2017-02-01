@@ -6,24 +6,21 @@ import android.content.Intent;
 
 import com.example.jose.updated.model.Page;
 import com.example.jose.updated.model.PagesHolder;
-import com.example.jose.updated.view.MainActivity;
 
 import java.util.List;
 
 public class UpdateBroadcastReceiver extends BroadcastReceiver {
     private UpdatedCallback callback;
 
-//TODO fix this
-    public UpdateBroadcastReceiver(){
-
+    public UpdateBroadcastReceiver(UpdatedCallback callback){
+        this.callback = callback;
     }
 
     @Override
-    public void onReceive(final Context context, Intent intent) {
+    public void onReceive(Context context, Intent intent) {
         List<Page> updatedPages = intent.getParcelableArrayListExtra("updated pages");
         PagesHolder.getInstance().setUpdatedPages(updatedPages);
-        MainActivity.notifyAdapterDataSetChange(context);
-//        callback.onUpdateDetected(updatedPages);
+        callback.onUpdateDetected();
     }
 
     public void setCallback(UpdatedCallback callback) {
@@ -34,6 +31,6 @@ public class UpdateBroadcastReceiver extends BroadcastReceiver {
      * Created by Joe on 12/8/16.
      */
     public interface UpdatedCallback {
-        void onUpdateDetected(List<Page> updatedPagesList);
+        void onUpdateDetected();
     }
 }

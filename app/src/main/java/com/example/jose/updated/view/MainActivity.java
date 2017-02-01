@@ -2,12 +2,12 @@ package com.example.jose.updated.view;
 
 import android.app.Activity;
 import android.app.FragmentManager;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class MainActivity extends Activity implements UpdateBroadcastReceiver.UpdatedCallback {
+public class MainActivity extends Activity implements UpdateBroadcastReceiver.UpdatedCallback{
     private FragmentManager fragmentManager;
     private EditText urlInputEditText;
     private Button updateButton;
@@ -39,14 +39,14 @@ public class MainActivity extends Activity implements UpdateBroadcastReceiver.Up
     public static List<Page> pagesToTrack;
     private AddPageDialogFragment addPageDialogFragment;
     private PagesHolder pagesHolder = PagesHolder.getInstance();
+    private LocalBroadcastManager localBroadcastManager;
     static Activity activity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_activity_main);
-        //TODO what was this for?
-        UpdateBroadcastReceiver receiver = new UpdateBroadcastReceiver();
+        localBroadcastManager = LocalBroadcastManager.getInstance(this);
 
         fragmentManager = getFragmentManager();
         updateButton = (Button) findViewById(R.id.track_page_button);
@@ -56,6 +56,7 @@ public class MainActivity extends Activity implements UpdateBroadcastReceiver.Up
         layoutManager = new LinearLayoutManager(this);
         addPageDialogFragment = new AddPageDialogFragment();
         pagesHolder = PagesHolder.getInstance();
+        localBroadcastManager.registerReceiver(new UpdateBroadcastReceiver(this), new IntentFilter("com.example.jose.updated.controller.CUSTOM_INTENT"));
 
         adapter = new PageAdapter();
         recyclerView.setAdapter(adapter);
@@ -73,14 +74,8 @@ public class MainActivity extends Activity implements UpdateBroadcastReceiver.Up
             Log.d("MAP SIZE", pagesHolder.getPageHtmlMap().size() + "");
         }
 
-
         Intent serviceIntent = new Intent(this, NotificationService.class);
         startService(serviceIntent);
-    }
-
-    @Override
-    public Intent registerReceiver(BroadcastReceiver receiver, IntentFilter filter) {
-        return super.registerReceiver(receiver, filter);
     }
 
 
@@ -128,8 +123,9 @@ public class MainActivity extends Activity implements UpdateBroadcastReceiver.Up
 
     }
 
+
     @Override
-    public void onUpdateDetected(List<Page> updatedPagesList) {
+    public void onUpdateDetected() {
         adapter.notifyDataSetChanged();
     }
 }

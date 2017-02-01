@@ -4,7 +4,6 @@ import android.app.IntentService;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Parcelable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -20,7 +19,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class NotificationService extends IntentService implements UpdateBroadcastReceiver.UpdatedCallback {
+public class NotificationService extends IntentService {
     private static List<Page> pagesToTrack;
     private static List<Page> updatedPages;
     private boolean started = false;
@@ -53,7 +52,6 @@ public class NotificationService extends IntentService implements UpdateBroadcas
         pagesHolder = PagesHolder.getInstance();
         localBroadcastManager = LocalBroadcastManager.getInstance(this);
         notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        localBroadcastManager.registerReceiver(new UpdateBroadcastReceiver(), new IntentFilter("com.example.jose.updated.controller.CUSTOM_INTENT"));
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -87,7 +85,17 @@ public class NotificationService extends IntentService implements UpdateBroadcas
     public void refresh() throws Exception {
         UpdateRefresher.refreshUpdate(getApplicationContext());
         if (updatedPages.size() > 0) {
-            onUpdateDetected(updatedPages);
+            String namesOfUpdatedPages = "";
+            for (Page p : updatedPages) {
+                namesOfUpdatedPages += p.getTitle() + ", ";
+            }
+            namesOfUpdatedPages += " have been updated!";
+            Log.i("NAMES OF PAGES ", namesOfUpdatedPages);
+            createNotification(namesOfUpdatedPages);
+            Intent broadcastIntent = new Intent();
+            broadcastIntent.putParcelableArrayListExtra("updated pages", (ArrayList<? extends Parcelable>) updatedPages);
+            broadcastIntent.setAction("com.example.jose.updated.controller.CUSTOM_INTENT");
+            localBroadcastManager.sendBroadcast(broadcastIntent);
         }
     }
 
@@ -99,20 +107,7 @@ public class NotificationService extends IntentService implements UpdateBroadcas
         return started;
     }
 
-    @Override
-    public void onUpdateDetected(List<Page> updatedPagesList) {
-        String namesOfUpdatedPages = "";
-        for (Page p : updatedPagesList) {
-            namesOfUpdatedPages += p.getTitle() + ", ";
-        }
-        namesOfUpdatedPages += " have been updated!";
-        Log.i("NAMES OF PAGES ", namesOfUpdatedPages);
-        createNotification(namesOfUpdatedPages);
-        Intent broadcastIntent = new Intent();
-        broadcastIntent.putParcelableArrayListExtra("updated pages", (ArrayList<? extends Parcelable>) updatedPages);
-        broadcastIntent.setAction("com.example.jose.updated.controller.CUSTOM_INTENT");
-        localBroadcastManager.sendBroadcast(broadcastIntent);
-    }
+
 
     public void createNotification(String namesOfUpdatedPages) {
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this).setSmallIcon(R.drawable.default_photo).setContentTitle(getString(R.string.notification_title)).setContentText(namesOfUpdatedPages);
@@ -122,6 +117,6 @@ public class NotificationService extends IntentService implements UpdateBroadcas
         notificationBuilder.setContentIntent(pendingIntent);
         notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
     }
-
+    //TODO callback is implemented in both notificationservice and main activity, this conflicts and callback in notification service is executing rather than callback in main activity
 
 }
