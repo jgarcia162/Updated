@@ -3,9 +3,11 @@ package com.example.jose.updated.view;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -43,7 +45,7 @@ public class MainActivity extends Activity implements UpdateBroadcastReceiver.Up
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_activity_main);
-        activity = this;
+        //TODO what was this for?
         UpdateBroadcastReceiver receiver = new UpdateBroadcastReceiver();
 
         fragmentManager = getFragmentManager();
@@ -90,21 +92,23 @@ public class MainActivity extends Activity implements UpdateBroadcastReceiver.Up
 
     public void refresh(View view) throws Exception {
         Toast.makeText(this, "WTF", Toast.LENGTH_SHORT).show();
-        UpdateRefresher.refreshUpdate();
+        UpdateRefresher.refreshUpdate(this);
     }
 
     public void showAddPageDialog(View view) {
         addPageDialogFragment.show(fragmentManager, "addPageFragment");
     }
 
-    public static void notifyAdapterDataSetChange() {
+    public static void notifyAdapterDataSetChange(Context context) {
 //        adapter.notifyDataSetChanged();
-        activity.runOnUiThread(new Runnable() {
+        Handler handler = new Handler(context.getMainLooper());
+        Runnable runnable = new Runnable() {
             @Override
             public void run() {
                 adapter.notifyDataSetChanged();
             }
-        });
+        };
+        handler.post(runnable);
     }
 
     private void createTestData() {

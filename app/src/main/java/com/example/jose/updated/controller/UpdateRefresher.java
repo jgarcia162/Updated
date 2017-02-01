@@ -1,5 +1,7 @@
 package com.example.jose.updated.controller;
 
+import android.content.Context;
+
 import com.example.jose.updated.model.Page;
 import com.example.jose.updated.model.PagesHolder;
 import com.example.jose.updated.view.MainActivity;
@@ -11,14 +13,14 @@ import java.util.Date;
 public class UpdateRefresher {
     private static PagesHolder pagesHolder = PagesHolder.getInstance();
 
-    public static void refreshUpdate() throws Exception {
+    public static void refreshUpdate(Context context) throws Exception {
         for(Page page : pagesHolder.getPagesToTrack()){
             if(isPageUpdated(page)) {
                 page.setUpdated(true);
                 if (!pagesHolder.getUpdatedPages().contains(page)) {
                     pagesHolder.addToUpdatedPages(page);
                     page.setTimeOfLastUpdateInMilliSec(new Date().getTime());
-                    MainActivity.notifyAdapterDataSetChange();
+                    MainActivity.notifyAdapterDataSetChange(context);
                 }
             }
         }

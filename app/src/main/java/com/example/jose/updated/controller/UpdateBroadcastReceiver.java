@@ -13,7 +13,7 @@ import java.util.List;
 public class UpdateBroadcastReceiver extends BroadcastReceiver {
     private UpdatedCallback callback;
 
-
+//TODO fix this
     public UpdateBroadcastReceiver(){
 
     }
@@ -22,7 +22,7 @@ public class UpdateBroadcastReceiver extends BroadcastReceiver {
     public void onReceive(final Context context, Intent intent) {
         List<Page> updatedPages = intent.getParcelableArrayListExtra("updated pages");
         PagesHolder.getInstance().setUpdatedPages(updatedPages);
-        MainActivity.notifyAdapterDataSetChange();
+        MainActivity.notifyAdapterDataSetChange(context);
 //        callback.onUpdateDetected(updatedPages);
     }
 
@@ -35,6 +35,5 @@ public class UpdateBroadcastReceiver extends BroadcastReceiver {
      */
     public interface UpdatedCallback {
         void onUpdateDetected(List<Page> updatedPagesList);
-
     }
 }

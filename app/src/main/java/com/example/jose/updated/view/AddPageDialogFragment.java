@@ -96,7 +96,7 @@ public class AddPageDialogFragment extends DialogFragment {
                 pagesHolder.addPageHtmlToMap(newPage);
                 newPage.setTimeOfLastUpdateInMilliSec(new Date().getTime());
                 pagesHolder.addToPagesToTrack(newPage);
-                MainActivity.notifyAdapterDataSetChange();
+                MainActivity.notifyAdapterDataSetChange(getActivity());
                 newPage = null;
                 this.dismiss();
             }else{
@@ -110,7 +110,7 @@ public class AddPageDialogFragment extends DialogFragment {
                 pagesHolder.addPageHtmlToMap(newPage);
                 newPage.setTimeOfLastUpdateInMilliSec(new Date().getTime());
                 pagesHolder.addToPagesToTrack(newPage);
-                MainActivity.notifyAdapterDataSetChange();
+                MainActivity.notifyAdapterDataSetChange(getActivity());
                 Toast.makeText(getActivity(),newPage.getTitle()+" Added", Toast.LENGTH_SHORT).show();
                 newPage = null;
                 this.dismiss();

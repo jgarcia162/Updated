@@ -85,7 +85,7 @@ public class NotificationService extends IntentService implements UpdateBroadcas
     }
 
     public void refresh() throws Exception {
-        UpdateRefresher.refreshUpdate();
+        UpdateRefresher.refreshUpdate(getApplicationContext());
         if (updatedPages.size() > 0) {
             onUpdateDetected(updatedPages);
         }
