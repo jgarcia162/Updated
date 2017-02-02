@@ -1,5 +1,6 @@
 package com.example.jose.updated.model;
 
+import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -17,6 +18,7 @@ public class Page implements Parcelable{
     private String notes;
     private long timeOfLastUpdateInMilliSec;
     private boolean isUpdated;
+    private Bitmap bitmapIcon;
 
 
 
@@ -118,6 +120,14 @@ public class Page implements Parcelable{
 
     public void setUpdated(boolean updated) {
         isUpdated = updated;
+    }
+
+    public void setBitmapIcon(Bitmap icon){
+        bitmapIcon = icon;
+    }
+
+    public Bitmap getBitmapIcon(){
+        return bitmapIcon;
     }
 
     @Override

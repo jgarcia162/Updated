@@ -8,13 +8,13 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
+import android.widget.ProgressBar;
 
 import com.example.jose.updated.R;
 import com.example.jose.updated.controller.NotificationService;
@@ -28,18 +28,18 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class MainActivity extends Activity implements UpdateBroadcastReceiver.UpdatedCallback{
+public class MainActivity extends AppCompatActivity implements UpdateBroadcastReceiver.UpdatedCallback{
     private FragmentManager fragmentManager;
     private EditText urlInputEditText;
-    private Button updateButton;
     private Page newPage;
     public static PageAdapter adapter;
     private RecyclerView recyclerView;
-    private RecyclerView.LayoutManager layoutManager;
+    private StaggeredGridLayoutManager layoutManager;
     public static List<Page> pagesToTrack;
     private AddPageDialogFragment addPageDialogFragment;
     private PagesHolder pagesHolder = PagesHolder.getInstance();
     private LocalBroadcastManager localBroadcastManager;
+    private ProgressBar progressBar;
     static Activity activity;
 
     @Override
@@ -49,16 +49,17 @@ public class MainActivity extends Activity implements UpdateBroadcastReceiver.Up
         localBroadcastManager = LocalBroadcastManager.getInstance(this);
 
         fragmentManager = getFragmentManager();
-        updateButton = (Button) findViewById(R.id.track_page_button);
         urlInputEditText = (EditText) findViewById(R.id.url_input_edit_text);
+        progressBar = (ProgressBar) findViewById(R.id.main_activity_progress_bar);
         pagesToTrack = new ArrayList<>();
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        layoutManager = new LinearLayoutManager(this);
+        layoutManager = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
         addPageDialogFragment = new AddPageDialogFragment();
         pagesHolder = PagesHolder.getInstance();
         localBroadcastManager.registerReceiver(new UpdateBroadcastReceiver(this), new IntentFilter("com.example.jose.updated.controller.CUSTOM_INTENT"));
 
         adapter = new PageAdapter();
+        recyclerView.addItemDecoration(new GridSpacingItemDecoration(2,15,true));
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(layoutManager);
         createTestData();
@@ -83,11 +84,6 @@ public class MainActivity extends Activity implements UpdateBroadcastReceiver.Up
     protected void onResume() {
         super.onResume();
 
-    }
-
-    public void refresh(View view) throws Exception {
-        Toast.makeText(this, "WTF", Toast.LENGTH_SHORT).show();
-        UpdateRefresher.refreshUpdate(this);
     }
 
     public void showAddPageDialog(View view) {
@@ -126,6 +122,7 @@ public class MainActivity extends Activity implements UpdateBroadcastReceiver.Up
 
     @Override
     public void onUpdateDetected() {
+        progressBar.setVisibility(View.INVISIBLE);
         adapter.notifyDataSetChanged();
     }
 }
