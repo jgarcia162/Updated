@@ -24,7 +24,6 @@ import com.example.jose.updated.controller.UpdateRefresher;
 import com.example.jose.updated.model.Page;
 import com.example.jose.updated.model.PagesHolder;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -47,11 +46,11 @@ public class MainActivity extends AppCompatActivity implements UpdateBroadcastRe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_activity_main);
         localBroadcastManager = LocalBroadcastManager.getInstance(this);
-
+        Log.d(this.getLocalClassName(),"ONCREATE");
         fragmentManager = getFragmentManager();
         urlInputEditText = (EditText) findViewById(R.id.url_input_edit_text);
         progressBar = (ProgressBar) findViewById(R.id.main_activity_progress_bar);
-        pagesToTrack = new ArrayList<>();
+        pagesToTrack = pagesHolder.getPagesToTrack();
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         layoutManager = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
         addPageDialogFragment = new AddPageDialogFragment();
@@ -70,9 +69,7 @@ public class MainActivity extends AppCompatActivity implements UpdateBroadcastRe
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            pagesHolder.addToPagesToTrack(page);
             pagesHolder.addPageHtmlToMap(page);
-            Log.d("MAP SIZE", pagesHolder.getPageHtmlMap().size() + "");
         }
 
         Intent serviceIntent = new Intent(this, NotificationService.class);

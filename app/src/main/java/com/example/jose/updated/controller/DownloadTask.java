@@ -10,6 +10,8 @@ import java.net.URL;
 
 
 public class DownloadTask extends AsyncTask<String,Void,String> {
+
+
     @Override
     protected String doInBackground(String... strings) {
         try{

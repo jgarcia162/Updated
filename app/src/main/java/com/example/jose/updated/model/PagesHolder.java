@@ -1,6 +1,7 @@
 package com.example.jose.updated.model;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,11 +54,17 @@ public class PagesHolder {
     }
 
     public void addToUpdatedPages(Page page){
-        updatedPages.add(page);
+        if(!updatedPages.contains(page)){
+            page.setUpdated(true);
+            page.setTimeOfLastUpdateInMilliSec(new Date().getTime());
+            updatedPages.add(page);
+        }
+
     }
 
     public void addToPagesToTrack(Page page){
-        pagesToTrack.add(page);
+        if(!pagesToTrack.contains(page))
+            pagesToTrack.add(page);
     }
 
     public void removeFromUpdatedPages(Page page) {

@@ -83,9 +83,10 @@ public class NotificationService extends IntentService {
     }
 
     public void refresh() throws Exception {
-        UpdateRefresher.refreshUpdate(getApplicationContext());
+        UpdateRefresher.refreshUpdate();
+        String namesOfUpdatedPages;
         if (updatedPages.size() > 0) {
-            String namesOfUpdatedPages = "";
+            namesOfUpdatedPages = "";
             for (Page p : updatedPages) {
                 namesOfUpdatedPages += p.getTitle() + ", ";
             }
@@ -93,6 +94,7 @@ public class NotificationService extends IntentService {
             Log.i("NAMES OF PAGES ", namesOfUpdatedPages);
             createNotification(namesOfUpdatedPages);
             Intent broadcastIntent = new Intent();
+            broadcastIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             broadcastIntent.putParcelableArrayListExtra("updated pages", (ArrayList<? extends Parcelable>) updatedPages);
             broadcastIntent.setAction("com.example.jose.updated.controller.CUSTOM_INTENT");
             localBroadcastManager.sendBroadcast(broadcastIntent);
@@ -108,15 +110,14 @@ public class NotificationService extends IntentService {
     }
 
 
-
     public void createNotification(String namesOfUpdatedPages) {
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this).setSmallIcon(R.drawable.default_photo).setContentTitle(getString(R.string.notification_title)).setContentText(namesOfUpdatedPages);
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getBaseContext()).setSmallIcon(R.drawable.default_photo).setContentTitle(getString(R.string.notification_title)).setContentText(namesOfUpdatedPages);
         notificationBuilder.setAutoCancel(true);
-        Intent notificationIntent = new Intent(this, MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent notificationIntent = new Intent(getBaseContext(), MainActivity.class);
+        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        PendingIntent pendingIntent = PendingIntent.getActivity(getBaseContext(), 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         notificationBuilder.setContentIntent(pendingIntent);
         notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
     }
-    //TODO callback is implemented in both notificationservice and main activity, this conflicts and callback in notification service is executing rather than callback in main activity
 
 }

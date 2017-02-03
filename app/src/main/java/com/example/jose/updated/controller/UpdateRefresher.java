@@ -1,28 +1,22 @@
 package com.example.jose.updated.controller;
 
-import android.content.Context;
+import android.util.Log;
 
 import com.example.jose.updated.model.Page;
 import com.example.jose.updated.model.PagesHolder;
-
-import java.util.Date;
 
 
 
 public class UpdateRefresher {
     private static PagesHolder pagesHolder = PagesHolder.getInstance();
 
-    public static void refreshUpdate(Context context) throws Exception {
+    static void refreshUpdate() throws Exception {
         for(Page page : pagesHolder.getPagesToTrack()){
             if(isPageUpdated(page)) {
-                page.setUpdated(true);
-                if (!pagesHolder.getUpdatedPages().contains(page)) {
-                    pagesHolder.addToUpdatedPages(page);
-                    page.setTimeOfLastUpdateInMilliSec(new Date().getTime());
-                    //MainActivity.notifyAdapterDataSetChange(context);
-                }
+                pagesHolder.addToUpdatedPages(page);
             }
         }
+        Log.d("Updated pages:",String.valueOf(pagesHolder.getUpdatedPages().size()));
     }
 
     private static boolean isPageUpdated(Page page) throws Exception{
@@ -34,6 +28,6 @@ public class UpdateRefresher {
         DownloadTask task = new DownloadTask();
         task.execute(page.getPageUrl());
         page.setContents(task.get());
-        return task.get();
+        return page.getContents();
     }
 }
