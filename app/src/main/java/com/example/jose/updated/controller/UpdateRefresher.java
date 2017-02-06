@@ -6,7 +6,6 @@ import com.example.jose.updated.model.Page;
 import com.example.jose.updated.model.PagesHolder;
 
 
-
 public class UpdateRefresher {
     private static PagesHolder pagesHolder = PagesHolder.getInstance();
 
@@ -24,10 +23,14 @@ public class UpdateRefresher {
         return htmlToCheck.equals(pagesHolder.getPageHtmlMap().get(page.getPageUrl()));
     }
 
+
     public static String downloadHtml(Page page) throws Exception {
         DownloadTask task = new DownloadTask();
         task.execute(page.getPageUrl());
         page.setContents(task.get());
-        return page.getContents();
+        return task.get();
     }
+
+
+
 }

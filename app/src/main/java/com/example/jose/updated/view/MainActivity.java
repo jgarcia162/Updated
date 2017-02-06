@@ -1,6 +1,5 @@
 package com.example.jose.updated.view;
 
-import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
@@ -11,10 +10,8 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 
 import com.example.jose.updated.R;
 import com.example.jose.updated.controller.NotificationService;
@@ -38,18 +35,14 @@ public class MainActivity extends AppCompatActivity implements UpdateBroadcastRe
     private AddPageDialogFragment addPageDialogFragment;
     private PagesHolder pagesHolder = PagesHolder.getInstance();
     private LocalBroadcastManager localBroadcastManager;
-    private ProgressBar progressBar;
-    static Activity activity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_activity_main);
         localBroadcastManager = LocalBroadcastManager.getInstance(this);
-        Log.d(this.getLocalClassName(),"ONCREATE");
         fragmentManager = getFragmentManager();
         urlInputEditText = (EditText) findViewById(R.id.url_input_edit_text);
-        progressBar = (ProgressBar) findViewById(R.id.main_activity_progress_bar);
         pagesToTrack = pagesHolder.getPagesToTrack();
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         layoutManager = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
@@ -88,7 +81,6 @@ public class MainActivity extends AppCompatActivity implements UpdateBroadcastRe
     }
 
     public static void notifyAdapterDataSetChange(Context context) {
-//        adapter.notifyDataSetChanged();
         Handler handler = new Handler(context.getMainLooper());
         Runnable runnable = new Runnable() {
             @Override
@@ -113,13 +105,10 @@ public class MainActivity extends AppCompatActivity implements UpdateBroadcastRe
         pagesToTrack.add(adidas);
         pagesToTrack.add(nike);
         pagesToTrack.add(inward);
-
     }
-
 
     @Override
     public void onUpdateDetected() {
-        progressBar.setVisibility(View.INVISIBLE);
         adapter.notifyDataSetChanged();
     }
 }

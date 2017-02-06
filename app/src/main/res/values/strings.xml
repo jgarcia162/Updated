@@ -4,8 +4,8 @@
     <string name="add_page">Track a new page</string>
     <string name="enter_url_here">Enter URL Here</string>
     <string name="open_in_browser_button_text">Open In Browser</string>
-    <string name="details_last_updated">Last Updated:</string>
-    <string name="details_url_tv_text">URL</string>
+    <string name="details_last_updated">Last Updated: %1$d</string>
+    <string name="details_url_tv_text">URL %1$s</string>
     <string name="details_copy_url_button_text">Copy URL</string>
     <string name="details_notes_title_text">Notes</string>
     <string name="page_updated">UPDATED</string>
@@ -14,4 +14,7 @@
     <string name="preview_page">PAGE PREVIEW</string>
     <string name="not_updated">NOT UPDATED</string>
     <string name="notification_title">Updated Pages</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

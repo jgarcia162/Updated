@@ -8,9 +8,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-
-public class DownloadTask extends AsyncTask<String,Void,String> {
-
+public class DownloadTask extends AsyncTask<String,Void,String>{
 
     @Override
     protected String doInBackground(String... strings) {
@@ -35,4 +33,5 @@ public class DownloadTask extends AsyncTask<String,Void,String> {
     protected void onPostExecute(String taskResult) {
 
     }
+
 }

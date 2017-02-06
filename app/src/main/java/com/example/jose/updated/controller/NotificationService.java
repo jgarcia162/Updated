@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.os.Parcelable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 
 import com.example.jose.updated.R;
 import com.example.jose.updated.model.Page;
@@ -84,15 +83,8 @@ public class NotificationService extends IntentService {
 
     public void refresh() throws Exception {
         UpdateRefresher.refreshUpdate();
-        String namesOfUpdatedPages;
         if (updatedPages.size() > 0) {
-            namesOfUpdatedPages = "";
-            for (Page p : updatedPages) {
-                namesOfUpdatedPages += p.getTitle() + ", ";
-            }
-            namesOfUpdatedPages += " have been updated!";
-            Log.i("NAMES OF PAGES ", namesOfUpdatedPages);
-            createNotification(namesOfUpdatedPages);
+            createNotification(getNamesOfUpdatedPages(updatedPages));
             Intent broadcastIntent = new Intent();
             broadcastIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             broadcastIntent.putParcelableArrayListExtra("updated pages", (ArrayList<? extends Parcelable>) updatedPages);
@@ -118,6 +110,15 @@ public class NotificationService extends IntentService {
         PendingIntent pendingIntent = PendingIntent.getActivity(getBaseContext(), 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         notificationBuilder.setContentIntent(pendingIntent);
         notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
+    }
+
+    private String getNamesOfUpdatedPages(List<Page> updatedPages){
+        String namesOfUpdatedPages = "";
+        for (Page p : updatedPages) {
+            namesOfUpdatedPages += p.getTitle() + ", ";
+        }
+        namesOfUpdatedPages = (updatedPages.size() == 1) ? (namesOfUpdatedPages + " has been updated!") : (namesOfUpdatedPages + " have been updated!");
+        return namesOfUpdatedPages;
     }
 
 }

@@ -1,7 +1,6 @@
 package com.example.jose.updated.view;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -36,7 +35,6 @@ public class PageViewHolder extends RecyclerView.ViewHolder {
         imageView = (ImageView) view.findViewById(R.id.page_icon);
         itemLayout = (CardView) view.findViewById(R.id.item_layout);
         context = view.getContext();
-        packageManager = context.getPackageManager();
 
     }
 
@@ -67,15 +65,7 @@ public class PageViewHolder extends RecyclerView.ViewHolder {
                     page.setUpdated(false);
                     PagesHolder.getInstance().removeFromUpdatedPages(page);
                 }
-                //URL only works with full URL "http..."
-                Intent intent = new Intent(Intent.ACTION_VIEW, pageUri);
-                String title = v.getResources().getString(R.string.chooser_title);
-                Intent chooser = Intent.createChooser(intent, title);
-                if (intent.resolveActivity(packageManager) != null) {
-                    context.startActivity(chooser);
-                }else{
-                    context.startActivity(intent);
-                }
+
             }
         });
 
