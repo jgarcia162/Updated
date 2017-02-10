@@ -15,22 +15,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.example.jose.updated.R;
 import com.example.jose.updated.model.Page;
-import static com.example.jose.updated.model.UpdatedConstants.*;
+
+import static com.example.jose.updated.model.UpdatedConstants.DEFAULT_NOTES;
+import static com.example.jose.updated.model.UpdatedConstants.PREFS_NAME;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class PageDetailsFragment extends Fragment {
-    //TODO add toggle to activate/deactivate refreshing of page
     private TextInputEditText pageTitle;
     private TextView timeLastUpdatedTV;
     private TextView urlTV;
     private Button openBrowserButton;
     private Button saveNotesButton;
+    private Switch trackingSwitch;
     private EditText notesEditText;
     private PackageManager packageManager;
     private Page page;
@@ -58,6 +61,7 @@ public class PageDetailsFragment extends Fragment {
         timeLastUpdatedTV = (TextView) view.findViewById(R.id.details_timelastupdated_tv);
         urlTV = (TextView) view.findViewById(R.id.details_url_tv);
         openBrowserButton = (Button) view.findViewById(R.id.details_open_browser_button);
+        trackingSwitch = (Switch) view.findViewById(R.id.page_active_switch);
         notesEditText = (EditText) view.findViewById(R.id.details_notes_et);
         saveNotesButton = (Button) view.findViewById(R.id.details_save_notes_button);
         return view;
@@ -82,6 +86,14 @@ public class PageDetailsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 preferences.edit().putString(page.getTitle()+"_notes", String.valueOf(notesEditText.getText())).apply();
+            }
+        });
+        trackingSwitch.setChecked(page.isActive());
+        //TODO fix logic for switch
+        trackingSwitch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                page.setIsActive(!page.isActive());
             }
         });
     }

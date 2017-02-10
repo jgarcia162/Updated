@@ -14,12 +14,31 @@
         android:textAlignment="center"
         android:textSize="30sp"
         tools:text="Page Title" />
+    <TextView
+        android:id="@+id/page_active_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/details_page_title_tv"
+        android:layout_alignStart="@id/details_page_title_tv"
+        android:layout_alignLeft="@id/details_page_title_tv"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:text="@string/page_active_tv"/>
+    <Switch
+        android:id="@+id/page_active_switch"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/details_page_title_tv"
+        android:layout_alignEnd="@id/details_page_title_tv"
+        android:layout_alignRight="@id/details_page_title_tv"
+        android:layout_centerHorizontal="true" />
 
     <TextView
         android:id="@+id/details_timelastupdated_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/details_page_title_tv"
+        android:layout_below="@id/page_active_switch"
         android:layout_marginLeft="10dp"
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"

@@ -17,4 +17,5 @@
     <string name="save_notes_text">SAVE</string>
     <string name="enter_url_toast">Please enter a URL!</string>
     <string name="added_url_toast">" Added"</string>
+    <string name="page_active_tv">Tracking</string>
 </resources>
