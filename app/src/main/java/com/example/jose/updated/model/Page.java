@@ -16,8 +16,10 @@ public class Page implements Parcelable{
     private String pageUrl;
     private String nickname;
     private String notes;
+    private long updateFrequency;
     private long timeOfLastUpdateInMilliSec;
     private boolean isUpdated;
+    private boolean isActive;
     private Bitmap bitmapIcon;
 
 
@@ -45,6 +47,7 @@ public class Page implements Parcelable{
         notes = in.readString();
         timeOfLastUpdateInMilliSec = in.readLong();
         isUpdated = in.readByte() != 0;
+        isActive = in.readByte() != 0;
     }
 
     public static final Creator<Page> CREATOR = new Creator<Page>() {
@@ -106,6 +109,13 @@ public class Page implements Parcelable{
     public void setTimeOfLastUpdateInMilliSec(long timeOfLastUpdateInMilliSec) {
         this.timeOfLastUpdateInMilliSec = timeOfLastUpdateInMilliSec;
     }
+    public long getUpdateFrequency() {
+        return updateFrequency;
+    }
+
+    public void setUpdateFrequency(long updateFrequency) {
+        this.updateFrequency = updateFrequency;
+    }
 
     public String getFormattedTimeOfLastUpdate() {
         SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss", Locale.US);
@@ -144,5 +154,13 @@ public class Page implements Parcelable{
         dest.writeString(notes);
         dest.writeLong(timeOfLastUpdateInMilliSec);
         dest.writeByte((byte) (isUpdated ? 1 : 0));
+        dest.writeByte((byte) (isActive ? 1 : 0));
+    }
+
+    public void setIsActive(boolean active){
+        this.isActive = active;
+    }
+    public boolean isActive() {
+        return isActive;
     }
 }

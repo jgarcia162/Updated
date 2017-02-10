@@ -15,4 +15,6 @@
     <string name="not_updated">NOT UPDATED</string>
     <string name="notification_title">Updated Pages</string>
     <string name="save_notes_text">SAVE</string>
+    <string name="enter_url_toast">Please enter a URL!</string>
+    <string name="added_url_toast">" Added"</string>
 </resources>

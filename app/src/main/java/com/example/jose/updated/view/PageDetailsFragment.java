@@ -19,11 +19,13 @@ import android.widget.TextView;
 
 import com.example.jose.updated.R;
 import com.example.jose.updated.model.Page;
+import static com.example.jose.updated.model.UpdatedConstants.*;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class PageDetailsFragment extends Fragment {
+    //TODO add toggle to activate/deactivate refreshing of page
     private TextInputEditText pageTitle;
     private TextView timeLastUpdatedTV;
     private TextView urlTV;
@@ -34,8 +36,6 @@ public class PageDetailsFragment extends Fragment {
     private Page page;
     private Bundle bundle;
     private SharedPreferences preferences;
-    private static final String PREFS_NAME = "UpdatedPreferencesFile";
-
     public PageDetailsFragment() {
 
     }
@@ -48,7 +48,6 @@ public class PageDetailsFragment extends Fragment {
             page = bundle.getParcelable("page");
         }
         preferences = getContext().getSharedPreferences(PREFS_NAME,0);
-
     }
 
     @Override
@@ -70,6 +69,7 @@ public class PageDetailsFragment extends Fragment {
         Resources resources = getResources();
         pageTitle.setText(page.getTitle());
         timeLastUpdatedTV.setText(String.format(resources.getString(R.string.details_last_updated),page.getFormattedTimeOfLastUpdate()));
+        //TODO add button to edit URL
         urlTV.setText(String.format(resources.getString(R.string.details_url_tv_text),page.getPageUrl()));
         openBrowserButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,7 +87,7 @@ public class PageDetailsFragment extends Fragment {
     }
 
     private String loadNotes() {
-        return preferences.getString(page.getTitle() + "_notes","No Notes");
+        return preferences.getString(page.getTitle() + "_notes",DEFAULT_NOTES);
     }
 
     public void openInBrowser(){

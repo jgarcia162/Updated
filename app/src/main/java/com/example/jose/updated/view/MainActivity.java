@@ -11,7 +11,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
-import android.widget.EditText;
 
 import com.example.jose.updated.R;
 import com.example.jose.updated.controller.NotificationService;
@@ -26,26 +25,20 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements UpdateBroadcastReceiver.UpdatedCallback{
     private FragmentManager fragmentManager;
-    private EditText urlInputEditText;
-    private Page newPage;
     public static PageAdapter adapter;
-    private RecyclerView recyclerView;
-    private StaggeredGridLayoutManager layoutManager;
     public static List<Page> pagesToTrack;
     private AddPageDialogFragment addPageDialogFragment;
     private PagesHolder pagesHolder = PagesHolder.getInstance();
-    private LocalBroadcastManager localBroadcastManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_activity_main);
-        localBroadcastManager = LocalBroadcastManager.getInstance(this);
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
         fragmentManager = getFragmentManager();
-        urlInputEditText = (EditText) findViewById(R.id.url_input_edit_text);
         pagesToTrack = pagesHolder.getPagesToTrack();
-        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        layoutManager = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         addPageDialogFragment = new AddPageDialogFragment();
         pagesHolder = PagesHolder.getInstance();
         localBroadcastManager.registerReceiver(new UpdateBroadcastReceiver(this), new IntentFilter("com.example.jose.updated.controller.CUSTOM_INTENT"));
@@ -92,18 +85,23 @@ public class MainActivity extends AppCompatActivity implements UpdateBroadcastRe
     }
 
     private void createTestData() {
-        Page nike = new Page("Nike", "https://www.nike.com/us/en_us/", new Date().getTime());
         Page twitter = new Page("Twitter", "https://twitter.com/AyoJoanks", new Date().getTime());
         Page inward = new Page("Inward", "https://inwardmovement.wordpress.com", new Date().getTime());
         Page adidas = new Page("Adidas", "https://www.adidas.com", new Date().getTime());
-        Page espn = new Page("ESPN", "https://www.espn.com", new Date().getTime());
+        Page nike   = new Page("Nike", "https://www.nike.com/us/en_us/", new Date().getTime());
+        Page espn   = new Page("ESPN", "https://www.espn.com", new Date().getTime());
 
         //for testing
         pagesToTrack.clear();
+        twitter.setIsActive(true);
+        inward.setIsActive(true);
+        adidas.setIsActive(true);
+        nike.setIsActive(true);
+        espn.setIsActive(true);
         pagesToTrack.add(twitter);
+        pagesToTrack.add(nike);
         pagesToTrack.add(espn);
         pagesToTrack.add(adidas);
-        pagesToTrack.add(nike);
         pagesToTrack.add(inward);
     }
 

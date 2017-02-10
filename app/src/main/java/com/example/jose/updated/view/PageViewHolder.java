@@ -3,6 +3,7 @@ package com.example.jose.updated.view;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 import com.example.jose.updated.R;
 import com.example.jose.updated.model.Page;
 import com.example.jose.updated.model.PagesHolder;
+import com.example.jose.updated.model.UpdatedConstants;
 
 public class PageViewHolder extends RecyclerView.ViewHolder {
 
@@ -44,7 +46,6 @@ public class PageViewHolder extends RecyclerView.ViewHolder {
         }
         imageView.setImageBitmap(page.getBitmapIcon());
 
-
         if (PagesHolder.getInstance().getUpdatedPages().contains(page)) {
             updatedStatusTextView.setText(R.string.page_updated);
             page.setUpdated(true);
@@ -69,14 +70,20 @@ public class PageViewHolder extends RecyclerView.ViewHolder {
                 context.startActivity(intent);
             }
         });
-
-
     }
 
     private Bitmap loadFavicon(Page page) {
+        //TODO set default image for empty favicon
         webView.loadData(page.getContents(), "text/html", null);
         webView.setActivated(false);
+        if(webView.getFavicon() == null){
+            return createBitmap(UpdatedConstants.DEFAULT_FAVICON);
+        }
         return webView.getFavicon();
+    }
+
+    private Bitmap createBitmap(int id){
+        return BitmapFactory.decodeResource(context.getResources(),id);
     }
 
 

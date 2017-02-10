@@ -1,7 +1,5 @@
 package com.example.jose.updated.controller;
 
-import android.util.Log;
-
 import com.example.jose.updated.model.Page;
 import com.example.jose.updated.model.PagesHolder;
 
@@ -15,14 +13,15 @@ public class UpdateRefresher {
                 pagesHolder.addToUpdatedPages(page);
             }
         }
-        Log.d("Updated pages:",String.valueOf(pagesHolder.getUpdatedPages().size()));
     }
 
     private static boolean isPageUpdated(Page page) throws Exception{
-        String htmlToCheck = downloadHtml(page);
-        return htmlToCheck.equals(pagesHolder.getPageHtmlMap().get(page.getPageUrl()));
+        if(page.isActive()){
+            String htmlToCheck = downloadHtml(page);
+            return htmlToCheck.equals(pagesHolder.getPageHtmlMap().get(page.getPageUrl()));
+        }
+        return false;
     }
-
 
     public static String downloadHtml(Page page) throws Exception {
         DownloadTask task = new DownloadTask();

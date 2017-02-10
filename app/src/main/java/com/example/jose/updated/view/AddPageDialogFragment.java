@@ -19,15 +19,14 @@ import com.example.jose.updated.model.Page;
 import com.example.jose.updated.model.PagesHolder;
 
 import java.util.Date;
-import java.util.Map;
 
 public class AddPageDialogFragment extends DialogFragment {
+    //TODO add persistence for storage when clicking add button
     private Button addPageButton, previewButton;
     private WebView pagePreviewWebView;
     private TextInputEditText urlInputEditText, titleInputEditText;
     private ImageView previewImage;
     private Page newPage;
-    private Map<String,String> pageHtmlMap;
     private PagesHolder pagesHolder = PagesHolder.getInstance();
 
     public AddPageDialogFragment(){
@@ -37,7 +36,6 @@ public class AddPageDialogFragment extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        pageHtmlMap = pagesHolder.getPageHtmlMap();
     }
 
     @Nullable
@@ -95,12 +93,14 @@ public class AddPageDialogFragment extends DialogFragment {
                 newPage.setContents(UpdateRefresher.downloadHtml(newPage));
                 pagesHolder.addPageHtmlToMap(newPage);
                 newPage.setTimeOfLastUpdateInMilliSec(new Date().getTime());
+                newPage.setIsActive(true);
                 pagesHolder.addToPagesToTrack(newPage);
+                //add to db
                 MainActivity.notifyAdapterDataSetChange(getActivity());
                 newPage = null;
                 this.dismiss();
             }else{
-                Toast.makeText(getActivity(), "Please enter a URL!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), R.string.enter_url_toast, Toast.LENGTH_SHORT).show();
             }
         }else{
             try {
@@ -109,9 +109,11 @@ public class AddPageDialogFragment extends DialogFragment {
                 newPage.setContents(UpdateRefresher.downloadHtml(newPage));
                 pagesHolder.addPageHtmlToMap(newPage);
                 newPage.setTimeOfLastUpdateInMilliSec(new Date().getTime());
+                newPage.setIsActive(true);
                 pagesHolder.addToPagesToTrack(newPage);
+                //add to db
                 MainActivity.notifyAdapterDataSetChange(getActivity());
-                Toast.makeText(getActivity(),newPage.getTitle()+" Added", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(),newPage.getTitle()+getString(R.string.added_url_toast), Toast.LENGTH_SHORT).show();
                 newPage = null;
                 this.dismiss();
             } catch (Exception e) {
@@ -132,7 +134,7 @@ public class AddPageDialogFragment extends DialogFragment {
                 previewImage.setVisibility(View.INVISIBLE);
             }
         }else{
-            Toast.makeText(getActivity(), "Please enter a URL!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), getString(R.string.enter_url_toast), Toast.LENGTH_SHORT).show();
         }
     }
 
