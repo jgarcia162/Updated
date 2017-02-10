@@ -19,8 +19,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class NotificationService extends IntentService {
-    private static List<Page> pagesToTrack;
-    private static List<Page> updatedPages;
     private boolean started = false;
     private Timer updateTimer;
     private TimerTask updateTimerTask;
@@ -57,8 +55,6 @@ public class NotificationService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         setStarted(true);
-        pagesToTrack = pagesHolder.getPagesToTrack();
-        updatedPages = pagesHolder.getUpdatedPages();
         createTimerTask();
         setUpTimer(updateTimerTask);
     }
@@ -83,11 +79,11 @@ public class NotificationService extends IntentService {
 
     public void refresh() throws Exception {
         UpdateRefresher.refreshUpdate();
-        if (updatedPages.size() > 0) {
-            createNotification(getNamesOfUpdatedPages(updatedPages));
+        if (pagesHolder.getSizeOfUpdatedPages() > 0) {
+            createNotification(getNamesOfUpdatedPages(pagesHolder.getUpdatedPages()));
             Intent broadcastIntent = new Intent();
             broadcastIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            broadcastIntent.putParcelableArrayListExtra("updated pages", (ArrayList<? extends Parcelable>) updatedPages);
+            broadcastIntent.putParcelableArrayListExtra("updated pages", (ArrayList<? extends Parcelable>) pagesHolder.getUpdatedPages());
             broadcastIntent.setAction("com.example.jose.updated.controller.CUSTOM_INTENT");
             localBroadcastManager.sendBroadcast(broadcastIntent);
         }

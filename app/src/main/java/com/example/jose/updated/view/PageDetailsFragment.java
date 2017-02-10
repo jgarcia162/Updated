@@ -4,6 +4,7 @@ package com.example.jose.updated.view;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -25,11 +26,14 @@ import com.example.jose.updated.model.Page;
 public class PageDetailsFragment extends Fragment {
     private TextInputEditText pageTitle;
     private TextView timeLastUpdatedTV;
+    private TextView urlTV;
     private Button openBrowserButton;
+    private Button saveNotesButton;
     private EditText notesEditText;
     private PackageManager packageManager;
     private Page page;
     private Bundle bundle;
+    private SharedPreferences preferences;
     private static final String PREFS_NAME = "UpdatedPreferencesFile";
 
     public PageDetailsFragment() {
@@ -43,6 +47,8 @@ public class PageDetailsFragment extends Fragment {
             bundle = getArguments();
             page = bundle.getParcelable("page");
         }
+        preferences = getContext().getSharedPreferences(PREFS_NAME,0);
+
     }
 
     @Override
@@ -51,16 +57,20 @@ public class PageDetailsFragment extends Fragment {
         packageManager = getContext().getPackageManager();
         pageTitle = (TextInputEditText) view.findViewById(R.id.details_page_title_tv);
         timeLastUpdatedTV = (TextView) view.findViewById(R.id.details_timelastupdated_tv);
+        urlTV = (TextView) view.findViewById(R.id.details_url_tv);
         openBrowserButton = (Button) view.findViewById(R.id.details_open_browser_button);
         notesEditText = (EditText) view.findViewById(R.id.details_notes_et);
+        saveNotesButton = (Button) view.findViewById(R.id.details_save_notes_button);
         return view;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        Resources resources = getResources();
         pageTitle.setText(page.getTitle());
-        timeLastUpdatedTV.setText(page.getFormattedTimeOfLastUpdate());
+        timeLastUpdatedTV.setText(String.format(resources.getString(R.string.details_last_updated),page.getFormattedTimeOfLastUpdate()));
+        urlTV.setText(String.format(resources.getString(R.string.details_url_tv_text),page.getPageUrl()));
         openBrowserButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -68,11 +78,16 @@ public class PageDetailsFragment extends Fragment {
             }
         });
         notesEditText.setText(loadNotes());
+        saveNotesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                preferences.edit().putString(page.getTitle()+"_notes", String.valueOf(notesEditText.getText())).apply();
+            }
+        });
     }
 
     private String loadNotes() {
-        SharedPreferences preferences = getContext().getSharedPreferences(PREFS_NAME,0);
-        return preferences.getString(page.getTitle() + " notes","No Notes");
+        return preferences.getString(page.getTitle() + "_notes","No Notes");
     }
 
     public void openInBrowser(){

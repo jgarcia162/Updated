@@ -3,7 +3,6 @@ package com.example.jose.updated.view;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -21,7 +20,6 @@ public class PageViewHolder extends RecyclerView.ViewHolder {
     private TextView pageTitleTextView, pageUrlTextView, updatedStatusTextView, timeOfLastUpdateTextView;
     private CardView itemLayout;
     private Context context;
-    private Uri pageUri;
     private ImageView imageView;
     private WebView webView;
 
@@ -39,7 +37,6 @@ public class PageViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(final Page page) {
-        pageUri = Uri.parse(page.getPageUrl());
         pageTitleTextView.setText(page.getTitle());
         pageUrlTextView.setText(page.getPageUrl());
         if (page.getBitmapIcon() == null) {
@@ -76,7 +73,7 @@ public class PageViewHolder extends RecyclerView.ViewHolder {
 
     }
 
-    public Bitmap loadFavicon(Page page) {
+    private Bitmap loadFavicon(Page page) {
         webView.loadData(page.getContents(), "text/html", null);
         webView.setActivated(false);
         return webView.getFavicon();

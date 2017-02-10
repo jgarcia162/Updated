@@ -1,66 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
     <android.support.design.widget.TextInputEditText
         android:id="@+id/details_page_title_tv"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
-        android:layout_marginTop="10dp"
         android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:inputType="text"
         android:textAlignment="center"
         android:textSize="30sp"
-        android:inputType="text"
-        tools:text="Page Title"/>
+        tools:text="Page Title" />
 
     <TextView
         android:id="@+id/details_timelastupdated_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginLeft="10dp"
         android:layout_below="@id/details_page_title_tv"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
         android:text="@string/details_last_updated"
         android:textSize="20sp"
-        android:textStyle="bold|italic"/>
+        android:textStyle="bold|italic" />
 
     <TextView
         android:id="@+id/details_url_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/details_timelastupdated_tv"
-        android:layout_marginTop="10dp"
-        android:layout_marginStart="10dp"
         android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
         android:text="@string/details_url_tv_text"
         android:textSize="15sp"
-        android:textStyle="bold"/>
+        android:textStyle="bold" />
+
     <Button
         android:id="@+id/details_open_browser_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/details_url_tv"
         android:layout_marginTop="10dp"
-        android:text="@string/open_in_browser_button_text"/>
-    <TextView
-        android:id="@+id/details_notes_title_tv"
+        android:text="@string/open_in_browser_button_text" />
+
+    <LinearLayout
+        android:id="@+id/notes_button_title_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
         android:layout_below="@id/details_open_browser_button"
-        android:layout_marginTop="10dp"
-        android:text="@string/details_notes_title_text"
-        android:textSize="20sp"/>
+        android:layout_centerHorizontal="true"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/details_notes_title_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/details_notes_title_text"
+            android:textSize="20sp" />
+
+        <Button
+            android:id="@+id/details_save_notes_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/save_notes_text" />
+    </LinearLayout>
+
     <EditText
         android:id="@+id/details_notes_et"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/notes_button_title_layout"
         android:layout_alignParentBottom="true"
-        android:layout_margin="10dp"
         android:layout_centerHorizontal="true"
-        android:layout_below="@id/details_notes_title_tv"
+        android:layout_margin="10dp"
+        android:layout_marginBottom="20dp"
         android:gravity="start"
-        tools:text="TESTING THIS"/>
+        tools:text="TESTING THIS" />
+
 
 </RelativeLayout>

@@ -82,4 +82,12 @@ public class PagesHolder {
     public void addPageHtmlToMap(Page page) {
         pageHtmlMap.put(page.getPageUrl(),page.getContents());
     }
+
+    public int getSizeOfUpdatedPages() {
+        return updatedPages.size();
+    }
+
+    public int getSizeOfPagesToTrack(){
+        return pagesToTrack.size();
+    }
 }
