@@ -20,7 +20,7 @@ import java.util.TimerTask;
  */
 
 public class BaseActivity extends AppCompatActivity {
-
+//TODO ON CREATE CALLED MULTIPLE TIMES BUG
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

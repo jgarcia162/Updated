@@ -75,7 +75,6 @@ public class PageViewHolder extends RecyclerView.ViewHolder {
     }
 
     private Bitmap loadFavicon(Page page) {
-        //TODO set default image for empty favicon
         webView.loadData(page.getContents(), "text/html", null);
         webView.setActivated(false);
         if(webView.getFavicon() == null){

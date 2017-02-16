@@ -24,7 +24,6 @@ public class NotificationService extends IntentService {
     private TimerTask updateTimerTask;
     private NotificationManager notificationManager;
     public static final int NOTIFICATION_ID = 1;
-
     private PagesHolder pagesHolder;
     private LocalBroadcastManager localBroadcastManager;
 
@@ -58,7 +57,6 @@ public class NotificationService extends IntentService {
         createTimerTask();
         setUpTimer(updateTimerTask);
     }
-
     private void setUpTimer(TimerTask task) {
         Timer timer = new Timer();
         timer.scheduleAtFixedRate(task, 0, 10000);

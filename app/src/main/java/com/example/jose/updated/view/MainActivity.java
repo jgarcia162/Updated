@@ -24,7 +24,6 @@ import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends BaseActivity implements UpdateBroadcastReceiver.UpdatedCallback{
-    //TODO how to access menu from every screen
     private FragmentManager fragmentManager;
     public static PageAdapter adapter;
     public static List<Page> pagesToTrack;
@@ -108,7 +107,7 @@ public class MainActivity extends BaseActivity implements UpdateBroadcastReceive
 
     @Override
     public void onUpdateDetected() {
-        adapter.notifyDataSetChanged();
+       // adapter.notifyDataSetChanged();
     }
 }
 
