@@ -61,7 +61,7 @@ public class NotificationService extends IntentService {
 
     private void setUpTimer(TimerTask task) {
         Timer timer = new Timer();
-        timer.scheduleAtFixedRate(task, 0, 5000);
+        timer.scheduleAtFixedRate(task, 0, 10000);
     }
 
     private void createTimerTask() {

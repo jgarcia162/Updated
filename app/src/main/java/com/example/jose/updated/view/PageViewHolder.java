@@ -43,8 +43,10 @@ public class PageViewHolder extends RecyclerView.ViewHolder {
         pageUrlTextView.setText(page.getPageUrl());
         if (page.getBitmapIcon() == null) {
             page.setBitmapIcon(loadFavicon(page));
+            imageView.setImageBitmap(page.getBitmapIcon());
+        } else {
+            imageView.setImageBitmap(page.getBitmapIcon());
         }
-        imageView.setImageBitmap(page.getBitmapIcon());
 
         if (PagesHolder.getInstance().getUpdatedPages().contains(page)) {
             updatedStatusTextView.setText(R.string.page_updated);
@@ -82,9 +84,7 @@ public class PageViewHolder extends RecyclerView.ViewHolder {
         return webView.getFavicon();
     }
 
-    private Bitmap createBitmap(int id){
-        return BitmapFactory.decodeResource(context.getResources(),id);
+    private Bitmap createBitmap(int id) {
+        return BitmapFactory.decodeResource(context.getResources(), id);
     }
-
-
 }

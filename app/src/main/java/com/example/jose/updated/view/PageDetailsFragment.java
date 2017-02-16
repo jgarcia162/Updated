@@ -20,9 +20,9 @@ import android.widget.TextView;
 
 import com.example.jose.updated.R;
 import com.example.jose.updated.model.Page;
+import com.example.jose.updated.model.PagesHolder;
 
-import static com.example.jose.updated.model.UpdatedConstants.DEFAULT_NOTES;
-import static com.example.jose.updated.model.UpdatedConstants.PREFS_NAME;
+import static com.example.jose.updated.model.UpdatedConstants.*;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -39,6 +39,7 @@ public class PageDetailsFragment extends Fragment {
     private Page page;
     private Bundle bundle;
     private SharedPreferences preferences;
+    private PagesHolder pagesHolder;
     public PageDetailsFragment() {
 
     }
@@ -51,6 +52,7 @@ public class PageDetailsFragment extends Fragment {
             page = bundle.getParcelable("page");
         }
         preferences = getContext().getSharedPreferences(PREFS_NAME,0);
+        pagesHolder = PagesHolder.getInstance();
     }
 
     @Override
@@ -73,7 +75,6 @@ public class PageDetailsFragment extends Fragment {
         Resources resources = getResources();
         pageTitle.setText(page.getTitle());
         timeLastUpdatedTV.setText(String.format(resources.getString(R.string.details_last_updated),page.getFormattedTimeOfLastUpdate()));
-        //TODO add button to edit URL
         urlTV.setText(String.format(resources.getString(R.string.details_url_tv_text),page.getPageUrl()));
         openBrowserButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,21 +86,25 @@ public class PageDetailsFragment extends Fragment {
         saveNotesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                preferences.edit().putString(page.getTitle()+"_notes", String.valueOf(notesEditText.getText())).apply();
+                preferences.edit().putString(page.getTitle()+NOTES_TAG, String.valueOf(notesEditText.getText())).apply();
             }
         });
-        trackingSwitch.setChecked(page.isActive());
-        //TODO fix logic for switch
+        boolean pageactive = preferences.getBoolean(page.getTitle()+IS_ACTIVE_TAG,true);
+        trackingSwitch.setChecked(pageactive);
         trackingSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 page.setIsActive(!page.isActive());
+                trackingSwitch.setChecked(page.isActive());
+                preferences.edit().putBoolean(page.getTitle()+IS_ACTIVE_TAG,page.isActive()).apply();
+                pagesHolder.addToPagesToTrack(page);
+                //update this page in db
             }
         });
     }
 
     private String loadNotes() {
-        return preferences.getString(page.getTitle() + "_notes",DEFAULT_NOTES);
+        return preferences.getString(page.getTitle() + NOTES_TAG,DEFAULT_NOTES);
     }
 
     public void openInBrowser(){

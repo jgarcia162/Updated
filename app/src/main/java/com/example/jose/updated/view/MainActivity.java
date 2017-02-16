@@ -7,12 +7,12 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 
 import com.example.jose.updated.R;
+import com.example.jose.updated.controller.BaseActivity;
 import com.example.jose.updated.controller.NotificationService;
 import com.example.jose.updated.controller.PageAdapter;
 import com.example.jose.updated.controller.UpdateBroadcastReceiver;
@@ -23,7 +23,8 @@ import com.example.jose.updated.model.PagesHolder;
 import java.util.Date;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements UpdateBroadcastReceiver.UpdatedCallback{
+public class MainActivity extends BaseActivity implements UpdateBroadcastReceiver.UpdatedCallback{
+    //TODO how to access menu from every screen
     private FragmentManager fragmentManager;
     public static PageAdapter adapter;
     public static List<Page> pagesToTrack;
@@ -33,7 +34,7 @@ public class MainActivity extends AppCompatActivity implements UpdateBroadcastRe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_activity_main);
+        setContentView(R.layout.activity_main);
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
         fragmentManager = getFragmentManager();
         pagesToTrack = pagesHolder.getPagesToTrack();

@@ -65,6 +65,10 @@ public class PagesHolder {
     public void addToPagesToTrack(Page page){
         if(!pagesToTrack.contains(page))
             pagesToTrack.add(page);
+        else{
+            pagesToTrack.remove(page);
+            pagesToTrack.add(page);
+        }
     }
 
     public void removeFromUpdatedPages(Page page) {

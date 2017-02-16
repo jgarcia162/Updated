@@ -19,8 +19,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/details_page_title_tv"
-        android:layout_alignStart="@id/details_page_title_tv"
-        android:layout_alignLeft="@id/details_page_title_tv"
+        android:layout_centerHorizontal="true"
         android:textSize="15sp"
         android:textStyle="bold"
         android:gravity="center"
@@ -30,8 +29,8 @@
         android:layout_width="50dp"
         android:layout_height="wrap_content"
         android:layout_below="@id/details_page_title_tv"
-        android:layout_alignEnd="@id/details_page_title_tv"
-        android:layout_alignRight="@id/details_page_title_tv"
+        android:layout_toRightOf="@id/page_active_tv"
+        android:layout_toEndOf="@id/page_active_tv"
         android:layout_centerHorizontal="true" />
 
     <TextView
@@ -56,7 +55,8 @@
         android:layout_marginTop="10dp"
         android:text="@string/details_url_tv_text"
         android:textSize="15sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:textIsSelectable="true"/>
 
     <Button
         android:id="@+id/details_open_browser_button"

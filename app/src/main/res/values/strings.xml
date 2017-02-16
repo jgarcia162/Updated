@@ -18,4 +18,9 @@
     <string name="enter_url_toast">Please enter a URL!</string>
     <string name="added_url_toast">" Added"</string>
     <string name="page_active_tv">Tracking</string>
+    <string name="settings_menu_text">Settings</string>
+    <string name="about_menu_text">About</string>
+    <string name="logout_menu_text">Log Out</string>
+    <string name="about_text">THIS PAGE IS ABOUT STUFF</string>
+    <string name="contact_menu_text">Contact</string>
 </resources>

@@ -3,10 +3,7 @@ package com.example.jose.updated.model;
 import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
-
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Locale;
+import android.text.format.DateUtils;
 
 
 public class Page implements Parcelable{
@@ -118,10 +115,7 @@ public class Page implements Parcelable{
     }
 
     public String getFormattedTimeOfLastUpdate() {
-        SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss", Locale.US);
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(timeOfLastUpdateInMilliSec);
-        return formatter.format(calendar.getTime());
+        return String.valueOf(DateUtils.getRelativeTimeSpanString(timeOfLastUpdateInMilliSec));
     }
 
     public boolean isUpdated() {
