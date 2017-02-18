@@ -5,15 +5,16 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.example.jose.updated.R;
-import com.example.jose.updated.controller.BaseActivity;
 import com.example.jose.updated.model.Page;
 
 /**
  * Created by Joe on 2/6/17.
  */
-public class SecondActivity extends BaseActivity {
+public class SecondActivity extends MainActivity {
     private FragmentManager fragmentManager;
     private int container;
 
@@ -21,6 +22,9 @@ public class SecondActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.second_activity);
+        if(!(getActionBar() == null)){
+            getActionBar().setDisplayHomeAsUpEnabled(true);
+        }
         fragmentManager = getSupportFragmentManager();
         container = R.id.second_activity_fragment_container;
         Intent intent = getIntent();
@@ -64,4 +68,13 @@ public class SecondActivity extends BaseActivity {
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        return super.onOptionsItemSelected(item);
+    }
 }

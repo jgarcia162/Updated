@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.jose.updated">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -10,24 +10,23 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".view.MainActivity"
-            android:launchMode="singleInstance">
-
-        </activity>
-        <activity android:name=".controller.BaseActivity">
+        <activity android:name=".view.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".view.SecondActivity"/>
-        <service android:name=".controller.NotificationService"/>
-        <receiver android:name=".controller.UpdateBroadcastReceiver"
+        <activity
+            android:name=".view.SecondActivity"
+            android:parentActivityName=".view.MainActivity" />
+
+        <service android:name=".controller.NotificationService" />
+        <receiver
+            android:name=".controller.UpdateBroadcastReceiver"
             android:enabled="true"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.example.jose.updated.controller.CUSTOM_INTENT"/>
+                <action android:name="com.example.jose.updated.controller.CUSTOM_INTENT" />
             </intent-filter>
         </receiver>
     </application>

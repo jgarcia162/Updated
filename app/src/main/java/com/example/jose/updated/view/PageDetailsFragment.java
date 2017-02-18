@@ -97,7 +97,11 @@ public class PageDetailsFragment extends Fragment {
                 page.setIsActive(!page.isActive());
                 trackingSwitch.setChecked(page.isActive());
                 preferences.edit().putBoolean(page.getTitle()+IS_ACTIVE_TAG,page.isActive()).apply();
-                pagesHolder.addToPagesToTrack(page);
+                if(page.isActive()){
+                    pagesHolder.addToPagesToTrack(page);
+                }else{
+                    pagesHolder.removeFromPagesToTrack(page);
+                }
                 //update this page in db
             }
         });

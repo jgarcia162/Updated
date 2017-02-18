@@ -59,7 +59,6 @@ public class PagesHolder {
             page.setTimeOfLastUpdateInMilliSec(new Date().getTime());
             updatedPages.add(page);
         }
-
     }
 
     public void addToPagesToTrack(Page page){

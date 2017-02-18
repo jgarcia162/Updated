@@ -3,24 +3,19 @@ package com.example.jose.updated.controller;
 import com.example.jose.updated.model.Page;
 import com.example.jose.updated.model.PagesHolder;
 
-import java.util.ArrayList;
-
 
 public class UpdateRefresher {
     private static PagesHolder pagesHolder = PagesHolder.getInstance();
 
     static void refreshUpdate() throws Exception {
-        ArrayList<Page> pages = new ArrayList<>();
         for (Page page : pagesHolder.getPagesToTrack()) {
-            if (isPageUpdated(page)) {
-                pages.add(page);
+            if (!page.isUpdated()) {
+                if (isPageUpdated(page)) {
+                    page.setUpdated(true);
+                    pagesHolder.addToUpdatedPages(page);
+                }
             }
         }
-        for (Page page : pages) {
-            pagesHolder.addToUpdatedPages(page);
-        }
-
-
     }
 
     private static boolean isPageUpdated(Page page) throws Exception {
