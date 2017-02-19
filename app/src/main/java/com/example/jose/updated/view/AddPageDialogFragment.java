@@ -15,7 +15,6 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.jose.updated.R;
-import com.example.jose.updated.controller.DownloadTask;
 import com.example.jose.updated.controller.UpdateRefresher;
 import com.example.jose.updated.model.Page;
 import com.example.jose.updated.model.PagesHolder;
@@ -86,7 +85,7 @@ public class AddPageDialogFragment extends DialogFragment {
         if (newPage == null) {
             if (!TextUtils.isEmpty(urlText)) {
                 if (!URLUtil.isValidUrl(urlText)) {
-                    Toast.makeText(getActivity(), "Not a valid URL!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), R.string.invalid_url_string, Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if (TextUtils.isEmpty(titleText)) {
@@ -100,7 +99,7 @@ public class AddPageDialogFragment extends DialogFragment {
                 newPage.setTimeOfLastUpdateInMilliSec(new Date().getTime());
                 newPage.setIsActive(true);
                 pagesHolder.addToPagesToTrack(newPage);
-                Toast.makeText(getActivity(), newPage.getTitle() + " Added", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), newPage.getTitle() + getString(R.string.added_page_string), Toast.LENGTH_SHORT).show();
                 //add to db
                 newPage = null;
                 resetTextFields();
@@ -111,7 +110,7 @@ public class AddPageDialogFragment extends DialogFragment {
         }
         if (newPage != null) { //this means user has previewed page
             if(!URLUtil.isValidUrl(newPage.getPageUrl())){
-                Toast.makeText(getActivity(), "Not a valid URL!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), R.string.invalid_url_string, Toast.LENGTH_SHORT).show();
                 return;
             }
             newPage.setContents(UpdateRefresher.downloadHtml(newPage));
@@ -136,14 +135,14 @@ public class AddPageDialogFragment extends DialogFragment {
     private void onClickPreviewButton(String urlText, String titleText) {
         if (!TextUtils.isEmpty(urlText)) {
             if (!URLUtil.isValidUrl(urlText)) {
-                Toast.makeText(getActivity(), "Not a valid URL!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), R.string.invalid_url_string, Toast.LENGTH_SHORT).show();
                 return;
             }
             if (!TextUtils.isEmpty(titleText)) {
                 newPage = new Page(titleText, urlText, new Date().getTime());
                 displayPageInPreviewWebView(newPage.getPageUrl());
             } else {
-                newPage = new Page("untitled", urlText, new Date().getTime());
+                newPage = new Page(getString(R.string.untitled_page_string), urlText, new Date().getTime());
                 displayPageInPreviewWebView(newPage.getPageUrl());
             }
         } else {
@@ -153,17 +152,6 @@ public class AddPageDialogFragment extends DialogFragment {
 
     public void displayPageInPreviewWebView(String url) {
         pagePreviewWebView.loadUrl(url);
-    }
-
-    private boolean checkUrl(String url) {
-        String string;
-        DownloadTask task = new DownloadTask();
-        try {
-            string = task.execute(url).get();
-        } catch (Exception e) {
-            return false;
-        }
-        return TextUtils.isEmpty(string);
     }
 
 }

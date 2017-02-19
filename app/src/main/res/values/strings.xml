@@ -23,4 +23,7 @@
     <string name="logout_menu_text">Log Out</string>
     <string name="about_text">THIS PAGE IS ABOUT STUFF</string>
     <string name="contact_menu_text">Contact</string>
+    <string name="invalid_url_string">Not a valid URL!</string>
+    <string name="untitled_page_string">Untitled</string>
+    <string name="added_page_string">" Added"</string>
 </resources>

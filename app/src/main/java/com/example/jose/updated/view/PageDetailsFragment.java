@@ -1,13 +1,13 @@
 package com.example.jose.updated.view;
 
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.customtabs.CustomTabsIntent;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -22,7 +22,10 @@ import com.example.jose.updated.R;
 import com.example.jose.updated.model.Page;
 import com.example.jose.updated.model.PagesHolder;
 
-import static com.example.jose.updated.model.UpdatedConstants.*;
+import static com.example.jose.updated.model.UpdatedConstants.DEFAULT_NOTES;
+import static com.example.jose.updated.model.UpdatedConstants.IS_ACTIVE_TAG;
+import static com.example.jose.updated.model.UpdatedConstants.NOTES_TAG;
+import static com.example.jose.updated.model.UpdatedConstants.PREFS_NAME;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -40,6 +43,7 @@ public class PageDetailsFragment extends Fragment {
     private Bundle bundle;
     private SharedPreferences preferences;
     private PagesHolder pagesHolder;
+
     public PageDetailsFragment() {
 
     }
@@ -47,17 +51,17 @@ public class PageDetailsFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(bundle == null){
+        if (bundle == null) {
             bundle = getArguments();
             page = bundle.getParcelable("page");
         }
-        preferences = getContext().getSharedPreferences(PREFS_NAME,0);
+        preferences = getContext().getSharedPreferences(PREFS_NAME, 0);
         pagesHolder = PagesHolder.getInstance();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view =  inflater.inflate(R.layout.page_details_layout, container, false);
+        View view = inflater.inflate(R.layout.page_details_layout, container, false);
         packageManager = getContext().getPackageManager();
         pageTitle = (TextInputEditText) view.findViewById(R.id.details_page_title_tv);
         timeLastUpdatedTV = (TextView) view.findViewById(R.id.details_timelastupdated_tv);
@@ -74,8 +78,8 @@ public class PageDetailsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         Resources resources = getResources();
         pageTitle.setText(page.getTitle());
-        timeLastUpdatedTV.setText(String.format(resources.getString(R.string.details_last_updated),page.getFormattedTimeOfLastUpdate()));
-        urlTV.setText(String.format(resources.getString(R.string.details_url_tv_text),page.getPageUrl()));
+        timeLastUpdatedTV.setText(String.format(resources.getString(R.string.details_last_updated), page.getFormattedTimeOfLastUpdate()));
+        urlTV.setText(String.format(resources.getString(R.string.details_url_tv_text), page.getPageUrl()));
         openBrowserButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -86,20 +90,20 @@ public class PageDetailsFragment extends Fragment {
         saveNotesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                preferences.edit().putString(page.getTitle()+NOTES_TAG, String.valueOf(notesEditText.getText())).apply();
+                preferences.edit().putString(page.getTitle() + NOTES_TAG, String.valueOf(notesEditText.getText())).apply();
             }
         });
-        boolean pageactive = preferences.getBoolean(page.getTitle()+IS_ACTIVE_TAG,true);
+        boolean pageactive = preferences.getBoolean(page.getTitle() + IS_ACTIVE_TAG, true);
         trackingSwitch.setChecked(pageactive);
         trackingSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 page.setIsActive(!page.isActive());
                 trackingSwitch.setChecked(page.isActive());
-                preferences.edit().putBoolean(page.getTitle()+IS_ACTIVE_TAG,page.isActive()).apply();
-                if(page.isActive()){
+                preferences.edit().putBoolean(page.getTitle() + IS_ACTIVE_TAG, page.isActive()).apply();
+                if (page.isActive()) {
                     pagesHolder.addToPagesToTrack(page);
-                }else{
+                } else {
                     pagesHolder.removeFromPagesToTrack(page);
                 }
                 //update this page in db
@@ -108,19 +112,15 @@ public class PageDetailsFragment extends Fragment {
     }
 
     private String loadNotes() {
-        return preferences.getString(page.getTitle() + NOTES_TAG,DEFAULT_NOTES);
+        return preferences.getString(page.getTitle() + NOTES_TAG, DEFAULT_NOTES);
     }
 
-    public void openInBrowser(){
-        //URL only works with full URL "http..."
+    public void openInBrowser() {
         Uri pageUri = Uri.parse(page.getPageUrl());
-        Intent intent = new Intent(Intent.ACTION_VIEW, pageUri);
-        String title = getResources().getString(R.string.chooser_title);
-        Intent chooser = Intent.createChooser(intent, title);
-        if (intent.resolveActivity(packageManager) != null) {
-            getContext().startActivity(chooser);
-        }else{
-            getContext().startActivity(intent);
-        }
+        CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+        builder.addDefaultShareMenuItem();
+        // set toolbar color and/or setting custom actions before invoking build()
+        CustomTabsIntent customTabsIntent = builder.build();
+        customTabsIntent.launchUrl(getContext(),pageUri);
     }
 }
