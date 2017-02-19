@@ -4,16 +4,18 @@ import android.app.DialogFragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.URLUtil;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.jose.updated.R;
+import com.example.jose.updated.controller.DownloadTask;
 import com.example.jose.updated.controller.UpdateRefresher;
 import com.example.jose.updated.model.Page;
 import com.example.jose.updated.model.PagesHolder;
@@ -25,11 +27,12 @@ public class AddPageDialogFragment extends DialogFragment {
     private Button addPageButton, previewButton;
     private WebView pagePreviewWebView;
     private TextInputEditText urlInputEditText, titleInputEditText;
-    private ImageView previewImage;
     private Page newPage;
-    private PagesHolder pagesHolder = PagesHolder.getInstance();
+    private PagesHolder pagesHolder;
+    private String urlText;
+    private String titleText;
 
-    public AddPageDialogFragment(){
+    public AddPageDialogFragment() {
 
     }
 
@@ -41,23 +44,26 @@ public class AddPageDialogFragment extends DialogFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.add_page_dialog_fragment_layout,container,false);
+        View view = inflater.inflate(R.layout.add_page_dialog_fragment_layout, container, false);
         initializeViews(view);
+        pagesHolder = PagesHolder.getInstance();
 
         previewButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onClickPreviewButton();
+                urlText = urlInputEditText.getText().toString();
+                titleText = titleInputEditText.getText().toString();
+                onClickPreviewButton(urlText, titleText);
             }
         });
 
         addPageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String urlText = urlInputEditText.getText().toString();
-                String titleText = titleInputEditText.getText().toString();
+                urlText = urlInputEditText.getText().toString();
+                titleText = titleInputEditText.getText().toString();
                 try {
-                    onClickAddButton(urlText,titleText);
+                    onClickAddButton(urlText, titleText);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -72,74 +78,92 @@ public class AddPageDialogFragment extends DialogFragment {
         pagePreviewWebView.setWebViewClient(new WebViewClient());
         titleInputEditText = (TextInputEditText) view.findViewById(R.id.title_input_edit_text);
         urlInputEditText = (TextInputEditText) view.findViewById(R.id.url_input_edit_text);
-        previewImage = (ImageView) view.findViewById(R.id.web_preview_image_view);
         previewButton = (Button) view.findViewById(R.id.preview_button);
     }
 
     private void onClickAddButton(String urlText, String titleText) throws Exception {
         PagesHolder pagesHolder = PagesHolder.getInstance();
-        if(newPage == null){
-            if(!urlText.equals("")){
-                if(!urlText.substring(0,3).equals("http")){
-                    urlText = "https://" + urlText;
+        if (newPage == null) {
+            if (!TextUtils.isEmpty(urlText)) {
+                if (!URLUtil.isValidUrl(urlText)) {
+                    Toast.makeText(getActivity(), "Not a valid URL!", Toast.LENGTH_SHORT).show();
+                    return;
                 }
-                if(titleText.equals("")){
-                    newPage = new Page("untitled", urlText, new Date().getTime());
+                if (TextUtils.isEmpty(titleText)) {
+                    titleText = "untitled";
                 }
                 newPage = new Page(titleText, urlText, new Date().getTime());
                 titleInputEditText.setText("");
                 urlInputEditText.setText("");
-                Toast.makeText(getActivity(),newPage.getTitle()+" Added", Toast.LENGTH_SHORT).show();
                 newPage.setContents(UpdateRefresher.downloadHtml(newPage));
                 pagesHolder.addPageHtmlToMap(newPage);
                 newPage.setTimeOfLastUpdateInMilliSec(new Date().getTime());
                 newPage.setIsActive(true);
                 pagesHolder.addToPagesToTrack(newPage);
+                Toast.makeText(getActivity(), newPage.getTitle() + " Added", Toast.LENGTH_SHORT).show();
                 //add to db
-                MainActivity.notifyAdapterDataSetChange(getActivity());
                 newPage = null;
+                resetTextFields();
                 this.dismiss();
-            }else{
+            } else {
                 Toast.makeText(getActivity(), R.string.enter_url_toast, Toast.LENGTH_SHORT).show();
             }
-        }else{
-            try {
-                titleInputEditText.setText("");
-                urlInputEditText.setText("");
-                newPage.setContents(UpdateRefresher.downloadHtml(newPage));
-                pagesHolder.addPageHtmlToMap(newPage);
-                newPage.setTimeOfLastUpdateInMilliSec(new Date().getTime());
-                newPage.setIsActive(true);
-                pagesHolder.addToPagesToTrack(newPage);
-                //add to db
-                MainActivity.notifyAdapterDataSetChange(getActivity());
-                Toast.makeText(getActivity(),newPage.getTitle()+getString(R.string.added_url_toast), Toast.LENGTH_SHORT).show();
-                newPage = null;
-                this.dismiss();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
         }
+        if (newPage != null) { //this means user has previewed page
+            if(!URLUtil.isValidUrl(newPage.getPageUrl())){
+                Toast.makeText(getActivity(), "Not a valid URL!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            newPage.setContents(UpdateRefresher.downloadHtml(newPage));
+            pagesHolder.addPageHtmlToMap(newPage);
+            newPage.setTimeOfLastUpdateInMilliSec(new Date().getTime());
+            newPage.setIsActive(true);
+            pagesHolder.addToPagesToTrack(newPage);
+            //add to db
+            Toast.makeText(getActivity(), newPage.getTitle() + getString(R.string.added_url_toast), Toast.LENGTH_SHORT).show();
+            newPage = null;
+            resetTextFields();
+            this.dismiss();
+        }
+        MainActivity.notifyAdapterDataSetChange(getActivity());
     }
 
-    private void onClickPreviewButton() {
-        if(!urlInputEditText.getText().toString().equals("")){
-            if(!titleInputEditText.getText().toString().equals("")){
-                newPage = new Page(titleInputEditText.getText().toString(), urlInputEditText.getText().toString(), new Date().getTime());
-                displayPageInPreviewWebView(newPage.getPageUrl());
-                previewImage.setVisibility(View.INVISIBLE);
-            }else{
-                newPage = new Page("untitled", urlInputEditText.getText().toString(), new Date().getTime());
-                displayPageInPreviewWebView(newPage.getPageUrl());
-                previewImage.setVisibility(View.INVISIBLE);
+    private void resetTextFields() {
+        titleInputEditText.setText(null);
+        urlInputEditText.setText(null);
+    }
+
+    private void onClickPreviewButton(String urlText, String titleText) {
+        if (!TextUtils.isEmpty(urlText)) {
+            if (!URLUtil.isValidUrl(urlText)) {
+                Toast.makeText(getActivity(), "Not a valid URL!", Toast.LENGTH_SHORT).show();
+                return;
             }
-        }else{
+            if (!TextUtils.isEmpty(titleText)) {
+                newPage = new Page(titleText, urlText, new Date().getTime());
+                displayPageInPreviewWebView(newPage.getPageUrl());
+            } else {
+                newPage = new Page("untitled", urlText, new Date().getTime());
+                displayPageInPreviewWebView(newPage.getPageUrl());
+            }
+        } else {
             Toast.makeText(getActivity(), getString(R.string.enter_url_toast), Toast.LENGTH_SHORT).show();
         }
     }
 
-    public void displayPageInPreviewWebView(String url){
+    public void displayPageInPreviewWebView(String url) {
         pagePreviewWebView.loadUrl(url);
+    }
+
+    private boolean checkUrl(String url) {
+        String string;
+        DownloadTask task = new DownloadTask();
+        try {
+            string = task.execute(url).get();
+        } catch (Exception e) {
+            return false;
+        }
+        return TextUtils.isEmpty(string);
     }
 
 }

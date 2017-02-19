@@ -25,6 +25,7 @@ public class DownloadTask extends AsyncTask<String,Void,String>{
             return builder.toString();
         }catch(Exception e){
             Log.e("ASYNC RESULT: ", "Download failed");
+
         }
         return null;
     }
