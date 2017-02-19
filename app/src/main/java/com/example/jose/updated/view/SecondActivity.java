@@ -41,12 +41,6 @@ public class SecondActivity extends BaseActivity {
             case "Settings":
                 transaction.replace(container,new SettingsFragment(),"pref_fragment").commit();
                 break;
-            case "Contact":
-                transaction.replace(container,new ContactFragment(),"contact_fragment").commit();
-                break;
-            case "About":
-                transaction.replace(container,new AboutFragment(),"about_fragment").commit();
-                break;
         }
     }
 

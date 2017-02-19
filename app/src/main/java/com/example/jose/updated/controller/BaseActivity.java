@@ -41,14 +41,6 @@ public class BaseActivity extends AppCompatActivity {
                 intent.putExtra("fragment_to_load", "Settings");
                 startActivity(intent);
                 break;
-            case R.id.contact_menu:
-                intent.putExtra("fragment_to_load", "Contact");
-                startActivity(intent);
-                break;
-            case R.id.about_menu:
-                intent.putExtra("fragment_to_load", "About");
-                startActivity(intent);
-                break;
             case R.id.logout_menu:
                 //logout and unregister receiver
                 LocalBroadcastManager.getInstance(this).unregisterReceiver(MainActivity.updateBroadcastReceiver);

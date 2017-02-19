@@ -4,12 +4,6 @@
     <item android:id="@+id/settings_menu"
         android:title="@string/settings_menu_text" />
 
-    <item android:id="@+id/contact_menu"
-        android:title="@string/contact_menu_text"/>
-
-    <item android:id="@+id/about_menu"
-        android:title="@string/about_menu_text"/>
-
     <item android:id="@+id/logout_menu"
         android:title="@string/logout_menu_text"/>
 
