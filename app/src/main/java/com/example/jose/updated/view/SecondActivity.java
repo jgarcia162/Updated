@@ -5,16 +5,15 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.view.Menu;
-import android.view.MenuItem;
 
 import com.example.jose.updated.R;
+import com.example.jose.updated.controller.BaseActivity;
 import com.example.jose.updated.model.Page;
 
 /**
  * Created by Joe on 2/6/17.
  */
-public class SecondActivity extends MainActivity {
+public class SecondActivity extends BaseActivity {
     private FragmentManager fragmentManager;
     private int container;
 
@@ -66,15 +65,5 @@ public class SecondActivity extends MainActivity {
                 fragmentManager.beginTransaction().replace(container, pageDetailsFragment, pageTag).commit();
             }
         }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        return super.onOptionsItemSelected(item);
     }
 }
