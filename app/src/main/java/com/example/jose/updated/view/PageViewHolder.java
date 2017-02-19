@@ -15,9 +15,8 @@ import android.widget.TextView;
 import com.example.jose.updated.R;
 import com.example.jose.updated.model.Page;
 import com.example.jose.updated.model.PagesHolder;
-import com.example.jose.updated.model.UpdatedConstants;
 
-public class PageViewHolder extends RecyclerView.ViewHolder {
+public class PageViewHolder extends RecyclerView.ViewHolder{
 
     private TextView pageTitleTextView, pageUrlTextView, updatedStatusTextView, timeOfLastUpdateTextView;
     private CardView itemLayout;
@@ -41,12 +40,11 @@ public class PageViewHolder extends RecyclerView.ViewHolder {
     public void bind(final Page page) {
         pageTitleTextView.setText(page.getTitle());
         pageUrlTextView.setText(page.getPageUrl());
-        if (page.getBitmapIcon() == null) {
-            page.setBitmapIcon(loadFavicon(page));
-            imageView.setImageBitmap(page.getBitmapIcon());
-        } else {
-            imageView.setImageBitmap(page.getBitmapIcon());
-        }
+            Bitmap bitmap = loadFavicon(page);
+            if(bitmap != null){
+                imageView.setImageBitmap(bitmap);
+                page.setBitmapIcon(bitmap);
+            }
 
         if (PagesHolder.getInstance().getUpdatedPages().contains(page)) {
             updatedStatusTextView.setText(R.string.page_updated);
@@ -75,11 +73,11 @@ public class PageViewHolder extends RecyclerView.ViewHolder {
     }
 
     private Bitmap loadFavicon(Page page) {
+        if(page.getBitmapIcon()!=null){
+            return page.getBitmapIcon();
+        }
         webView.loadData(page.getContents(), "text/html", null);
         webView.setActivated(false);
-        if(webView.getFavicon() == null){
-            return createBitmap(UpdatedConstants.DEFAULT_FAVICON);
-        }
         return webView.getFavicon();
     }
 

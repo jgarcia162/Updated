@@ -52,7 +52,6 @@ public class BaseActivity extends AppCompatActivity {
             case R.id.logout_menu:
                 //logout and unregister receiver
                 LocalBroadcastManager.getInstance(this).unregisterReceiver(MainActivity.updateBroadcastReceiver);
-
         }
         return true;
     }
