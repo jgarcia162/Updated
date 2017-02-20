@@ -1,12 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorAccent">
+    android:orientation="vertical">
+
     <TextView
+        android:id="@+id/settings_title"
+        style="@style/SettingFragmentTitles"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="@string/settings_title_text"
+        android:textSize="25sp" />
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="SETTINGS HERE"
-        android:textSize="40sp"/>
+        android:gravity="center_horizontal"
+        android:layout_marginTop="20dp">
+        <TextView
+            android:id="@+id/update_frequency_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/update_frequency_title"
+            style="@style/SettingFragmentTitles"/>
+
+        <EditText
+            android:id="@+id/update_frequency_et"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/update_frequency_title"
+            android:layout_toRightOf="@id/update_frequency_title"
+            android:layout_alignBottom="@id/update_frequency_title"
+            android:layout_marginLeft="@dimen/frequency_et_left_margin"
+            android:layout_marginStart="@dimen/frequency_et_left_margin"
+            android:inputType="number"
+            android:hint="24"
+            android:textSize="20sp"/>
+        <Spinner
+            android:id="@+id/frequency_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/update_frequency_et"
+            android:layout_toRightOf="@id/update_frequency_et"
+            android:layout_toEndOf="@id/update_frequency_et"/>
+        <TextView
+            android:id="@+id/notifications_settings_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/update_frequency_title"
+            android:layout_marginTop="20dp"
+            android:text="@string/notifications_settings_title"
+            style="@style/SettingFragmentTitles"/>
+        <Switch
+            android:id="@+id/notifications_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/frequency_spinner"
+            android:layout_toRightOf="@id/notifications_settings_title"
+            android:layout_toEndOf="@id/notifications_settings_title"
+            android:layout_alignBottom="@id/notifications_settings_title"
+            android:layout_marginTop="20dp"
+            android:layout_alignEnd="@id/frequency_spinner"
+            android:layout_alignRight="@id/frequency_spinner"/>
+    </RelativeLayout>
+
 
 </LinearLayout>

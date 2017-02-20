@@ -4,4 +4,8 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="main_activity_background">#e6e3de</color>
+    <color name="settingsTitlesColor">#232323</color>
+    <color name="transparent">#00232323</color>
+    <color name="deadRed">#7c1111</color>
+
 </resources>

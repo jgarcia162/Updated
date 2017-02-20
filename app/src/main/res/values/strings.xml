@@ -14,7 +14,7 @@
     <string name="preview_page">PAGE PREVIEW</string>
     <string name="not_updated">NOT UPDATED</string>
     <string name="notification_title">Updated Pages</string>
-    <string name="save_notes_text">SAVE</string>
+    <string name="save_page_settings_text">Save Page Settings</string>
     <string name="enter_url_toast">Please enter a URL!</string>
     <string name="added_url_toast">" Added"</string>
     <string name="page_active_tv">Tracking</string>
@@ -26,4 +26,15 @@
     <string name="invalid_url_string">Not a valid URL!</string>
     <string name="untitled_page_string">Untitled</string>
     <string name="added_page_string">" Added"</string>
+    <string name="settings_title_text">SETTINGS</string>
+    <string name="update_frequency_title">Update Frequency</string>
+    <string name="notifications_settings_title">Notifications</string>
+    <string name="details_update_frequency_text">Update Frequency %1$s</string>
+    <string name="settings_icon">Settings Icon</string>
+    <string name="page_favicon">Page Favicon</string>
+    <string name="delete_page_button">Delete Page</string>
+    <string-array name="frequency_spinner_array">
+        <item>Hours</item>
+        <item>Minutes</item>
+    </string-array>
 </resources>

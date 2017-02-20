@@ -12,7 +12,6 @@ import com.example.jose.updated.R;
 
 import static com.example.jose.updated.model.UpdatedConstants.DEFAULT_NOTIFICATIONS_ACTIVE;
 import static com.example.jose.updated.model.UpdatedConstants.DEFAULT_UPDATE_FREQUENCY;
-import static com.example.jose.updated.model.UpdatedConstants.DEFAULT_WIFI_ONLY;
 import static com.example.jose.updated.model.UpdatedConstants.PREFS_NAME;
 
 
@@ -23,7 +22,6 @@ import static com.example.jose.updated.model.UpdatedConstants.PREFS_NAME;
 public class SettingsFragment extends Fragment {
     private long updateFrequency;
     private boolean stopNotifications;
-    private boolean wifiOnly;
     private SharedPreferences preferences;
     public SettingsFragment(){
     }
@@ -33,7 +31,6 @@ public class SettingsFragment extends Fragment {
         preferences = getContext().getSharedPreferences(PREFS_NAME,0);
         updateFrequency = preferences.getLong("update_frequency", DEFAULT_UPDATE_FREQUENCY);
         stopNotifications = preferences.getBoolean("stop_notifications",DEFAULT_NOTIFICATIONS_ACTIVE);
-        wifiOnly = preferences.getBoolean("wifi_only",DEFAULT_WIFI_ONLY);
     }
 
     @Nullable

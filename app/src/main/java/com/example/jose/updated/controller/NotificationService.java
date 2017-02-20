@@ -97,7 +97,7 @@ public class NotificationService extends IntentService {
 
 
     public void createNotification(String namesOfUpdatedPages) {
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getBaseContext()).setSmallIcon(R.drawable.default_photo).setContentTitle(getString(R.string.notification_title)).setContentText(namesOfUpdatedPages);
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getBaseContext()).setSmallIcon(R.drawable.updated_logo).setContentTitle(getString(R.string.notification_title)).setContentText(namesOfUpdatedPages);
         notificationBuilder.setAutoCancel(true);
         Intent notificationIntent = new Intent(getBaseContext(), MainActivity.class);
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP|Intent.FLAG_ACTIVITY_CLEAR_TOP);

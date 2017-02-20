@@ -4,10 +4,8 @@ package com.example.jose.updated.view;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.customtabs.CustomTabsIntent;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -17,6 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.jose.updated.R;
 import com.example.jose.updated.model.Page;
@@ -33,11 +32,12 @@ import static com.example.jose.updated.model.UpdatedConstants.PREFS_NAME;
 public class PageDetailsFragment extends Fragment {
     private TextInputEditText pageTitle;
     private TextView timeLastUpdatedTV;
-    private TextView urlTV;
-    private Button openBrowserButton;
-    private Button saveNotesButton;
-    private Switch trackingSwitch;
+    private EditText urlEditText;
     private EditText notesEditText;
+    private EditText frequencyEditText;
+    private Button saveSettingsButton;
+    private Button deleteButton;
+    private Switch trackingSwitch;
     private PackageManager packageManager;
     private Page page;
     private Bundle bundle;
@@ -62,38 +62,49 @@ public class PageDetailsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.page_details_layout, container, false);
+        findViews(view);
+        return view;
+    }
+
+    private void findViews(View view) {
         packageManager = getContext().getPackageManager();
         pageTitle = (TextInputEditText) view.findViewById(R.id.details_page_title_tv);
         timeLastUpdatedTV = (TextView) view.findViewById(R.id.details_timelastupdated_tv);
-        urlTV = (TextView) view.findViewById(R.id.details_url_tv);
-        openBrowserButton = (Button) view.findViewById(R.id.details_open_browser_button);
+        urlEditText = (EditText) view.findViewById(R.id.details_url_tv);
+        frequencyEditText = (EditText) view.findViewById(R.id.details_frequency_et);
         trackingSwitch = (Switch) view.findViewById(R.id.page_active_switch);
+        saveSettingsButton = (Button) view.findViewById(R.id.details_settings_button);
+        deleteButton = (Button) view.findViewById(R.id.delete_page_button);
         notesEditText = (EditText) view.findViewById(R.id.details_notes_et);
-        saveNotesButton = (Button) view.findViewById(R.id.details_save_notes_button);
-        return view;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Resources resources = getResources();
-        pageTitle.setText(page.getTitle());
-        timeLastUpdatedTV.setText(String.format(resources.getString(R.string.details_last_updated), page.getFormattedTimeOfLastUpdate()));
-        urlTV.setText(String.format(resources.getString(R.string.details_url_tv_text), page.getPageUrl()));
-        openBrowserButton.setOnClickListener(new View.OnClickListener() {
+
+        setTextFields(resources);
+
+        saveSettingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openInBrowser();
+                saveSettings();
             }
         });
-        notesEditText.setText(loadNotes());
-        saveNotesButton.setOnClickListener(new View.OnClickListener() {
+
+        deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                preferences.edit().putString(page.getTitle() + NOTES_TAG, String.valueOf(notesEditText.getText())).apply();
+                deletePage();
             }
         });
+
         boolean pageactive = preferences.getBoolean(page.getTitle() + IS_ACTIVE_TAG, true);
+
+        setUpTrackingSwitch(pageactive);
+    }
+
+    private void setUpTrackingSwitch(boolean pageactive) {
         trackingSwitch.setChecked(pageactive);
         trackingSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -111,16 +122,39 @@ public class PageDetailsFragment extends Fragment {
         });
     }
 
+    private void setTextFields(Resources resources) {
+        pageTitle.setText(page.getTitle());
+        timeLastUpdatedTV.setText(String.format(resources.getString(R.string.details_last_updated), page.getFormattedTimeOfLastUpdate()));
+        urlEditText.setText(String.format(resources.getString(R.string.details_url_tv_text), page.getPageUrl()));
+        //TODO this doesn't display correct number
+        //TODO format to hours/minutes
+        frequencyEditText.setText(String.format(resources.getString(R.string.details_update_frequency_text),page.getUpdateFrequency()+""));
+        notesEditText.setText(loadNotes());
+    }
+
     private String loadNotes() {
         return preferences.getString(page.getTitle() + NOTES_TAG, DEFAULT_NOTES);
     }
+    
+    private void saveSettings(){
+        preferences.edit().putString(page.getTitle() + NOTES_TAG, String.valueOf(notesEditText.getText())).apply();
+        if(!page.getPageUrl().equals(String.valueOf(urlEditText.getText()))){
+            page.setPageUrl(String.valueOf(urlEditText.getText()));
+        }
+        //update page in db
 
-    public void openInBrowser() {
-        Uri pageUri = Uri.parse(page.getPageUrl());
-        CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-        builder.addDefaultShareMenuItem();
-        // set toolbar color and/or setting custom actions before invoking build()
-        CustomTabsIntent customTabsIntent = builder.build();
-        customTabsIntent.launchUrl(getContext(),pageUri);
     }
+
+    //TODO implement delete
+    public void deletePage(){
+        Toast.makeText(getContext(), "DELETE", Toast.LENGTH_SHORT).show();
+        if(page.isUpdated()){
+            pagesHolder.removeFromUpdatedPages(page);
+        }
+        pagesHolder.removeFromPagesToTrack(page);
+        getActivity().onBackPressed();
+        MainActivity.notifyAdapterDataSetChange(getContext());
+
+    }
+    
 }

@@ -4,4 +4,5 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="dialog_fragment_width">350dp</dimen>
     <dimen name="dialog_fragment_height">450dp</dimen>
+    <dimen name="frequency_et_left_margin">20dp</dimen>
 </resources>

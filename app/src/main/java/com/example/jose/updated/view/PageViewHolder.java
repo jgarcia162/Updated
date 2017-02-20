@@ -5,7 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.customtabs.CustomTabsIntent;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -18,25 +20,34 @@ import com.example.jose.updated.R;
 import com.example.jose.updated.model.Page;
 import com.example.jose.updated.model.PagesHolder;
 
-public class PageViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+public class PageViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener{
 
     private TextView pageTitleTextView, pageUrlTextView, updatedStatusTextView, timeOfLastUpdateTextView;
     private CardView itemLayout;
     private Context context;
     private ImageView imageView;
     private WebView webView;
+    private ImageView editPageButton;
     private Page page;
+
+
 
     public PageViewHolder(View view) {
         super(view);
         updatedStatusTextView = (TextView) view.findViewById(R.id.update_status_text_view);
         pageTitleTextView = (TextView) view.findViewById(R.id.page_title_text_view);
-        pageUrlTextView = (TextView) view.findViewById(R.id.page_url_text_view);
         timeOfLastUpdateTextView = (TextView) view.findViewById(R.id.time_of_last_update_text_view);
         webView = (WebView) view.findViewById(R.id.card_view_webview);
         imageView = (ImageView) view.findViewById(R.id.page_icon);
+        editPageButton = (ImageView) view.findViewById(R.id.edit_page_button);
+        editPageButton.setOnClickListener(this);
         itemLayout = (CardView) view.findViewById(R.id.item_layout);
-        itemLayout.setOnClickListener(this);
+        itemLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openInBrowser();
+            }
+        });
         context = view.getContext();
 
     }
@@ -80,15 +91,31 @@ public class PageViewHolder extends RecyclerView.ViewHolder implements View.OnCl
 
     @Override
     public void onClick(View v) {
-        if (page.isUpdated()) {
-            updatedStatusTextView.setText(R.string.not_updated);
-            page.setUpdated(false);
-            PagesHolder.getInstance().removeFromUpdatedPages(page);
-        }
         Bundle bundle = new Bundle();
         bundle.putParcelable("page", page);
         Intent intent = new Intent(context, SecondActivity.class);
         intent.putExtra("page_bundle", bundle);
         context.startActivity(intent);
+    }
+
+    @Override
+    public boolean onLongClick(View v) {
+        //TODO add long click editable
+        PagesHolder.getInstance().removeFromPagesToTrack(page);
+        return true;
+    }
+
+    public void openInBrowser() {
+        Uri pageUri = Uri.parse(page.getPageUrl());
+        CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+        builder.addDefaultShareMenuItem();
+        // set toolbar color and/or setting custom actions before invoking build()
+        CustomTabsIntent customTabsIntent = builder.build();
+        if (page.isUpdated()) {
+            updatedStatusTextView.setText(R.string.not_updated);
+            page.setUpdated(false);
+            PagesHolder.getInstance().removeFromUpdatedPages(page);
+        }
+        customTabsIntent.launchUrl(context,pageUri);
     }
 }

@@ -21,6 +21,7 @@ import com.example.jose.updated.controller.UpdateBroadcastReceiver;
 import com.example.jose.updated.controller.UpdateRefresher;
 import com.example.jose.updated.model.Page;
 import com.example.jose.updated.model.PagesHolder;
+import com.example.jose.updated.model.UpdatedConstants;
 
 import java.util.Date;
 import java.util.List;
@@ -39,7 +40,6 @@ public class MainActivity extends BaseActivity implements UpdateBroadcastReceive
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         if(savedInstanceState == null){
-            Log.d("MAIN ACTIVITY ON CREATE","ON CREATE HAPPENED");
             LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
             updateBroadcastReceiver = new UpdateBroadcastReceiver(this);
             fragmentManager = getFragmentManager();
@@ -75,7 +75,7 @@ public class MainActivity extends BaseActivity implements UpdateBroadcastReceive
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         adapter = new PageAdapter();
-        recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 15, true));
+//        recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 15, true));
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(layoutManager);
     }
@@ -110,6 +110,12 @@ public class MainActivity extends BaseActivity implements UpdateBroadcastReceive
         adidas.setIsActive(true);
         nike.setIsActive(true);
         espn.setIsActive(true);
+        twitter.setUpdateFrequency(UpdatedConstants.DEFAULT_UPDATE_FREQUENCY);
+        Log.d("FREQUEN",UpdatedConstants.DEFAULT_UPDATE_FREQUENCY +"");
+        inward.setUpdateFrequency(UpdatedConstants.DEFAULT_UPDATE_FREQUENCY);
+        adidas.setUpdateFrequency(UpdatedConstants.DEFAULT_UPDATE_FREQUENCY);
+        nike.setUpdateFrequency(UpdatedConstants.DEFAULT_UPDATE_FREQUENCY);
+        espn.setUpdateFrequency(UpdatedConstants.DEFAULT_UPDATE_FREQUENCY);
         pagesToTrack.add(twitter);
         pagesToTrack.add(nike);
         pagesToTrack.add(espn);
@@ -121,11 +127,5 @@ public class MainActivity extends BaseActivity implements UpdateBroadcastReceive
     public void onUpdateDetected() {
         adapter.notifyDataSetChanged();
     }
-
-    //    @Override
-//    protected void onDestroy() {
-//        preferences.edit().putBoolean("main_activity_created",false).apply();
-//        super.onStop();
-//    }
 }
 
