@@ -7,7 +7,8 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import com.example.jose.updated.R;
 
 import static com.example.jose.updated.model.UpdatedConstants.DEFAULT_NOTIFICATIONS_ACTIVE;
@@ -23,6 +24,8 @@ public class SettingsFragment extends Fragment {
     private long updateFrequency;
     private boolean stopNotifications;
     private SharedPreferences preferences;
+    private Spinner spinner;
+    ArrayAdapter adapter;
     public SettingsFragment(){
     }
     @Override
@@ -31,6 +34,8 @@ public class SettingsFragment extends Fragment {
         preferences = getContext().getSharedPreferences(PREFS_NAME,0);
         updateFrequency = preferences.getLong("update_frequency", DEFAULT_UPDATE_FREQUENCY);
         stopNotifications = preferences.getBoolean("stop_notifications",DEFAULT_NOTIFICATIONS_ACTIVE);
+        adapter = ArrayAdapter.createFromResource(getContext(),R.array.frequency_spinner_array,android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
     }
 
     @Nullable
@@ -41,6 +46,7 @@ public class SettingsFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        spinner = (Spinner) view.findViewById(R.id.frequency_spinner);
         super.onViewCreated(view, savedInstanceState);
     }
 }

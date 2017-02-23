@@ -68,6 +68,7 @@ public class AddPageDialogFragment extends DialogFragment {
                 }
             }
         });
+
         return view;
     }
 

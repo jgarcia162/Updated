@@ -26,6 +26,9 @@ import com.example.jose.updated.model.UpdatedConstants;
 import java.util.Date;
 import java.util.List;
 
+//TODO set limit to edit text for email message
+//TODO add icons for contact, twitter, IG, email
+//TODO animate recyclerview
 public class MainActivity extends BaseActivity implements UpdateBroadcastReceiver.UpdatedCallback {
     private FragmentManager fragmentManager;
     public static PageAdapter adapter;
@@ -74,8 +77,8 @@ public class MainActivity extends BaseActivity implements UpdateBroadcastReceive
     private void setupRecyclerView() {
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-        adapter = new PageAdapter();
-//        recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 15, true));
+        adapter = new PageAdapter(getBaseContext());
+        recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 15, true));
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(layoutManager);
     }

@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Updated</string>
-    <string name="track_page">Track This Page</string>
+    <string name="track_page">Track</string>
     <string name="add_page">Track a new page</string>
     <string name="enter_url_here">Enter URL Here</string>
     <string name="open_in_browser_button_text">Open In Browser</string>
@@ -8,11 +8,11 @@
     <string name="details_url_tv_text">URL: %1$s</string>
     <string name="details_copy_url_button_text">Copy URL</string>
     <string name="details_notes_title_text">Notes</string>
-    <string name="page_updated">UPDATED</string>
+    <string name="page_updated">Updated</string>
     <string name="chooser_title">Open this page with:</string>
     <string name="enter_title_here">Enter Title Here</string>
-    <string name="preview_page">PAGE PREVIEW</string>
-    <string name="not_updated">NOT UPDATED</string>
+    <string name="preview_page">Preview</string>
+    <string name="not_updated">Not Updated</string>
     <string name="notification_title">Updated Pages</string>
     <string name="save_page_settings_text">Save Page Settings</string>
     <string name="enter_url_toast">Please enter a URL!</string>
@@ -21,18 +21,21 @@
     <string name="settings_menu_text">Settings</string>
     <string name="about_menu_text">About</string>
     <string name="logout_menu_text">Log Out</string>
-    <string name="about_text">THIS PAGE IS ABOUT STUFF</string>
     <string name="contact_menu_text">Contact</string>
     <string name="invalid_url_string">Not a valid URL!</string>
     <string name="untitled_page_string">Untitled</string>
     <string name="added_page_string">" Added"</string>
-    <string name="settings_title_text">SETTINGS</string>
+    <string name="settings_title_text">Settings</string>
     <string name="update_frequency_title">Update Frequency</string>
     <string name="notifications_settings_title">Notifications</string>
     <string name="details_update_frequency_text">Update Frequency %1$s</string>
     <string name="settings_icon">Settings Icon</string>
     <string name="page_favicon">Page Favicon</string>
     <string name="delete_page_button">Delete Page</string>
+    <string name="contact_setting_title">Contact</string>
+    <string name="send_message_button_text">Send</string>
+    <string name="about_title_text">About</string>
+    <string name="version_number">Version: 1.0</string>
     <string-array name="frequency_spinner_array">
         <item>Hours</item>
         <item>Minutes</item>
