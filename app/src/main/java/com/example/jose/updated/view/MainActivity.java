@@ -26,8 +26,7 @@ import com.example.jose.updated.model.UpdatedConstants;
 import java.util.Date;
 import java.util.List;
 
-//TODO set limit to edit text for email message
-//TODO add icons for contact, twitter, IG, email
+//TODO add icons for contact, twitter, IG, github
 //TODO animate recyclerview
 public class MainActivity extends BaseActivity implements UpdateBroadcastReceiver.UpdatedCallback {
     private FragmentManager fragmentManager;
