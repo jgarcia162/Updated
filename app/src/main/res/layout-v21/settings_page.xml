@@ -34,12 +34,11 @@
             android:id="@+id/frequency_spinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
             android:layout_marginStart="10dp"
             android:layout_alignBottom="@id/update_frequency_title"
             android:layout_toEndOf="@id/update_frequency_title"
-            android:layout_toRightOf="@id/update_frequency_title"
             android:popupBackground="@color/colorPrimaryDark"
+            android:popupElevation="10dp"
             android:background="@color/colorPrimaryDark"/>
         <TextView
             android:id="@+id/settings_update_units_tv"
@@ -49,7 +48,6 @@
             android:layout_height="wrap_content"
             android:layout_alignBottom="@id/update_frequency_title"
             android:layout_toEndOf="@id/frequency_spinner"
-            android:layout_toRightOf="@id/frequency_spinner"
             android:text="@string/settings_update_units"
             android:textSize="16sp"/>
 
@@ -73,7 +71,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
             android:layout_alignEnd="@id/frequency_spinner"
-            android:layout_alignRight="@id/frequency_spinner"
             android:layout_below="@id/frequency_spinner" />
     </RelativeLayout>
 

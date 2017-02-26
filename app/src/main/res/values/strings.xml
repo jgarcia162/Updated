@@ -26,7 +26,7 @@
     <string name="untitled_page_string">Untitled</string>
     <string name="added_page_string">" Added"</string>
     <string name="settings_title_text">Settings</string>
-    <string name="update_frequency_title">Update Frequency</string>
+    <string name="update_frequency_title">Check for updates every </string>
     <string name="notifications_settings_title">Notifications</string>
     <string name="details_update_frequency_text">Update Frequency %1$s</string>
     <string name="settings_icon">Settings Icon</string>
@@ -35,9 +35,11 @@
     <string name="contact_setting_title">Contact</string>
     <string name="send_message_button_text">Send</string>
     <string name="about_title_text">About</string>
-    <string name="version_number">Version: 1.0</string>
+    <string name="version_number">Version 1.0</string>
+    <string name="email_et_hint">Send Us A Message</string>
+    <string name="settings_update_units">Hours</string>
     <string-array name="frequency_spinner_array">
-        <item>Hours</item>
-        <item>Minutes</item>
+        <item>24</item>
+        <item>48</item>
     </string-array>
 </resources>
