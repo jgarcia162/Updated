@@ -10,7 +10,6 @@ import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.util.Log;
 import android.view.View;
 
 import com.example.jose.updated.R;
@@ -21,10 +20,11 @@ import com.example.jose.updated.controller.UpdateBroadcastReceiver;
 import com.example.jose.updated.controller.UpdateRefresher;
 import com.example.jose.updated.model.Page;
 import com.example.jose.updated.model.PagesHolder;
-import com.example.jose.updated.model.UpdatedConstants;
 
 import java.util.Date;
 import java.util.List;
+
+import static com.example.jose.updated.model.UpdatedConstants.DEFAULT_UPDATE_FREQUENCY;
 
 //TODO add icons for contact, twitter, IG, github
 //TODO animate recyclerview
@@ -102,25 +102,16 @@ public class MainActivity extends BaseActivity implements UpdateBroadcastReceive
         Page twitter = new Page("Twitter", "https://twitter.com/AyoJoanks", new Date().getTime());
         Page inward = new Page("Inward", "https://inwardmovement.wordpress.com", new Date().getTime());
         Page adidas = new Page("Adidas", "https://www.adidas.com", new Date().getTime());
-        Page nike = new Page("Nike", "https://www.nike.com/us/en_us/", new Date().getTime());
-        Page espn = new Page("ESPN", "https://www.espn.com", new Date().getTime());
 
         //for testing
         pagesToTrack.clear();
         twitter.setIsActive(true);
         inward.setIsActive(true);
         adidas.setIsActive(true);
-        nike.setIsActive(true);
-        espn.setIsActive(true);
-        twitter.setUpdateFrequency(UpdatedConstants.DEFAULT_UPDATE_FREQUENCY);
-        Log.d("FREQUEN",UpdatedConstants.DEFAULT_UPDATE_FREQUENCY +"");
-        inward.setUpdateFrequency(UpdatedConstants.DEFAULT_UPDATE_FREQUENCY);
-        adidas.setUpdateFrequency(UpdatedConstants.DEFAULT_UPDATE_FREQUENCY);
-        nike.setUpdateFrequency(UpdatedConstants.DEFAULT_UPDATE_FREQUENCY);
-        espn.setUpdateFrequency(UpdatedConstants.DEFAULT_UPDATE_FREQUENCY);
+        twitter.setUpdateFrequency(DEFAULT_UPDATE_FREQUENCY);
+        inward.setUpdateFrequency(DEFAULT_UPDATE_FREQUENCY);
+        adidas.setUpdateFrequency(DEFAULT_UPDATE_FREQUENCY);
         pagesToTrack.add(twitter);
-        pagesToTrack.add(nike);
-        pagesToTrack.add(espn);
         pagesToTrack.add(adidas);
         pagesToTrack.add(inward);
     }

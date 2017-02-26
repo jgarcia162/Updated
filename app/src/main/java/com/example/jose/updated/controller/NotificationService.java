@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Parcelable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -18,14 +19,22 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static com.example.jose.updated.model.UpdatedConstants.DEFAULT_NOTIFICATIONS_ACTIVE;
+import static com.example.jose.updated.model.UpdatedConstants.DEFAULT_UPDATE_FREQUENCY;
+import static com.example.jose.updated.model.UpdatedConstants.PREFS_NAME;
+import static com.example.jose.updated.model.UpdatedConstants.STOP_NOTIFICATION_PREFERENCE_TAG;
+import static com.example.jose.updated.model.UpdatedConstants.UPDATE_FREQUENCY_PREFERENCE_TAG;
+
 public class NotificationService extends IntentService {
     private boolean started = false;
     private Timer updateTimer;
     private TimerTask updateTimerTask;
     private NotificationManager notificationManager;
     public static final int NOTIFICATION_ID = 1;
+    private long timerLength;
     private PagesHolder pagesHolder;
     private LocalBroadcastManager localBroadcastManager;
+    private SharedPreferences preferences;
 
 
     /**
@@ -47,6 +56,8 @@ public class NotificationService extends IntentService {
     public int onStartCommand(Intent intent, int flags, int startId) {
         pagesHolder = PagesHolder.getInstance();
         localBroadcastManager = LocalBroadcastManager.getInstance(this);
+        preferences = getSharedPreferences(PREFS_NAME,MODE_PRIVATE);
+        timerLength = preferences.getLong(UPDATE_FREQUENCY_PREFERENCE_TAG,DEFAULT_UPDATE_FREQUENCY);
         notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         return super.onStartCommand(intent, flags, startId);
     }
@@ -78,7 +89,9 @@ public class NotificationService extends IntentService {
     public void refresh() throws Exception {
         UpdateRefresher.refreshUpdate();
         if (pagesHolder.getSizeOfUpdatedPages() > 0) {
-            createNotification(getNamesOfUpdatedPages(pagesHolder.getUpdatedPages()));
+            if(preferences.getBoolean(STOP_NOTIFICATION_PREFERENCE_TAG,DEFAULT_NOTIFICATIONS_ACTIVE)){
+                createNotification(getNamesOfUpdatedPages(pagesHolder.getUpdatedPages()));
+            }
             Intent broadcastIntent = new Intent();
             broadcastIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             broadcastIntent.putParcelableArrayListExtra("updated pages", (ArrayList<? extends Parcelable>) pagesHolder.getUpdatedPages());
