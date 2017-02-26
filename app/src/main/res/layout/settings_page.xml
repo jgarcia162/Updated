@@ -49,6 +49,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@id/update_frequency_title"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
             android:layout_toEndOf="@id/frequency_spinner"
             android:layout_toRightOf="@id/frequency_spinner"
             android:text="@string/settings_update_units"
@@ -101,27 +103,27 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_margin="10dp"
-            android:src="@drawable/updated_logo" />
+            android:src="@drawable/twitter_icon" />
 
         <ImageView
             android:id="@+id/instagram_icon"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_margin="10dp"
-            android:src="@drawable/updated_logo" />
+            android:src="@drawable/ig_icon" />
 
         <ImageView
             android:id="@+id/github_icon"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_margin="10dp"
-            android:src="@drawable/updated_logo" />
+            android:src="@drawable/github_icon" />
         <ImageView
             android:id="@+id/email_icon"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_margin="10dp"
-            android:src="@drawable/updated_logo" />
+            android:src="@drawable/email_icon" />
     </LinearLayout>
 
     <Button

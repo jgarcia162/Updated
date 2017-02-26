@@ -38,7 +38,7 @@
     <string name="about_title_text">About</string>
     <string name="version_number">Version 1.0</string>
     <string name="email_et_hint">Send Us A Message</string>
-    <string name="settings_update_units">Hours</string>
+    <string name="settings_update_units">hours</string>
     <string name="twitter_settings_icon_description">Twitter Settings Icon</string>
     <string name="ig_settings_icon_description">IG Settings Icond Description</string>
     <string name="github_icon_description">GitHub Icon</string>

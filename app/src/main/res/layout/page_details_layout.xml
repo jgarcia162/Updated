@@ -54,19 +54,12 @@
         android:layout_below="@id/details_timelastupdated_tv"
         android:text="@string/details_url_tv_text"
         style="@style/PageDetailsEditTextStyle"/>
-    <EditText
-        android:id="@+id/details_frequency_et"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/details_url_tv"
-        android:text="@string/details_update_frequency_text"
-        style="@style/PageDetailsEditTextStyle"/>
 
     <LinearLayout
         android:id="@+id/notes_title_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/details_frequency_et"
+        android:layout_below="@id/details_url_tv"
         android:layout_centerHorizontal="true"
         android:orientation="horizontal">
 

@@ -34,7 +34,6 @@ public class PageDetailsFragment extends Fragment {
     private TextView timeLastUpdatedTV;
     private EditText urlEditText;
     private EditText notesEditText;
-    private EditText frequencyEditText;
     private Button saveSettingsButton;
     private Button deleteButton;
     private Switch trackingSwitch;
@@ -71,7 +70,6 @@ public class PageDetailsFragment extends Fragment {
         pageTitle = (TextInputEditText) view.findViewById(R.id.details_page_title_tv);
         timeLastUpdatedTV = (TextView) view.findViewById(R.id.details_timelastupdated_tv);
         urlEditText = (EditText) view.findViewById(R.id.details_url_tv);
-        frequencyEditText = (EditText) view.findViewById(R.id.details_frequency_et);
         trackingSwitch = (Switch) view.findViewById(R.id.page_active_switch);
         saveSettingsButton = (Button) view.findViewById(R.id.details_settings_button);
         deleteButton = (Button) view.findViewById(R.id.delete_page_button);
@@ -126,9 +124,6 @@ public class PageDetailsFragment extends Fragment {
         pageTitle.setText(page.getTitle());
         timeLastUpdatedTV.setText(String.format(resources.getString(R.string.details_last_updated), page.getFormattedTimeOfLastUpdate()));
         urlEditText.setText(String.format(resources.getString(R.string.details_url_tv_text), page.getPageUrl()));
-        //TODO this doesn't display correct number
-        //TODO format to hours/minutes
-        frequencyEditText.setText(String.format(resources.getString(R.string.details_update_frequency_text),page.getUpdateFrequency()+""));
         notesEditText.setText(loadNotes());
     }
 

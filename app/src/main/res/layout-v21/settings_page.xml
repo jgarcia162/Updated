@@ -48,6 +48,7 @@
             android:layout_height="wrap_content"
             android:layout_alignBottom="@id/update_frequency_title"
             android:layout_toEndOf="@id/frequency_spinner"
+            android:layout_marginStart="10dp"
             android:text="@string/settings_update_units"
             android:textSize="16sp"/>
 
@@ -97,7 +98,7 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_margin="10dp"
-            android:src="@drawable/updated_logo"
+            android:src="@drawable/twitter_icon"
             android:contentDescription="@string/twitter_settings_icon_description" />
 
         <ImageView
@@ -105,7 +106,7 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_margin="10dp"
-            android:src="@drawable/updated_logo"
+            android:src="@drawable/ig_icon"
             android:contentDescription="@string/ig_settings_icon_description" />
 
         <ImageView
@@ -113,14 +114,14 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_margin="10dp"
-            android:src="@drawable/updated_logo"
+            android:src="@drawable/github_icon"
             android:contentDescription="@string/github_icon_description" />
         <ImageView
             android:id="@+id/email_icon"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_margin="10dp"
-            android:src="@drawable/updated_logo"
+            android:src="@drawable/email_icon"
             android:contentDescription="@string/email_icon_description" />
     </LinearLayout>
 
