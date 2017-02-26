@@ -15,6 +15,7 @@
     <string name="not_updated">Not Updated</string>
     <string name="notification_title">Updated Pages</string>
     <string name="save_page_settings_text">Save Page Settings</string>
+    <string name="save_settings_text">Save Settings</string>
     <string name="enter_url_toast">Please enter a URL!</string>
     <string name="added_url_toast">" Added"</string>
     <string name="page_active_tv">Tracking</string>
@@ -38,6 +39,10 @@
     <string name="version_number">Version 1.0</string>
     <string name="email_et_hint">Send Us A Message</string>
     <string name="settings_update_units">Hours</string>
+    <string name="twitter_settings_icon_description">Twitter Settings Icon</string>
+    <string name="ig_settings_icon_description">IG Settings Icond Description</string>
+    <string name="github_icon_description">GitHub Icon</string>
+    <string name="email_icon_description">Email Icon</string>
     <string-array name="frequency_spinner_array">
         <item>24</item>
         <item>48</item>

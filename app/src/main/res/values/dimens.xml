@@ -5,4 +5,8 @@
     <dimen name="dialog_fragment_width">350dp</dimen>
     <dimen name="dialog_fragment_height">450dp</dimen>
     <dimen name="frequency_et_left_margin">20dp</dimen>
+    <dimen name="top_half_paddingtop">20dp</dimen>
+    <dimen name="settings_title_tv_text_size">25sp</dimen>
+    <dimen name="settings_title_marginTop">30dp</dimen>
+    <dimen name="settings_frequency_title_textsize">16sp</dimen>
 </resources>

@@ -3,7 +3,6 @@ package com.example.jose.updated.view;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,8 +26,6 @@ public class SettingsFragment extends Fragment {
     private boolean stopNotifications;
     private SharedPreferences preferences;
     private Spinner spinner;
-    private TextInputEditText frequencyET;
-    private TextInputEditText emailMessageET;
     ArrayAdapter adapter;
     public SettingsFragment(){
     }
@@ -51,7 +48,6 @@ public class SettingsFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         spinner = (Spinner) view.findViewById(R.id.frequency_spinner);
-        emailMessageET = (TextInputEditText) view.findViewById(R.id.message_et);
         spinner.setAdapter(adapter);
         super.onViewCreated(view, savedInstanceState);
     }
