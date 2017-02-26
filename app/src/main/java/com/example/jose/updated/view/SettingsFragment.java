@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.Spinner;
 
 import com.example.jose.updated.R;
@@ -26,6 +27,10 @@ public class SettingsFragment extends Fragment {
     private boolean stopNotifications;
     private SharedPreferences preferences;
     private Spinner spinner;
+    private ImageView twitterIV;
+    private ImageView instagramIV;
+    private ImageView githubIV;
+    private ImageView emailIV;
     ArrayAdapter adapter;
     public SettingsFragment(){
     }
@@ -49,6 +54,10 @@ public class SettingsFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         spinner = (Spinner) view.findViewById(R.id.frequency_spinner);
         spinner.setAdapter(adapter);
+        twitterIV = (ImageView) view.findViewById(R.id.twitter_icon);
+        instagramIV = (ImageView) view.findViewById(R.id.instagram_icon);
+        githubIV = (ImageView) view.findViewById(R.id.github_icon);
+        emailIV = (ImageView) view.findViewById(R.id.email_icon);
         super.onViewCreated(view, savedInstanceState);
     }
 }
