@@ -11,7 +11,7 @@ import android.support.v4.content.LocalBroadcastManager;
 
 import com.example.jose.updated.R;
 import com.example.jose.updated.model.Page;
-import com.example.jose.updated.model.PagesHolder;
+import com.example.jose.updated.model.RealmDatabaseHelper;
 import com.example.jose.updated.view.MainActivity;
 
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ public class NotificationService extends IntentService {
     private NotificationManager notificationManager;
     public static final int NOTIFICATION_ID = 1;
     private long timerLength;
-    private PagesHolder pagesHolder;
+    private RealmDatabaseHelper realmDatabaseHelper;
     private LocalBroadcastManager localBroadcastManager;
     private SharedPreferences preferences;
 
@@ -54,7 +54,7 @@ public class NotificationService extends IntentService {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        pagesHolder = PagesHolder.getInstance();
+        realmDatabaseHelper = RealmDatabaseHelper.getInstance();
         localBroadcastManager = LocalBroadcastManager.getInstance(this);
         preferences = getSharedPreferences(PREFS_NAME,MODE_PRIVATE);
         timerLength = preferences.getLong(UPDATE_FREQUENCY_PREFERENCE_TAG,DEFAULT_UPDATE_FREQUENCY);
@@ -89,14 +89,14 @@ public class NotificationService extends IntentService {
 
     public void refresh() throws Exception {
         UpdateRefresher.refreshUpdate();
-        if (pagesHolder.getSizeOfUpdatedPages() > 0) {
+        if (realmDatabaseHelper.getSizeOfUpdatedPages() > 0) {
             if(preferences.getBoolean(STOP_NOTIFICATION_PREFERENCE_TAG,DEFAULT_NOTIFICATIONS_ACTIVE)){
-                createNotification(getNamesOfUpdatedPages(pagesHolder.getUpdatedPages()));
+                createNotification(getNamesOfUpdatedPages(realmDatabaseHelper.getUpdatedPages()));
             }
             Intent broadcastIntent = new Intent();
             broadcastIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             List<Page> pagesForBroadcast = new ArrayList<>();
-            for (Page page: pagesHolder.getUpdatedPages()) {
+            for (Page page: realmDatabaseHelper.getUpdatedPages()) {
                 pagesForBroadcast.add(page);
             }
             broadcastIntent.putParcelableArrayListExtra("updated pages", (ArrayList<? extends Parcelable>) pagesForBroadcast);

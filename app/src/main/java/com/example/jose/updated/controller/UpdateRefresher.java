@@ -1,18 +1,18 @@
 package com.example.jose.updated.controller;
 
 import com.example.jose.updated.model.Page;
-import com.example.jose.updated.model.PagesHolder;
+import com.example.jose.updated.model.RealmDatabaseHelper;
 
 
 public class UpdateRefresher {
-    private static PagesHolder pagesHolder = PagesHolder.getInstance();
+    private static RealmDatabaseHelper realmDatabaseHelper = RealmDatabaseHelper.getInstance();
 
     public static void refreshUpdate() throws Exception {
-        for (Page page : pagesHolder.getPagesToTrack()) {
+        for (Page page : realmDatabaseHelper.getPagesToTrack()) {
             if (!page.isUpdated()) {
                 if (isPageUpdated(page)) {
                     page.setUpdated(true);
-                    pagesHolder.addToUpdatedPages(page);
+                    realmDatabaseHelper.addToUpdatedPages(page);
                 }
             }
         }
@@ -21,7 +21,7 @@ public class UpdateRefresher {
     private static boolean isPageUpdated(Page page) throws Exception {
         if (page.isActive()) {
             String htmlToCheck = downloadHtml(page);
-            return htmlToCheck.equals(pagesHolder.getPageHtmlMap().get(page.getPageUrl()));
+            return htmlToCheck.equals(realmDatabaseHelper.getPageHtmlMap().get(page.getPageUrl()));
         }
         return false;
     }

@@ -18,7 +18,7 @@ import android.widget.TextView;
 
 import com.example.jose.updated.R;
 import com.example.jose.updated.model.Page;
-import com.example.jose.updated.model.PagesHolder;
+import com.example.jose.updated.model.RealmDatabaseHelper;
 
 public class PageViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener{
 
@@ -61,7 +61,7 @@ public class PageViewHolder extends RecyclerView.ViewHolder implements View.OnCl
             page.setBitmapIcon(bitmap);
         }
 
-        if (PagesHolder.getInstance().getUpdatedPages().contains(page)) {
+        if (RealmDatabaseHelper.getInstance().getUpdatedPages().contains(page)) {
             updatedStatusTextView.setText(R.string.page_updated);
             page.setUpdated(true);
         } else {
@@ -101,7 +101,7 @@ public class PageViewHolder extends RecyclerView.ViewHolder implements View.OnCl
     @Override
     public boolean onLongClick(View v) {
         //TODO add long click editable
-        PagesHolder.getInstance().removeFromPagesToTrack(page);
+        RealmDatabaseHelper.getInstance().removeFromPagesToTrack(page);
         return true;
     }
 
@@ -114,7 +114,7 @@ public class PageViewHolder extends RecyclerView.ViewHolder implements View.OnCl
         if (page.isUpdated()) {
             updatedStatusTextView.setText(R.string.not_updated);
             page.setUpdated(false);
-            PagesHolder.getInstance().removeFromUpdatedPages(page);
+            RealmDatabaseHelper.getInstance().removeFromUpdatedPages(page);
         }
         customTabsIntent.launchUrl(context,pageUri);
     }

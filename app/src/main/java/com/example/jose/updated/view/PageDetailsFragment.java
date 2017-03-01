@@ -20,7 +20,7 @@ import android.widget.Toast;
 
 import com.example.jose.updated.R;
 import com.example.jose.updated.model.Page;
-import com.example.jose.updated.model.PagesHolder;
+import com.example.jose.updated.model.RealmDatabaseHelper;
 
 import static com.example.jose.updated.model.UpdatedConstants.DEFAULT_NOTES;
 import static com.example.jose.updated.model.UpdatedConstants.IS_ACTIVE_TAG;
@@ -42,7 +42,7 @@ public class PageDetailsFragment extends Fragment {
     private Page page;
     private Bundle bundle;
     private SharedPreferences preferences;
-    private PagesHolder pagesHolder = PagesHolder.getInstance();
+    private RealmDatabaseHelper realmDatabaseHelper = RealmDatabaseHelper.getInstance();
 
     public PageDetailsFragment() {
 
@@ -111,9 +111,9 @@ public class PageDetailsFragment extends Fragment {
                 trackingSwitch.setChecked(page.isActive());
                 preferences.edit().putBoolean(page.getTitle() + IS_ACTIVE_TAG, page.isActive()).apply();
                 if (page.isActive()) {
-                    pagesHolder.addToPagesToTrack(page);
+                    realmDatabaseHelper.addToPagesToTrack(page);
                 } else {
-                    pagesHolder.removeFromPagesToTrack(page);
+                    realmDatabaseHelper.removeFromPagesToTrack(page);
                 }
                 //update this page in db
             }
@@ -142,18 +142,18 @@ public class PageDetailsFragment extends Fragment {
 
     //TODO implement delete
     public void deletePage(){
-        Toast.makeText(getContext(), "TRACKED DELETE " + pagesHolder.getPagesToTrack().size(), Toast.LENGTH_SHORT).show();
-        Toast.makeText(getContext(), "UPDATED DELETE " + pagesHolder.getUpdatedPages().size(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "TRACKED DELETE " + realmDatabaseHelper.getPagesToTrack().size(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "UPDATED DELETE " + realmDatabaseHelper.getUpdatedPages().size(), Toast.LENGTH_SHORT).show();
 
         //TODO not removing page ???
         if(page.isUpdated()){
-            pagesHolder.removeFromUpdatedPages(page);
+            realmDatabaseHelper.removeFromUpdatedPages(page);
         }
 
-        pagesHolder.removeFromPagesToTrack(page);
+        realmDatabaseHelper.removeFromPagesToTrack(page);
         MainActivity.adapter.notifyDataSetChanged();
-        Toast.makeText(getContext(), "TRACKED AFTER DELETE "+pagesHolder.getSizeOfPagesToTrack(), Toast.LENGTH_SHORT).show();
-        Toast.makeText(getContext(), "UPDATED PAGES AFTER DELETE "+pagesHolder.getSizeOfUpdatedPages(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "TRACKED AFTER DELETE "+ realmDatabaseHelper.getSizeOfPagesToTrack(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "UPDATED PAGES AFTER DELETE "+ realmDatabaseHelper.getSizeOfUpdatedPages(), Toast.LENGTH_SHORT).show();
         getActivity().onBackPressed();
 
     }

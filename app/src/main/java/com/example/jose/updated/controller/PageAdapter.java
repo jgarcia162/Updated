@@ -10,7 +10,7 @@ import android.view.animation.AnimationUtils;
 
 import com.example.jose.updated.R;
 import com.example.jose.updated.model.Page;
-import com.example.jose.updated.model.PagesHolder;
+import com.example.jose.updated.model.RealmDatabaseHelper;
 import com.example.jose.updated.view.PageViewHolder;
 
 import java.util.List;
@@ -21,8 +21,8 @@ public class PageAdapter extends RecyclerView.Adapter<PageViewHolder>{
     private Context context;
 
     public PageAdapter(Context context){
-        PagesHolder pagesHolder = PagesHolder.getInstance();
-        listOfPages = pagesHolder.getPagesToTrack();
+        RealmDatabaseHelper realmDatabaseHelper = RealmDatabaseHelper.getInstance();
+        listOfPages = realmDatabaseHelper.getPagesToTrack();
         this.context = context;
         lastPosition = -1;
 

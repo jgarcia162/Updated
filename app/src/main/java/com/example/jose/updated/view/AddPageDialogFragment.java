@@ -17,7 +17,7 @@ import android.widget.Toast;
 import com.example.jose.updated.R;
 import com.example.jose.updated.controller.UpdateRefresher;
 import com.example.jose.updated.model.Page;
-import com.example.jose.updated.model.PagesHolder;
+import com.example.jose.updated.model.RealmDatabaseHelper;
 
 import java.util.Date;
 
@@ -27,7 +27,7 @@ public class AddPageDialogFragment extends DialogFragment {
     private WebView pagePreviewWebView;
     private TextInputEditText urlInputEditText, titleInputEditText;
     private Page newPage;
-    private PagesHolder pagesHolder;
+    private RealmDatabaseHelper realmDatabaseHelper;
     private String urlText;
     private String titleText;
 
@@ -38,7 +38,7 @@ public class AddPageDialogFragment extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        pagesHolder = PagesHolder.getInstance();
+        realmDatabaseHelper = RealmDatabaseHelper.getInstance();
     }
 
     @Nullable
@@ -94,11 +94,11 @@ public class AddPageDialogFragment extends DialogFragment {
                 titleInputEditText.setText("");
                 urlInputEditText.setText("");
                 newPage.setContents(UpdateRefresher.downloadHtml(newPage));
-                pagesHolder.addPageHtmlToMap(newPage);
+                realmDatabaseHelper.addPageHtmlToMap(newPage);
                 newPage.setTimeOfLastUpdateInMilliSec(new Date().getTime());
                 newPage.setIsActive(true);
-                pagesHolder.addToPagesToTrack(newPage);
-                if (!pagesHolder.getPageHtmlMap().containsKey(newPage.getPageUrl())) {
+                realmDatabaseHelper.addToPagesToTrack(newPage);
+                if (!realmDatabaseHelper.getPageHtmlMap().containsKey(newPage.getPageUrl())) {
                     Toast.makeText(getActivity(), R.string.page_already_added_text, Toast.LENGTH_SHORT).show();
                 } else {
 
@@ -118,11 +118,11 @@ public class AddPageDialogFragment extends DialogFragment {
                 return;
             }
             newPage.setContents(UpdateRefresher.downloadHtml(newPage));
-            pagesHolder.addPageHtmlToMap(newPage);
+            realmDatabaseHelper.addPageHtmlToMap(newPage);
             newPage.setTimeOfLastUpdateInMilliSec(new Date().getTime());
             newPage.setIsActive(true);
-            pagesHolder.addToPagesToTrack(newPage);
-            if (!pagesHolder.getPageHtmlMap().containsKey(newPage.getPageUrl())) {
+            realmDatabaseHelper.addToPagesToTrack(newPage);
+            if (!realmDatabaseHelper.getPageHtmlMap().containsKey(newPage.getPageUrl())) {
                 Toast.makeText(getActivity(), R.string.page_already_added_text, Toast.LENGTH_SHORT).show();
             }
             //add to db

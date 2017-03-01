@@ -22,7 +22,7 @@ import com.example.jose.updated.controller.PageAdapter;
 import com.example.jose.updated.controller.UpdateBroadcastReceiver;
 import com.example.jose.updated.controller.UpdateRefresher;
 import com.example.jose.updated.model.Page;
-import com.example.jose.updated.model.PagesHolder;
+import com.example.jose.updated.model.RealmDatabaseHelper;
 
 import java.util.Date;
 
@@ -33,7 +33,7 @@ public class MainActivity extends BaseActivity implements UpdateBroadcastReceive
     @SuppressLint("StaticFieldLeak")
     public static PageAdapter adapter;
     private AddPageDialogFragment addPageDialogFragment;
-    private PagesHolder pagesHolder = PagesHolder.getInstance();
+    private RealmDatabaseHelper realmDatabaseHelper = RealmDatabaseHelper.getInstance();
     private SharedPreferences preferences;
     private SwipeRefreshLayout swipeRefreshLayout;
     public static UpdateBroadcastReceiver updateBroadcastReceiver;
@@ -45,7 +45,7 @@ public class MainActivity extends BaseActivity implements UpdateBroadcastReceive
             LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
             updateBroadcastReceiver = new UpdateBroadcastReceiver(this);
             fragmentManager = getFragmentManager();
-            pagesHolder = PagesHolder.getInstance();
+            realmDatabaseHelper = RealmDatabaseHelper.getInstance();
             swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
             swipeRefreshLayout.setOnRefreshListener(this);
             setupRecyclerView();
@@ -53,7 +53,7 @@ public class MainActivity extends BaseActivity implements UpdateBroadcastReceive
             localBroadcastManager.registerReceiver(updateBroadcastReceiver, new IntentFilter("com.example.jose.updated.controller.CUSTOM_INTENT"));
             createTestData();
             downloadTestData();
-            pagesHolder.initializeMap();
+            realmDatabaseHelper.initializeMap();
             Intent serviceIntent = new Intent(getBaseContext(), NotificationService.class);
             startService(serviceIntent);
 
@@ -61,13 +61,13 @@ public class MainActivity extends BaseActivity implements UpdateBroadcastReceive
     }
 
     private void downloadTestData() {
-        for (Page page : pagesHolder.getPagesToTrack()) {
+        for (Page page : realmDatabaseHelper.getPagesToTrack()) {
             try {
                 UpdateRefresher.downloadHtml(page);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            pagesHolder.addPageHtmlToMap(page);
+            realmDatabaseHelper.addPageHtmlToMap(page);
         }
         adapter.notifyDataSetChanged();
     }
@@ -109,9 +109,9 @@ public class MainActivity extends BaseActivity implements UpdateBroadcastReceive
         twitter.setUpdateFrequency(DEFAULT_UPDATE_FREQUENCY);
         inward.setUpdateFrequency(DEFAULT_UPDATE_FREQUENCY);
         adidas.setUpdateFrequency(DEFAULT_UPDATE_FREQUENCY);
-        pagesHolder.addToPagesToTrack((twitter));
-        pagesHolder.addToPagesToTrack(adidas);
-        pagesHolder.addToPagesToTrack(inward);
+        realmDatabaseHelper.addToPagesToTrack((twitter));
+        realmDatabaseHelper.addToPagesToTrack(adidas);
+        realmDatabaseHelper.addToPagesToTrack(inward);
     }
 
     @Override
@@ -136,9 +136,9 @@ public class MainActivity extends BaseActivity implements UpdateBroadcastReceive
     }
 
     public void deleteButtonPressed(View view){
-        Toast.makeText(getApplicationContext(), ""+pagesHolder.getSizeOfPagesToTrack(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), ""+ realmDatabaseHelper.getSizeOfPagesToTrack(), Toast.LENGTH_SHORT).show();
         notifyAdapterDataSetChange(getApplicationContext());
-        Toast.makeText(getApplicationContext(), ""+pagesHolder.getSizeOfPagesToTrack(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), ""+ realmDatabaseHelper.getSizeOfPagesToTrack(), Toast.LENGTH_SHORT).show();
     }
 
 }

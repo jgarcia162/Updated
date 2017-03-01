@@ -7,12 +7,14 @@ import android.text.format.DateUtils;
 
 import io.realm.RealmObject;
 import io.realm.annotations.Ignore;
+import io.realm.annotations.PrimaryKey;
 
 
 public class Page extends RealmObject implements Parcelable{
 
     private String title;
     private String contents;
+    @PrimaryKey
     private String pageUrl;
     private String nickname;
     private String notes;
