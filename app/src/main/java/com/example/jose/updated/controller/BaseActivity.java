@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.ProgressBar;
 
 import com.example.jose.updated.R;
 import com.example.jose.updated.view.MainActivity;
@@ -17,10 +18,12 @@ import com.example.jose.updated.view.SecondActivity;
  * Created by Joe on 2/18/17.
  */
 
-public class BaseActivity extends AppCompatActivity {
+public abstract class BaseActivity extends AppCompatActivity {
+    private ProgressBar progressBar;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
     }
 
     @Override
@@ -36,6 +39,13 @@ public class BaseActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
+                break;
+            case R.id.refresh_menu:
+                try {
+                    UpdateRefresher.refreshUpdate();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 break;
             case R.id.settings_menu:
                 intent.putExtra("fragment_to_load", "Settings");

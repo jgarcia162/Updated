@@ -1,6 +1,7 @@
 package com.example.jose.updated.view;
 
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
@@ -41,7 +42,7 @@ public class PageDetailsFragment extends Fragment {
     private Page page;
     private Bundle bundle;
     private SharedPreferences preferences;
-    private PagesHolder pagesHolder;
+    private PagesHolder pagesHolder = PagesHolder.getInstance();
 
     public PageDetailsFragment() {
 
@@ -54,8 +55,7 @@ public class PageDetailsFragment extends Fragment {
             bundle = getArguments();
             page = bundle.getParcelable("page");
         }
-        preferences = getContext().getSharedPreferences(PREFS_NAME, 0);
-        pagesHolder = PagesHolder.getInstance();
+        preferences = getContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
     }
 
     @Override
@@ -142,13 +142,19 @@ public class PageDetailsFragment extends Fragment {
 
     //TODO implement delete
     public void deletePage(){
-        Toast.makeText(getContext(), "DELETE", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "TRACKED DELETE " + pagesHolder.getPagesToTrack().size(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "UPDATED DELETE " + pagesHolder.getUpdatedPages().size(), Toast.LENGTH_SHORT).show();
+
+        //TODO not removing page ???
         if(page.isUpdated()){
             pagesHolder.removeFromUpdatedPages(page);
         }
+
         pagesHolder.removeFromPagesToTrack(page);
+        MainActivity.adapter.notifyDataSetChanged();
+        Toast.makeText(getContext(), "TRACKED AFTER DELETE "+pagesHolder.getSizeOfPagesToTrack(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "UPDATED PAGES AFTER DELETE "+pagesHolder.getSizeOfUpdatedPages(), Toast.LENGTH_SHORT).show();
         getActivity().onBackPressed();
-        MainActivity.notifyAdapterDataSetChange(getContext());
 
     }
     

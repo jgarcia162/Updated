@@ -46,6 +46,8 @@
     <string name="email_icon_description">Email Icon</string>
     <string name="on_text">On</string>
     <string name="off_text">Off</string>
+    <string name="refresh_menu_text">Refresh</string>
+    <string name="page_already_added_text">Page already added!</string>
     <string-array name="frequency_spinner_array">
         <item>24</item>
         <item>48</item>

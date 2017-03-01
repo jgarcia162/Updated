@@ -1,5 +1,6 @@
 package com.example.jose.updated.view;
 
+import android.annotation.SuppressLint;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
@@ -8,9 +9,11 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.jose.updated.R;
 import com.example.jose.updated.controller.BaseActivity;
@@ -22,48 +25,43 @@ import com.example.jose.updated.model.Page;
 import com.example.jose.updated.model.PagesHolder;
 
 import java.util.Date;
-import java.util.List;
 
 import static com.example.jose.updated.model.UpdatedConstants.DEFAULT_UPDATE_FREQUENCY;
 
-//TODO add icons for contact, twitter, IG, github
-//TODO animate recyclerview
-public class MainActivity extends BaseActivity implements UpdateBroadcastReceiver.UpdatedCallback {
+public class MainActivity extends BaseActivity implements UpdateBroadcastReceiver.UpdatedCallback, SwipeRefreshLayout.OnRefreshListener{
     private FragmentManager fragmentManager;
+    @SuppressLint("StaticFieldLeak")
     public static PageAdapter adapter;
-    public static List<Page> pagesToTrack;
     private AddPageDialogFragment addPageDialogFragment;
     private PagesHolder pagesHolder = PagesHolder.getInstance();
     private SharedPreferences preferences;
+    private SwipeRefreshLayout swipeRefreshLayout;
     public static UpdateBroadcastReceiver updateBroadcastReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
         if(savedInstanceState == null){
             LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
             updateBroadcastReceiver = new UpdateBroadcastReceiver(this);
             fragmentManager = getFragmentManager();
             pagesHolder = PagesHolder.getInstance();
-            pagesToTrack = pagesHolder.getPagesToTrack();
+            swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
+            swipeRefreshLayout.setOnRefreshListener(this);
             setupRecyclerView();
             addPageDialogFragment = new AddPageDialogFragment();
             localBroadcastManager.registerReceiver(updateBroadcastReceiver, new IntentFilter("com.example.jose.updated.controller.CUSTOM_INTENT"));
             createTestData();
             downloadTestData();
+            pagesHolder.initializeMap();
             Intent serviceIntent = new Intent(getBaseContext(), NotificationService.class);
             startService(serviceIntent);
+
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
     private void downloadTestData() {
-        for (Page page : pagesToTrack) {
+        for (Page page : pagesHolder.getPagesToTrack()) {
             try {
                 UpdateRefresher.downloadHtml(page);
             } catch (Exception e) {
@@ -71,6 +69,7 @@ public class MainActivity extends BaseActivity implements UpdateBroadcastReceive
             }
             pagesHolder.addPageHtmlToMap(page);
         }
+        adapter.notifyDataSetChanged();
     }
 
     private void setupRecyclerView() {
@@ -104,21 +103,43 @@ public class MainActivity extends BaseActivity implements UpdateBroadcastReceive
         Page adidas = new Page("Adidas", "https://www.adidas.com", new Date().getTime());
 
         //for testing
-        pagesToTrack.clear();
         twitter.setIsActive(true);
         inward.setIsActive(true);
         adidas.setIsActive(true);
         twitter.setUpdateFrequency(DEFAULT_UPDATE_FREQUENCY);
         inward.setUpdateFrequency(DEFAULT_UPDATE_FREQUENCY);
         adidas.setUpdateFrequency(DEFAULT_UPDATE_FREQUENCY);
-        pagesToTrack.add(twitter);
-        pagesToTrack.add(adidas);
-        pagesToTrack.add(inward);
+        pagesHolder.addToPagesToTrack((twitter));
+        pagesHolder.addToPagesToTrack(adidas);
+        pagesHolder.addToPagesToTrack(inward);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        adapter.notifyDataSetChanged();
     }
 
     @Override
     public void onUpdateDetected() {
         adapter.notifyDataSetChanged();
     }
+
+    @Override
+    public void onRefresh() {
+        try {
+            UpdateRefresher.refreshUpdate();
+            swipeRefreshLayout.setRefreshing(false);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deleteButtonPressed(View view){
+        Toast.makeText(getApplicationContext(), ""+pagesHolder.getSizeOfPagesToTrack(), Toast.LENGTH_SHORT).show();
+        notifyAdapterDataSetChange(getApplicationContext());
+        Toast.makeText(getApplicationContext(), ""+pagesHolder.getSizeOfPagesToTrack(), Toast.LENGTH_SHORT).show();
+    }
+
 }
 

@@ -70,6 +70,7 @@ public class NotificationService extends IntentService {
     }
     private void setUpTimer(TimerTask task) {
         Timer timer = new Timer();
+        //TODO don't forget to change this to timerLength when done testing
         timer.scheduleAtFixedRate(task, 0, 10000);
     }
 
@@ -94,7 +95,11 @@ public class NotificationService extends IntentService {
             }
             Intent broadcastIntent = new Intent();
             broadcastIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            broadcastIntent.putParcelableArrayListExtra("updated pages", (ArrayList<? extends Parcelable>) pagesHolder.getUpdatedPages());
+            List<Page> pagesForBroadcast = new ArrayList<>();
+            for (Page page: pagesHolder.getUpdatedPages()) {
+                pagesForBroadcast.add(page);
+            }
+            broadcastIntent.putParcelableArrayListExtra("updated pages", (ArrayList<? extends Parcelable>) pagesForBroadcast);
             broadcastIntent.setAction("com.example.jose.updated.controller.CUSTOM_INTENT");
             localBroadcastManager.sendBroadcast(broadcastIntent);
         }

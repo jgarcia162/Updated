@@ -18,11 +18,11 @@ import java.util.List;
 public class PageAdapter extends RecyclerView.Adapter<PageViewHolder>{
     private List<Page> listOfPages;
     private int lastPosition;
-    Context context;
+    private Context context;
 
     public PageAdapter(Context context){
         PagesHolder pagesHolder = PagesHolder.getInstance();
-        this.listOfPages = pagesHolder.getPagesToTrack();
+        listOfPages = pagesHolder.getPagesToTrack();
         this.context = context;
         lastPosition = -1;
 

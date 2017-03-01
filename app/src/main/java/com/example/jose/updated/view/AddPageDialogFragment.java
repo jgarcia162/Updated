@@ -38,6 +38,7 @@ public class AddPageDialogFragment extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        pagesHolder = PagesHolder.getInstance();
     }
 
     @Nullable
@@ -45,8 +46,6 @@ public class AddPageDialogFragment extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.add_page_dialog_fragment_layout, container, false);
         initializeViews(view);
-        pagesHolder = PagesHolder.getInstance();
-
         previewButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -82,7 +81,6 @@ public class AddPageDialogFragment extends DialogFragment {
     }
 
     private void onClickAddButton(String urlText, String titleText) throws Exception {
-        PagesHolder pagesHolder = PagesHolder.getInstance();
         if (newPage == null) {
             if (!TextUtils.isEmpty(urlText)) {
                 if (!URLUtil.isValidUrl(urlText)) {
@@ -100,7 +98,12 @@ public class AddPageDialogFragment extends DialogFragment {
                 newPage.setTimeOfLastUpdateInMilliSec(new Date().getTime());
                 newPage.setIsActive(true);
                 pagesHolder.addToPagesToTrack(newPage);
-                Toast.makeText(getActivity(), newPage.getTitle() + getString(R.string.added_page_string), Toast.LENGTH_SHORT).show();
+                if (!pagesHolder.getPageHtmlMap().containsKey(newPage.getPageUrl())) {
+                    Toast.makeText(getActivity(), R.string.page_already_added_text, Toast.LENGTH_SHORT).show();
+                } else {
+
+                    Toast.makeText(getActivity(), newPage.getTitle() + getString(R.string.added_page_string), Toast.LENGTH_SHORT).show();
+                }
                 //add to db
                 newPage = null;
                 resetTextFields();
@@ -110,7 +113,7 @@ public class AddPageDialogFragment extends DialogFragment {
             }
         }
         if (newPage != null) { //this means user has previewed page
-            if(!URLUtil.isValidUrl(newPage.getPageUrl())){
+            if (!URLUtil.isValidUrl(newPage.getPageUrl())) {
                 Toast.makeText(getActivity(), R.string.invalid_url_string, Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -119,6 +122,9 @@ public class AddPageDialogFragment extends DialogFragment {
             newPage.setTimeOfLastUpdateInMilliSec(new Date().getTime());
             newPage.setIsActive(true);
             pagesHolder.addToPagesToTrack(newPage);
+            if (!pagesHolder.getPageHtmlMap().containsKey(newPage.getPageUrl())) {
+                Toast.makeText(getActivity(), R.string.page_already_added_text, Toast.LENGTH_SHORT).show();
+            }
             //add to db
             Toast.makeText(getActivity(), newPage.getTitle() + getString(R.string.added_url_toast), Toast.LENGTH_SHORT).show();
             newPage = null;

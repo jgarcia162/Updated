@@ -7,7 +7,7 @@ import com.example.jose.updated.model.PagesHolder;
 public class UpdateRefresher {
     private static PagesHolder pagesHolder = PagesHolder.getInstance();
 
-    static void refreshUpdate() throws Exception {
+    public static void refreshUpdate() throws Exception {
         for (Page page : pagesHolder.getPagesToTrack()) {
             if (!page.isUpdated()) {
                 if (isPageUpdated(page)) {

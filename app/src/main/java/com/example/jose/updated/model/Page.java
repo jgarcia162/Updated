@@ -5,8 +5,11 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.format.DateUtils;
 
+import io.realm.RealmObject;
+import io.realm.annotations.Ignore;
 
-public class Page implements Parcelable{
+
+public class Page extends RealmObject implements Parcelable{
 
     private String title;
     private String contents;
@@ -17,6 +20,7 @@ public class Page implements Parcelable{
     private long timeOfLastUpdateInMilliSec;
     private boolean isUpdated;
     private boolean isActive;
+    @Ignore
     private Bitmap bitmapIcon;
 
 

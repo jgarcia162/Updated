@@ -1,14 +1,17 @@
 package com.example.jose.updated.controller;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class DownloadTask extends AsyncTask<String,Void,String>{
+class DownloadTask extends AsyncTask<String,Void,String>{
+
+    DownloadTask(){
+
+    }
 
     @Override
     protected String doInBackground(String... strings) {
@@ -24,8 +27,7 @@ public class DownloadTask extends AsyncTask<String,Void,String>{
             reader.close();
             return builder.toString();
         }catch(Exception e){
-            Log.e("ASYNC RESULT: ", "Download failed");
-
+            e.printStackTrace();
         }
         return null;
     }
