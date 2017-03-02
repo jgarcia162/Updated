@@ -21,7 +21,10 @@ public class UpdateRefresher {
         if (page.isActive()) {
             String htmlToCheck = downloadHtml(page);
             Page currentlyStoredPage = realmDatabaseHelper.getPage(page);
-            return htmlToCheck.equals(currentlyStoredPage.getContents());
+            if (!htmlToCheck.equals(currentlyStoredPage.getContents())) {
+                realmDatabaseHelper.updatePageHtml(currentlyStoredPage, htmlToCheck);
+                return true;
+            }
         }
         return false;
     }
@@ -29,7 +32,6 @@ public class UpdateRefresher {
     public static String downloadHtml(Page page) throws Exception {
         DownloadTask task = new DownloadTask();
         task.execute(page.getPageUrl());
-        page.setContents(task.get());
         return task.get();
     }
 

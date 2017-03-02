@@ -20,14 +20,9 @@ import com.example.jose.updated.controller.NotificationService;
 import com.example.jose.updated.controller.PageAdapter;
 import com.example.jose.updated.controller.UpdateBroadcastReceiver;
 import com.example.jose.updated.controller.UpdateRefresher;
-import com.example.jose.updated.model.Page;
 import com.example.jose.updated.model.RealmDatabaseHelper;
 
-import java.util.Date;
-
 import io.realm.Realm;
-
-import static com.example.jose.updated.model.UpdatedConstants.DEFAULT_UPDATE_FREQUENCY;
 
 public class MainActivity extends BaseActivity implements UpdateBroadcastReceiver.UpdatedCallback, SwipeRefreshLayout.OnRefreshListener {
     private FragmentManager fragmentManager;
@@ -82,22 +77,6 @@ public class MainActivity extends BaseActivity implements UpdateBroadcastReceive
         handler.post(runnable);
     }
 
-    private void createTestData() {
-        Page twitter = new Page("Twitter", "https://twitter.com/AyoJoanks", new Date().getTime());
-        Page inward = new Page("Inward", "https://inwardmovement.wordpress.com", new Date().getTime());
-        Page adidas = new Page("Adidas", "https://www.adidas.com", new Date().getTime());
-
-        //for testing
-        twitter.setIsActive(true);
-        inward.setIsActive(true);
-        adidas.setIsActive(true);
-        twitter.setUpdateFrequency(DEFAULT_UPDATE_FREQUENCY);
-        inward.setUpdateFrequency(DEFAULT_UPDATE_FREQUENCY);
-        adidas.setUpdateFrequency(DEFAULT_UPDATE_FREQUENCY);
-        realmDatabaseHelper.addToPagesToTrack((twitter));
-        realmDatabaseHelper.addToPagesToTrack(adidas);
-        realmDatabaseHelper.addToPagesToTrack(inward);
-    }
 
     @Override
     protected void onResume() {

@@ -22,7 +22,7 @@ public class PageAdapter extends RecyclerView.Adapter<PageViewHolder>{
 
     public PageAdapter(Context context){
         RealmDatabaseHelper realmDatabaseHelper = new RealmDatabaseHelper();
-        listOfPages = realmDatabaseHelper.getPagesToTrack();
+        listOfPages = realmDatabaseHelper.getAllPages();
         this.context = context;
         lastPosition = -1;
 

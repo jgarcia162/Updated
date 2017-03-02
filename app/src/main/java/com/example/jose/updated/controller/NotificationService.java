@@ -10,7 +10,6 @@ import android.support.v4.content.LocalBroadcastManager;
 
 import com.example.jose.updated.R;
 import com.example.jose.updated.model.Page;
-import com.example.jose.updated.model.RealmDatabaseHelper;
 import com.example.jose.updated.view.MainActivity;
 
 import java.util.List;
@@ -32,7 +31,6 @@ public class NotificationService extends IntentService {
     private NotificationManager notificationManager;
     public static final int NOTIFICATION_ID = 1;
     private long timerLength;
-    private RealmDatabaseHelper realmDatabaseHelper;
     Realm realm;
     private LocalBroadcastManager localBroadcastManager;
     private SharedPreferences preferences;
@@ -55,7 +53,6 @@ public class NotificationService extends IntentService {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        realmDatabaseHelper = new RealmDatabaseHelper();
         localBroadcastManager = LocalBroadcastManager.getInstance(this);
         preferences = getSharedPreferences(PREFS_NAME,MODE_PRIVATE);
         timerLength = preferences.getLong(UPDATE_FREQUENCY_PREFERENCE_TAG,DEFAULT_UPDATE_FREQUENCY);
@@ -90,7 +87,8 @@ public class NotificationService extends IntentService {
 
     public void refresh() throws Exception {
         UpdateRefresher.refreshUpdate();
-        List<Page> updatedPages = realmDatabaseHelper.getUpdatedPages();
+        Realm realm = Realm.getDefaultInstance();
+        List<Page> updatedPages = realm.where(Page.class).equalTo("isUpdated",true).findAll();
         if (updatedPages.size() > 0) {
             if(preferences.getBoolean(STOP_NOTIFICATION_PREFERENCE_TAG,DEFAULT_NOTIFICATIONS_ACTIVE)){
                 createNotification(getNamesOfUpdatedPages(updatedPages));

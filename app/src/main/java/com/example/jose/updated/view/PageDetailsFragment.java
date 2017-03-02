@@ -21,9 +21,6 @@ import com.example.jose.updated.R;
 import com.example.jose.updated.model.Page;
 import com.example.jose.updated.model.RealmDatabaseHelper;
 
-import static com.example.jose.updated.model.UpdatedConstants.DEFAULT_NOTES;
-import static com.example.jose.updated.model.UpdatedConstants.IS_ACTIVE_TAG;
-import static com.example.jose.updated.model.UpdatedConstants.NOTES_TAG;
 import static com.example.jose.updated.model.UpdatedConstants.PREFS_NAME;
 
 /**
@@ -32,7 +29,7 @@ import static com.example.jose.updated.model.UpdatedConstants.PREFS_NAME;
 public class PageDetailsFragment extends Fragment {
     private TextInputEditText pageTitle;
     private TextView timeLastUpdatedTV;
-    private EditText urlEditText;
+    private TextView urlTextView;
     private EditText notesEditText;
     private Button saveSettingsButton;
     private Button deleteButton;
@@ -69,7 +66,7 @@ public class PageDetailsFragment extends Fragment {
         packageManager = getContext().getPackageManager();
         pageTitle = (TextInputEditText) view.findViewById(R.id.details_page_title_tv);
         timeLastUpdatedTV = (TextView) view.findViewById(R.id.details_timelastupdated_tv);
-        urlEditText = (EditText) view.findViewById(R.id.details_url_tv);
+        urlTextView = (TextView) view.findViewById(R.id.details_url_tv);
         trackingSwitch = (Switch) view.findViewById(R.id.page_active_switch);
         saveSettingsButton = (Button) view.findViewById(R.id.details_settings_button);
         deleteButton = (Button) view.findViewById(R.id.delete_page_button);
@@ -96,57 +93,33 @@ public class PageDetailsFragment extends Fragment {
                 deletePage();
             }
         });
-
-        boolean pageactive = preferences.getBoolean(page.getTitle() + IS_ACTIVE_TAG, true);
-
-        setUpTrackingSwitch(pageactive);
-    }
-
-    private void setUpTrackingSwitch(boolean pageactive) {
-        trackingSwitch.setChecked(pageactive);
-        trackingSwitch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                page.setIsActive(!page.isActive());
-                trackingSwitch.setChecked(page.isActive());
-                preferences.edit().putBoolean(page.getTitle() + IS_ACTIVE_TAG, page.isActive()).apply();
-                if (page.isActive()) {
-                    realmDatabaseHelper.addToPagesToTrack(page);
-                } else {
-                    realmDatabaseHelper.removeFromPagesToTrack(page);
-                }
-                //update this page in db
-            }
-        });
+        trackingSwitch.setChecked(page.isActive());
     }
 
     private void setTextFields(Resources resources) {
         pageTitle.setText(page.getTitle());
         timeLastUpdatedTV.setText(String.format(resources.getString(R.string.details_last_updated), page.getFormattedTimeOfLastUpdate()));
-        urlEditText.setText(String.format(resources.getString(R.string.details_url_tv_text), page.getPageUrl()));
-        notesEditText.setText(loadNotes());
+        urlTextView.setText(String.format(resources.getString(R.string.details_url_tv_text), page.getPageUrl()));
+        notesEditText.setText(page.getNotes());
     }
 
-    private String loadNotes() {
-        return preferences.getString(page.getTitle() + NOTES_TAG, DEFAULT_NOTES);
-    }
+//    private String loadNotes() {
+//        return preferences.getString(page.getTitle() + NOTES_TAG, DEFAULT_NOTES);
+//    }
     
     private void saveSettings(){
-        preferences.edit().putString(page.getTitle() + NOTES_TAG, String.valueOf(notesEditText.getText())).apply();
-        if(!page.getPageUrl().equals(String.valueOf(urlEditText.getText()))){
-            page.setPageUrl(String.valueOf(urlEditText.getText()));
-        }
+        String title = String.valueOf(pageTitle.getText());
+        boolean isActive = trackingSwitch.isChecked();
+        String notes = String.valueOf(notesEditText.getText());
+        realmDatabaseHelper.savePageSettings(page,title,notes,isActive);
     }
 
     public void deletePage(){
         if(page.isUpdated()){
             realmDatabaseHelper.removeFromUpdatedPages(page);
         }
-
         realmDatabaseHelper.removeFromPagesToTrack(page);
-        MainActivity.adapter.notifyDataSetChanged();
         getActivity().onBackPressed();
-
     }
     
 }
