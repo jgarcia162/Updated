@@ -16,7 +16,7 @@ import android.widget.Toast;
 
 import com.example.jose.updated.R;
 import com.example.jose.updated.model.Page;
-import com.example.jose.updated.model.RealmDatabaseHelper;
+import com.example.jose.updated.controller.RealmDatabaseHelper;
 
 import java.util.Date;
 

@@ -89,6 +89,7 @@ public class NotificationService extends IntentService {
         UpdateRefresher.refreshUpdate();
         Realm realm = Realm.getDefaultInstance();
         List<Page> updatedPages = realm.where(Page.class).equalTo("isUpdated",true).findAll();
+        realm.close();
         if (updatedPages.size() > 0) {
             if(preferences.getBoolean(STOP_NOTIFICATION_PREFERENCE_TAG,DEFAULT_NOTIFICATIONS_ACTIVE)){
                 createNotification(getNamesOfUpdatedPages(updatedPages));

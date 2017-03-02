@@ -20,6 +20,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.jose.updated.R;
+import com.example.jose.updated.model.Page;
+
+import io.realm.Realm;
 
 import static com.example.jose.updated.model.UpdatedConstants.DEFAULT_NOTIFICATIONS_ACTIVE;
 import static com.example.jose.updated.model.UpdatedConstants.DEFAULT_UPDATE_FREQUENCY_SPINNER_POSITION;
@@ -115,6 +118,8 @@ public class SettingsFragment extends Fragment {
         notificationSwitch.setChecked(true);
         spinner.setSelection(0);
         notificationsTV.setText(getResources().getString(R.string.notifications_settings_title,onSwitchStatus));
+        Realm realm = Realm.getDefaultInstance();
+        realm.delete(Page.class);
     }
 
     private void displayAlertDialog() {

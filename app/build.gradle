@@ -3,7 +3,7 @@ apply plugin: 'realm-android'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.1"
+    buildToolsVersion "25.0.2"
 
     defaultConfig {
         applicationId "com.example.jose.updated"
@@ -33,5 +33,6 @@ dependencies {
     compile 'com.squareup.okhttp3:okhttp:3.6.0'
     compile 'com.android.support:support-v4:25.2.0'
     compile 'com.android.support:customtabs:25.2.0'
+    compile 'com.davidecirillo.multichoicerecyclerview:multichoicerecyclerview:2.0.0'
     testCompile 'junit:junit:4.12'
 }

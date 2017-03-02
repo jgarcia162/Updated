@@ -1,6 +1,6 @@
-package com.example.jose.updated.model;
+package com.example.jose.updated.controller;
 
-import com.example.jose.updated.controller.UpdateRefresher;
+import com.example.jose.updated.model.Page;
 
 import java.util.Date;
 import java.util.List;

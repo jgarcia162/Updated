@@ -1,27 +1,31 @@
 package com.example.jose.updated.controller;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
+import android.graphics.Color;
+import android.support.annotation.NonNull;
+import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Toast;
 
+import com.davidecirillo.multichoicerecyclerview.MultiChoiceAdapter;
 import com.example.jose.updated.R;
 import com.example.jose.updated.model.Page;
-import com.example.jose.updated.model.RealmDatabaseHelper;
 import com.example.jose.updated.view.PageViewHolder;
 
 import java.util.List;
 
-public class PageAdapter extends RecyclerView.Adapter<PageViewHolder>{
+public class PageAdapter extends MultiChoiceAdapter<PageViewHolder> {
     private List<Page> listOfPages;
     private int lastPosition;
     private Context context;
+    private RealmDatabaseHelper realmDatabaseHelper;
 
     public PageAdapter(Context context){
-        RealmDatabaseHelper realmDatabaseHelper = new RealmDatabaseHelper();
+        realmDatabaseHelper = new RealmDatabaseHelper();
         listOfPages = realmDatabaseHelper.getAllPages();
         this.context = context;
         lastPosition = -1;
@@ -39,6 +43,7 @@ public class PageAdapter extends RecyclerView.Adapter<PageViewHolder>{
         Page page = listOfPages.get(position);
         holder.bind(page);
         setAnimation(holder.itemView,position);
+        super.onBindViewHolder(holder,position);
     }
 
     @Override
@@ -56,5 +61,24 @@ public class PageAdapter extends RecyclerView.Adapter<PageViewHolder>{
             viewToAnimate.startAnimation(animation);
             lastPosition = position;
         }
+    }
+
+    @Override
+    protected View.OnClickListener defaultItemViewClickListener(PageViewHolder holder, int position) {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(context, "CLICKED", Toast.LENGTH_SHORT).show();
+            }
+        };
+    }
+
+    @Override
+    public void setActive(@NonNull View view, boolean state) {
+        CardView card = (CardView) view.findViewById(R.id.item_layout);
+        if(state){
+            card.setBackgroundColor(Color.red(R.color.deadRed));
+        }
+
     }
 }

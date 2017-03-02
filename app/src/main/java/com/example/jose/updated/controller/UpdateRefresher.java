@@ -1,7 +1,6 @@
 package com.example.jose.updated.controller;
 
 import com.example.jose.updated.model.Page;
-import com.example.jose.updated.model.RealmDatabaseHelper;
 
 
 public class UpdateRefresher {

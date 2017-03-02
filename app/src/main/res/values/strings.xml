@@ -54,6 +54,7 @@
     <string name="reset_defaults_alert_positive">Yes</string>
     <string name="reset_defaults_alert_negative">Cancel</string>
     <string name="defaults_reset_text">Defaults Reset</string>
+    <string name="details_saved_text">Details Saved!</string>
     <string-array name="frequency_spinner_array">
         <item>24</item>
         <item>48</item>

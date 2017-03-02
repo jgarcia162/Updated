@@ -16,10 +16,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.jose.updated.R;
 import com.example.jose.updated.model.Page;
-import com.example.jose.updated.model.RealmDatabaseHelper;
+import com.example.jose.updated.controller.RealmDatabaseHelper;
 
 import static com.example.jose.updated.model.UpdatedConstants.PREFS_NAME;
 
@@ -79,11 +80,13 @@ public class PageDetailsFragment extends Fragment {
         Resources resources = getResources();
 
         setTextFields(resources);
+        trackingSwitch.setChecked(page.isActive());
 
         saveSettingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 saveSettings();
+                Toast.makeText(getActivity(), R.string.details_saved_text, Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -93,7 +96,6 @@ public class PageDetailsFragment extends Fragment {
                 deletePage();
             }
         });
-        trackingSwitch.setChecked(page.isActive());
     }
 
     private void setTextFields(Resources resources) {

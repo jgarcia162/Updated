@@ -9,7 +9,7 @@ import android.support.v4.app.FragmentTransaction;
 import com.example.jose.updated.R;
 import com.example.jose.updated.controller.BaseActivity;
 import com.example.jose.updated.model.Page;
-import com.example.jose.updated.model.RealmDatabaseHelper;
+import com.example.jose.updated.controller.RealmDatabaseHelper;
 
 /**
  * Created by Joe on 2/6/17.
