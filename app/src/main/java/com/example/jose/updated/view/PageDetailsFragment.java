@@ -102,10 +102,6 @@ public class PageDetailsFragment extends Fragment {
         urlTextView.setText(String.format(resources.getString(R.string.details_url_tv_text), page.getPageUrl()));
         notesEditText.setText(page.getNotes());
     }
-
-//    private String loadNotes() {
-//        return preferences.getString(page.getTitle() + NOTES_TAG, DEFAULT_NOTES);
-//    }
     
     private void saveSettings(){
         String title = String.valueOf(pageTitle.getText());

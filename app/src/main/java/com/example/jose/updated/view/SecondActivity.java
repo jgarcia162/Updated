@@ -33,11 +33,11 @@ public class SecondActivity extends BaseActivity {
         if(!intent.hasExtra("fragment_to_load")){
             loadPageDetailsFragment(intent);
         }else {
-            loadOtherFragment(intent);
+            loadSettingsFragment(intent);
         }
     }
 
-    private void loadOtherFragment(Intent intent) {
+    private void loadSettingsFragment(Intent intent) {
         String fragmentName = intent.getStringExtra("fragment_to_load");
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         switch(fragmentName){

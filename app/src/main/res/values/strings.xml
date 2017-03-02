@@ -48,6 +48,12 @@
     <string name="refresh_menu_text">Refresh</string>
     <string name="page_already_added_text">Page already added!</string>
     <string name="untitled_page_text">Untitled</string>
+    <string name="settings_saved_text">Settings Saved!</string>
+    <string name="reset_default_alert_title">Are you sure?</string>
+    <string name="reset_defaults_alert_message">You\'re about to wipe out all data and settings!</string>
+    <string name="reset_defaults_alert_positive">Yes</string>
+    <string name="reset_defaults_alert_negative">Cancel</string>
+    <string name="defaults_reset_text">Defaults Reset</string>
     <string-array name="frequency_spinner_array">
         <item>24</item>
         <item>48</item>

@@ -21,7 +21,6 @@ import com.example.jose.updated.model.RealmDatabaseHelper;
 import java.util.Date;
 
 public class AddPageDialogFragment extends DialogFragment {
-    //TODO add persistence for storage when clicking add button
     private Button addPageButton, previewButton;
     private WebView pagePreviewWebView;
     private TextInputEditText urlInputEditText, titleInputEditText;
@@ -109,7 +108,6 @@ public class AddPageDialogFragment extends DialogFragment {
             resetTextFields();
             this.dismiss();
         }
-//        MainActivity.notifyAdapterDataSetChange(getActivity());
     }
 
     private void resetTextFields() {

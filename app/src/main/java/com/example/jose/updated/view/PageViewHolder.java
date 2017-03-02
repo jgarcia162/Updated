@@ -61,6 +61,7 @@ public class PageViewHolder extends RecyclerView.ViewHolder implements View.OnCl
             page.setBitmapIcon(bitmap);
         }
 
+        Log.d("ADAPTER",realmDatabaseHelper.getUpdatedPages().contains(page) +"");
         if (realmDatabaseHelper.getUpdatedPages().contains(page)) {
             updatedStatusTextView.setText(R.string.page_updated);
         } else {
@@ -103,7 +104,7 @@ public class PageViewHolder extends RecyclerView.ViewHolder implements View.OnCl
         return true;
     }
 
-    public void openInBrowser() {
+    private void openInBrowser() {
         Uri pageUri = Uri.parse(page.getPageUrl());
         CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
         builder.addDefaultShareMenuItem();

@@ -89,6 +89,7 @@ public class MainActivity extends BaseActivity implements UpdateBroadcastReceive
         adapter.notifyDataSetChanged();
     }
 
+    //TODO refresh progress bar stays on forever
     @Override
     public void onRefresh() {
         try {

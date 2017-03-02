@@ -8,7 +8,7 @@ public class UpdateRefresher {
     private static RealmDatabaseHelper realmDatabaseHelper = new RealmDatabaseHelper();
 
     public static void refreshUpdate() throws Exception {
-        for (Page page : realmDatabaseHelper.getPagesToTrack()) {
+        for (Page page : realmDatabaseHelper.getAllPages()) {
             if (!page.isUpdated()) {
                 if (isPageUpdated(page)) {
                     realmDatabaseHelper.addToUpdatedPages(page);

@@ -132,7 +132,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/contact_icons"
         android:layout_marginTop="50dp"
-        android:text="@string/save_page_settings_text"
+        android:text="@string/save_settings_text"
         android:background="@color/transparent"/>
     <Button
         android:id="@+id/reset_defaults_button"

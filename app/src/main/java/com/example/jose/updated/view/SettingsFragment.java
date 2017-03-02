@@ -1,10 +1,12 @@
 package com.example.jose.updated.view;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.jose.updated.R;
 
@@ -101,14 +104,33 @@ public class SettingsFragment extends Fragment {
         resetDefaultsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                preferences.edit().clear().apply();
-                notificationSwitch.setChecked(true);
-                spinner.setSelection(0);
-                notificationsTV.setText(getResources().getString(R.string.notifications_settings_title,onSwitchStatus));
-
+                displayAlertDialog();
             }
         });
         super.onViewCreated(view, savedInstanceState);
+    }
+
+    private void resetDefaultSettings() {
+        preferences.edit().clear().apply();
+        notificationSwitch.setChecked(true);
+        spinner.setSelection(0);
+        notificationsTV.setText(getResources().getString(R.string.notifications_settings_title,onSwitchStatus));
+    }
+
+    private void displayAlertDialog() {
+        AlertDialog alert = new AlertDialog.Builder(getActivity()).setTitle(R.string.reset_default_alert_title).setMessage(R.string.reset_defaults_alert_message).setPositiveButton(R.string.reset_defaults_alert_positive, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                resetDefaultSettings();
+                Toast.makeText(getActivity(), R.string.defaults_reset_text, Toast.LENGTH_SHORT).show();
+            }
+        }).setNegativeButton(R.string.reset_defaults_alert_negative, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        }).create();
+        alert.show();
     }
 
     private void saveSettingsButtonClicked() {
@@ -121,6 +143,7 @@ public class SettingsFragment extends Fragment {
         }
         preferences.edit().putInt(SPINNER_POSITION_PREFERENCE_TAG, spinnerPosition).apply();
         preferences.edit().putBoolean(STOP_NOTIFICATION_PREFERENCE_TAG,!stopNotifications).apply();
+        Toast.makeText(getContext(), R.string.settings_saved_text, Toast.LENGTH_SHORT).show();
     }
 
     private int getIndex(Spinner spinner, String myString){
