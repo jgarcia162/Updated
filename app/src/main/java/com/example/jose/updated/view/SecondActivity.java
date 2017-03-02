@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentTransaction;
 import com.example.jose.updated.R;
 import com.example.jose.updated.controller.BaseActivity;
 import com.example.jose.updated.model.Page;
+import com.example.jose.updated.model.RealmDatabaseHelper;
 
 /**
  * Created by Joe on 2/6/17.
@@ -16,6 +17,7 @@ import com.example.jose.updated.model.Page;
 public class SecondActivity extends BaseActivity {
     private FragmentManager fragmentManager;
     private int container;
+    private RealmDatabaseHelper realmDatabaseHelper;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -24,6 +26,7 @@ public class SecondActivity extends BaseActivity {
         if(!(getActionBar() == null)){
             getActionBar().setDisplayHomeAsUpEnabled(true);
         }
+        realmDatabaseHelper = new RealmDatabaseHelper();
         fragmentManager = getSupportFragmentManager();
         container = R.id.second_activity_fragment_container;
         Intent intent = getIntent();
@@ -46,7 +49,8 @@ public class SecondActivity extends BaseActivity {
 
     private void loadPageDetailsFragment(Intent intent) {
         Bundle bundle = intent.getBundleExtra("page_bundle");
-        Page page = bundle.getParcelable("page");
+        String pageUrl = bundle.getString("page");
+        Page page = realmDatabaseHelper.getPageFromUrl(pageUrl);
         PageDetailsFragment pageDetailsFragment;
         if (page != null) {
             String pageTag = page.getTitle() + "_fragment";

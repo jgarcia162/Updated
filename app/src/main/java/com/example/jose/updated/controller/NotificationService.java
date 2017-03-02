@@ -5,7 +5,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Parcelable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 
@@ -14,10 +13,11 @@ import com.example.jose.updated.model.Page;
 import com.example.jose.updated.model.RealmDatabaseHelper;
 import com.example.jose.updated.view.MainActivity;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import io.realm.Realm;
 
 import static com.example.jose.updated.model.UpdatedConstants.DEFAULT_NOTIFICATIONS_ACTIVE;
 import static com.example.jose.updated.model.UpdatedConstants.DEFAULT_UPDATE_FREQUENCY;
@@ -33,6 +33,7 @@ public class NotificationService extends IntentService {
     public static final int NOTIFICATION_ID = 1;
     private long timerLength;
     private RealmDatabaseHelper realmDatabaseHelper;
+    Realm realm;
     private LocalBroadcastManager localBroadcastManager;
     private SharedPreferences preferences;
 
@@ -54,7 +55,7 @@ public class NotificationService extends IntentService {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        realmDatabaseHelper = RealmDatabaseHelper.getInstance();
+        realmDatabaseHelper = new RealmDatabaseHelper();
         localBroadcastManager = LocalBroadcastManager.getInstance(this);
         preferences = getSharedPreferences(PREFS_NAME,MODE_PRIVATE);
         timerLength = preferences.getLong(UPDATE_FREQUENCY_PREFERENCE_TAG,DEFAULT_UPDATE_FREQUENCY);
@@ -89,17 +90,13 @@ public class NotificationService extends IntentService {
 
     public void refresh() throws Exception {
         UpdateRefresher.refreshUpdate();
-        if (realmDatabaseHelper.getSizeOfUpdatedPages() > 0) {
+        List<Page> updatedPages = realmDatabaseHelper.getUpdatedPages();
+        if (updatedPages.size() > 0) {
             if(preferences.getBoolean(STOP_NOTIFICATION_PREFERENCE_TAG,DEFAULT_NOTIFICATIONS_ACTIVE)){
-                createNotification(getNamesOfUpdatedPages(realmDatabaseHelper.getUpdatedPages()));
+                createNotification(getNamesOfUpdatedPages(updatedPages));
             }
             Intent broadcastIntent = new Intent();
             broadcastIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            List<Page> pagesForBroadcast = new ArrayList<>();
-            for (Page page: realmDatabaseHelper.getUpdatedPages()) {
-                pagesForBroadcast.add(page);
-            }
-            broadcastIntent.putParcelableArrayListExtra("updated pages", (ArrayList<? extends Parcelable>) pagesForBroadcast);
             broadcastIntent.setAction("com.example.jose.updated.controller.CUSTOM_INTENT");
             localBroadcastManager.sendBroadcast(broadcastIntent);
         }
@@ -117,9 +114,9 @@ public class NotificationService extends IntentService {
     public void createNotification(String namesOfUpdatedPages) {
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getBaseContext()).setSmallIcon(R.drawable.updated_logo).setContentTitle(getString(R.string.notification_title)).setContentText(namesOfUpdatedPages);
         notificationBuilder.setAutoCancel(true);
-        Intent notificationIntent = new Intent(getBaseContext(), MainActivity.class);
+        Intent notificationIntent = new Intent(getApplicationContext(), MainActivity.class);
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP|Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(getBaseContext(), 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         notificationBuilder.setContentIntent(pendingIntent);
         notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
     }

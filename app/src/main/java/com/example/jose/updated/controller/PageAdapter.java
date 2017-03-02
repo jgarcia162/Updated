@@ -21,7 +21,7 @@ public class PageAdapter extends RecyclerView.Adapter<PageViewHolder>{
     private Context context;
 
     public PageAdapter(Context context){
-        RealmDatabaseHelper realmDatabaseHelper = RealmDatabaseHelper.getInstance();
+        RealmDatabaseHelper realmDatabaseHelper = new RealmDatabaseHelper();
         listOfPages = realmDatabaseHelper.getPagesToTrack();
         this.context = context;
         lastPosition = -1;

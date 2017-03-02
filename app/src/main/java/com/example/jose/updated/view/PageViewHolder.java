@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.customtabs.CustomTabsIntent;
@@ -29,8 +30,7 @@ public class PageViewHolder extends RecyclerView.ViewHolder implements View.OnCl
     private WebView webView;
     private ImageView editPageButton;
     private Page page;
-
-
+    private RealmDatabaseHelper realmDatabaseHelper = new RealmDatabaseHelper();
 
     public PageViewHolder(View view) {
         super(view);
@@ -61,12 +61,10 @@ public class PageViewHolder extends RecyclerView.ViewHolder implements View.OnCl
             page.setBitmapIcon(bitmap);
         }
 
-        if (RealmDatabaseHelper.getInstance().getUpdatedPages().contains(page)) {
+        if (realmDatabaseHelper.getUpdatedPages().contains(page)) {
             updatedStatusTextView.setText(R.string.page_updated);
-            page.setUpdated(true);
         } else {
             updatedStatusTextView.setText(R.string.not_updated);
-            page.setUpdated(false);
         }
 
         timeOfLastUpdateTextView.setText(page.getFormattedTimeOfLastUpdate());
@@ -92,7 +90,7 @@ public class PageViewHolder extends RecyclerView.ViewHolder implements View.OnCl
     @Override
     public void onClick(View v) {
         Bundle bundle = new Bundle();
-        bundle.putParcelable("page", page);
+        bundle.putString("page", page.getPageUrl());
         Intent intent = new Intent(context, SecondActivity.class);
         intent.putExtra("page_bundle", bundle);
         context.startActivity(intent);
@@ -101,7 +99,7 @@ public class PageViewHolder extends RecyclerView.ViewHolder implements View.OnCl
     @Override
     public boolean onLongClick(View v) {
         //TODO add long click editable
-        RealmDatabaseHelper.getInstance().removeFromPagesToTrack(page);
+        realmDatabaseHelper.removeFromPagesToTrack(page);
         return true;
     }
 
@@ -109,12 +107,12 @@ public class PageViewHolder extends RecyclerView.ViewHolder implements View.OnCl
         Uri pageUri = Uri.parse(page.getPageUrl());
         CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
         builder.addDefaultShareMenuItem();
+        builder.setToolbarColor(Color.BLUE);
         // set toolbar color and/or setting custom actions before invoking build()
         CustomTabsIntent customTabsIntent = builder.build();
         if (page.isUpdated()) {
             updatedStatusTextView.setText(R.string.not_updated);
-            page.setUpdated(false);
-            RealmDatabaseHelper.getInstance().removeFromUpdatedPages(page);
+            realmDatabaseHelper.removeFromUpdatedPages(page);
         }
         customTabsIntent.launchUrl(context,pageUri);
     }

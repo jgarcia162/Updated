@@ -4,11 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import com.example.jose.updated.model.Page;
-import com.example.jose.updated.model.RealmDatabaseHelper;
-
-import java.util.List;
-
 public class UpdateBroadcastReceiver extends BroadcastReceiver {
     private UpdatedCallback callback;
 
@@ -18,8 +13,6 @@ public class UpdateBroadcastReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        List<Page> updatedPages = intent.getParcelableArrayListExtra("updated pages");
-        RealmDatabaseHelper.getInstance().setUpdatedPages(updatedPages);
         callback.onUpdateDetected();
     }
 

@@ -13,7 +13,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
-import android.widget.Toast;
 
 import com.example.jose.updated.R;
 import com.example.jose.updated.controller.BaseActivity;
@@ -26,14 +25,16 @@ import com.example.jose.updated.model.RealmDatabaseHelper;
 
 import java.util.Date;
 
+import io.realm.Realm;
+
 import static com.example.jose.updated.model.UpdatedConstants.DEFAULT_UPDATE_FREQUENCY;
 
-public class MainActivity extends BaseActivity implements UpdateBroadcastReceiver.UpdatedCallback, SwipeRefreshLayout.OnRefreshListener{
+public class MainActivity extends BaseActivity implements UpdateBroadcastReceiver.UpdatedCallback, SwipeRefreshLayout.OnRefreshListener {
     private FragmentManager fragmentManager;
     @SuppressLint("StaticFieldLeak")
     public static PageAdapter adapter;
     private AddPageDialogFragment addPageDialogFragment;
-    private RealmDatabaseHelper realmDatabaseHelper = RealmDatabaseHelper.getInstance();
+    private RealmDatabaseHelper realmDatabaseHelper;
     private SharedPreferences preferences;
     private SwipeRefreshLayout swipeRefreshLayout;
     public static UpdateBroadcastReceiver updateBroadcastReceiver;
@@ -41,41 +42,25 @@ public class MainActivity extends BaseActivity implements UpdateBroadcastReceive
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(savedInstanceState == null){
-            LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
-            updateBroadcastReceiver = new UpdateBroadcastReceiver(this);
-            fragmentManager = getFragmentManager();
-            realmDatabaseHelper = RealmDatabaseHelper.getInstance();
-            swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
-            swipeRefreshLayout.setOnRefreshListener(this);
-            setupRecyclerView();
-            addPageDialogFragment = new AddPageDialogFragment();
-            localBroadcastManager.registerReceiver(updateBroadcastReceiver, new IntentFilter("com.example.jose.updated.controller.CUSTOM_INTENT"));
-            createTestData();
-            downloadTestData();
-            realmDatabaseHelper.initializeMap();
-            Intent serviceIntent = new Intent(getBaseContext(), NotificationService.class);
-            startService(serviceIntent);
+        Realm.init(getApplicationContext());
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
+        updateBroadcastReceiver = new UpdateBroadcastReceiver(this);
+        fragmentManager = getFragmentManager();
+        realmDatabaseHelper = new RealmDatabaseHelper();
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
+        swipeRefreshLayout.setOnRefreshListener(this);
+        setupRecyclerView();
+        addPageDialogFragment = new AddPageDialogFragment();
+        localBroadcastManager.registerReceiver(updateBroadcastReceiver, new IntentFilter("com.example.jose.updated.controller.CUSTOM_INTENT"));
+        Intent serviceIntent = new Intent(getApplicationContext(), NotificationService.class);
+        startService(serviceIntent);
 
-        }
-    }
-
-    private void downloadTestData() {
-        for (Page page : realmDatabaseHelper.getPagesToTrack()) {
-            try {
-                UpdateRefresher.downloadHtml(page);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            realmDatabaseHelper.addPageHtmlToMap(page);
-        }
-        adapter.notifyDataSetChanged();
     }
 
     private void setupRecyclerView() {
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-        adapter = new PageAdapter(getBaseContext());
+        adapter = new PageAdapter(getApplicationContext());
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 15, true));
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(layoutManager);
@@ -133,12 +118,6 @@ public class MainActivity extends BaseActivity implements UpdateBroadcastReceive
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public void deleteButtonPressed(View view){
-        Toast.makeText(getApplicationContext(), ""+ realmDatabaseHelper.getSizeOfPagesToTrack(), Toast.LENGTH_SHORT).show();
-        notifyAdapterDataSetChange(getApplicationContext());
-        Toast.makeText(getApplicationContext(), ""+ realmDatabaseHelper.getSizeOfPagesToTrack(), Toast.LENGTH_SHORT).show();
     }
 
 }

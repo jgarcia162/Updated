@@ -5,13 +5,12 @@ import com.example.jose.updated.model.RealmDatabaseHelper;
 
 
 public class UpdateRefresher {
-    private static RealmDatabaseHelper realmDatabaseHelper = RealmDatabaseHelper.getInstance();
+    private static RealmDatabaseHelper realmDatabaseHelper = new RealmDatabaseHelper();
 
     public static void refreshUpdate() throws Exception {
         for (Page page : realmDatabaseHelper.getPagesToTrack()) {
             if (!page.isUpdated()) {
                 if (isPageUpdated(page)) {
-                    page.setUpdated(true);
                     realmDatabaseHelper.addToUpdatedPages(page);
                 }
             }
@@ -21,7 +20,8 @@ public class UpdateRefresher {
     private static boolean isPageUpdated(Page page) throws Exception {
         if (page.isActive()) {
             String htmlToCheck = downloadHtml(page);
-            return htmlToCheck.equals(realmDatabaseHelper.getPageHtmlMap().get(page.getPageUrl()));
+            Page currentlyStoredPage = realmDatabaseHelper.getPage(page);
+            return htmlToCheck.equals(currentlyStoredPage.getContents());
         }
         return false;
     }

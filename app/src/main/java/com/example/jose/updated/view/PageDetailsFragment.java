@@ -16,7 +16,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.jose.updated.R;
 import com.example.jose.updated.model.Page;
@@ -42,10 +41,10 @@ public class PageDetailsFragment extends Fragment {
     private Page page;
     private Bundle bundle;
     private SharedPreferences preferences;
-    private RealmDatabaseHelper realmDatabaseHelper = RealmDatabaseHelper.getInstance();
+    private RealmDatabaseHelper realmDatabaseHelper;
 
     public PageDetailsFragment() {
-
+        realmDatabaseHelper = new RealmDatabaseHelper();
     }
 
     @Override
@@ -53,7 +52,8 @@ public class PageDetailsFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (bundle == null) {
             bundle = getArguments();
-            page = bundle.getParcelable("page");
+            String pageUrl = bundle.getString("page");
+            page = realmDatabaseHelper.getPageFromUrl(pageUrl);
         }
         preferences = getContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
     }
@@ -136,24 +136,15 @@ public class PageDetailsFragment extends Fragment {
         if(!page.getPageUrl().equals(String.valueOf(urlEditText.getText()))){
             page.setPageUrl(String.valueOf(urlEditText.getText()));
         }
-        //update page in db
-
     }
 
-    //TODO implement delete
     public void deletePage(){
-        Toast.makeText(getContext(), "TRACKED DELETE " + realmDatabaseHelper.getPagesToTrack().size(), Toast.LENGTH_SHORT).show();
-        Toast.makeText(getContext(), "UPDATED DELETE " + realmDatabaseHelper.getUpdatedPages().size(), Toast.LENGTH_SHORT).show();
-
-        //TODO not removing page ???
         if(page.isUpdated()){
             realmDatabaseHelper.removeFromUpdatedPages(page);
         }
 
         realmDatabaseHelper.removeFromPagesToTrack(page);
         MainActivity.adapter.notifyDataSetChanged();
-        Toast.makeText(getContext(), "TRACKED AFTER DELETE "+ realmDatabaseHelper.getSizeOfPagesToTrack(), Toast.LENGTH_SHORT).show();
-        Toast.makeText(getContext(), "UPDATED PAGES AFTER DELETE "+ realmDatabaseHelper.getSizeOfUpdatedPages(), Toast.LENGTH_SHORT).show();
         getActivity().onBackPressed();
 
     }

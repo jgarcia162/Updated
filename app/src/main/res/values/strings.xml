@@ -25,7 +25,6 @@
     <string name="logout_menu_text">Log Out</string>
     <string name="contact_menu_text">Contact</string>
     <string name="invalid_url_string">Not a valid URL!</string>
-    <string name="untitled_page_string">Untitled</string>
     <string name="added_page_string">" Added"</string>
     <string name="settings_title_text">Settings</string>
     <string name="update_frequency_title">Check for updates every </string>
@@ -48,6 +47,7 @@
     <string name="off_text">Off</string>
     <string name="refresh_menu_text">Refresh</string>
     <string name="page_already_added_text">Page already added!</string>
+    <string name="untitled_page_text">Untitled</string>
     <string-array name="frequency_spinner_array">
         <item>24</item>
         <item>48</item>

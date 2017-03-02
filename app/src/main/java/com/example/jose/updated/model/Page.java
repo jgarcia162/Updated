@@ -12,18 +12,16 @@ import io.realm.annotations.PrimaryKey;
 
 public class Page extends RealmObject implements Parcelable{
 
+    @PrimaryKey private String pageUrl;
     private String title;
     private String contents;
-    @PrimaryKey
-    private String pageUrl;
     private String nickname;
     private String notes;
     private long updateFrequency;
     private long timeOfLastUpdateInMilliSec;
-    private boolean isUpdated;
     private boolean isActive;
-    @Ignore
-    private Bitmap bitmapIcon;
+    private boolean isUpdated;
+    @Ignore private Bitmap bitmapIcon;
 
 
 

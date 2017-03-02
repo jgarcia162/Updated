@@ -15,7 +15,6 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.jose.updated.R;
-import com.example.jose.updated.controller.UpdateRefresher;
 import com.example.jose.updated.model.Page;
 import com.example.jose.updated.model.RealmDatabaseHelper;
 
@@ -30,6 +29,7 @@ public class AddPageDialogFragment extends DialogFragment {
     private RealmDatabaseHelper realmDatabaseHelper;
     private String urlText;
     private String titleText;
+    private boolean previewButtonClicked;
 
     public AddPageDialogFragment() {
 
@@ -38,7 +38,8 @@ public class AddPageDialogFragment extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        realmDatabaseHelper = RealmDatabaseHelper.getInstance();
+        realmDatabaseHelper = new RealmDatabaseHelper();
+        previewButtonClicked = false;
     }
 
     @Nullable
@@ -81,30 +82,16 @@ public class AddPageDialogFragment extends DialogFragment {
     }
 
     private void onClickAddButton(String urlText, String titleText) throws Exception {
-        if (newPage == null) {
+        if (!previewButtonClicked) {
             if (!TextUtils.isEmpty(urlText)) {
                 if (!URLUtil.isValidUrl(urlText)) {
                     Toast.makeText(getActivity(), R.string.invalid_url_string, Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if (TextUtils.isEmpty(titleText)) {
-                    titleText = "untitled";
+                    titleText = getString(R.string.untitled_page_text);
                 }
-                newPage = new Page(titleText, urlText, new Date().getTime());
-                titleInputEditText.setText("");
-                urlInputEditText.setText("");
-                newPage.setContents(UpdateRefresher.downloadHtml(newPage));
-                realmDatabaseHelper.addPageHtmlToMap(newPage);
-                newPage.setTimeOfLastUpdateInMilliSec(new Date().getTime());
-                newPage.setIsActive(true);
-                realmDatabaseHelper.addToPagesToTrack(newPage);
-                if (!realmDatabaseHelper.getPageHtmlMap().containsKey(newPage.getPageUrl())) {
-                    Toast.makeText(getActivity(), R.string.page_already_added_text, Toast.LENGTH_SHORT).show();
-                } else {
-
-                    Toast.makeText(getActivity(), newPage.getTitle() + getString(R.string.added_page_string), Toast.LENGTH_SHORT).show();
-                }
-                //add to db
+                realmDatabaseHelper.createPage(titleText,urlText,new Date().getTime());
                 newPage = null;
                 resetTextFields();
                 this.dismiss();
@@ -112,26 +99,17 @@ public class AddPageDialogFragment extends DialogFragment {
                 Toast.makeText(getActivity(), R.string.enter_url_toast, Toast.LENGTH_SHORT).show();
             }
         }
-        if (newPage != null) { //this means user has previewed page
+        if (previewButtonClicked) { //this means user has previewed page
             if (!URLUtil.isValidUrl(newPage.getPageUrl())) {
                 Toast.makeText(getActivity(), R.string.invalid_url_string, Toast.LENGTH_SHORT).show();
                 return;
             }
-            newPage.setContents(UpdateRefresher.downloadHtml(newPage));
-            realmDatabaseHelper.addPageHtmlToMap(newPage);
-            newPage.setTimeOfLastUpdateInMilliSec(new Date().getTime());
-            newPage.setIsActive(true);
-            realmDatabaseHelper.addToPagesToTrack(newPage);
-            if (!realmDatabaseHelper.getPageHtmlMap().containsKey(newPage.getPageUrl())) {
-                Toast.makeText(getActivity(), R.string.page_already_added_text, Toast.LENGTH_SHORT).show();
-            }
-            //add to db
-            Toast.makeText(getActivity(), newPage.getTitle() + getString(R.string.added_url_toast), Toast.LENGTH_SHORT).show();
+            realmDatabaseHelper.createPage(newPage.getTitle(),newPage.getPageUrl(),newPage.getTimeOfLastUpdateInMilliSec());
             newPage = null;
             resetTextFields();
             this.dismiss();
         }
-        MainActivity.notifyAdapterDataSetChange(getActivity());
+//        MainActivity.notifyAdapterDataSetChange(getActivity());
     }
 
     private void resetTextFields() {
@@ -140,6 +118,7 @@ public class AddPageDialogFragment extends DialogFragment {
     }
 
     private void onClickPreviewButton(String urlText, String titleText) {
+        previewButtonClicked = true;
         if (!TextUtils.isEmpty(urlText)) {
             if (!URLUtil.isValidUrl(urlText)) {
                 Toast.makeText(getActivity(), R.string.invalid_url_string, Toast.LENGTH_SHORT).show();
@@ -149,7 +128,7 @@ public class AddPageDialogFragment extends DialogFragment {
                 newPage = new Page(titleText, urlText, new Date().getTime());
                 displayPageInPreviewWebView(newPage.getPageUrl());
             } else {
-                newPage = new Page(getString(R.string.untitled_page_string), urlText, new Date().getTime());
+                newPage = new Page(getString(R.string.untitled_page_text), urlText, new Date().getTime());
                 displayPageInPreviewWebView(newPage.getPageUrl());
             }
         } else {
