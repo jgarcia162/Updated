@@ -12,4 +12,5 @@ Technical Components include <br>
 -Android Support Library <br>
 -RecyclerView <br>
 -Fragments <br>
+-Async Task <br>
 -[Realm Java 3.0.0](https://realm.io/) database <br>
