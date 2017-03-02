@@ -5,9 +5,11 @@ Nevermind those pesky newsletters flooding your inbox; Updated lets you track yo
 
 Project currently a work in progress. 
 
-Technical Components include
--ContentProvider
--IntentService
--Android Support Library
--RecyclerView
--Fragments
+Technical Components include <br>
+-Content Provider <br>
+-Intent Service <br>
+-Broadcast Receiver <br>
+-Android Support Library <br>
+-RecyclerView <br>
+-Fragments <br>
+-[Realm Java 3.0.0](https://realm.io/) database <br>
