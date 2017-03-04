@@ -14,14 +14,16 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.jose.updated.R;
 import com.example.jose.updated.controller.RealmDatabaseHelper;
 import com.example.jose.updated.model.Page;
 
-public class PageViewHolder extends RecyclerView.ViewHolder{
+public class PageViewHolder extends RecyclerView.ViewHolder implements AdapterView.OnLongClickListener,View.OnClickListener{
 
     private TextView pageTitleTextView;
     private TextView pageUrlTextView;
@@ -50,6 +52,8 @@ public class PageViewHolder extends RecyclerView.ViewHolder{
             }
         });
         itemLayout = (CardView) view.findViewById(R.id.item_layout);
+        itemLayout.setOnLongClickListener(this);
+        itemLayout.setOnClickListener(this);
         context = view.getContext();
 
     }
@@ -105,7 +109,7 @@ public class PageViewHolder extends RecyclerView.ViewHolder{
 //    @Override
 //    public boolean onLongClick(View v) {
 //        //TODO add long click editable
-//        Toast.makeText(context,"LONG CLICK",Toast.LENGTH_SHORT).show();
+//        Toast.makeText(context,"LONG CLICK", Toast.LENGTH_SHORT).show();
 //        return true;
 //    }
 
@@ -121,5 +125,17 @@ public class PageViewHolder extends RecyclerView.ViewHolder{
             realmDatabaseHelper.removeFromUpdatedPages(page);
         }
         customTabsIntent.launchUrl(context, pageUri);
+    }
+
+
+    @Override
+    public boolean onLongClick(View v) {
+        Toast.makeText(context,"LONG CLICK", Toast.LENGTH_SHORT).show();
+        return true;
+    }
+
+    @Override
+    public void onClick(View v) {
+        openInBrowser();
     }
 }

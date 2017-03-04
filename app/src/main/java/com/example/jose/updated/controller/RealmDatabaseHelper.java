@@ -52,7 +52,6 @@ public class RealmDatabaseHelper {
         } finally {
             realm.commitTransaction();
         }
-
     }
 
     public void removeFromUpdatedPages(Page page) {
