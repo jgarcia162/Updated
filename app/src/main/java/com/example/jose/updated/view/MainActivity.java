@@ -2,31 +2,30 @@ package com.example.jose.updated.view;
 
 import android.annotation.SuppressLint;
 import android.app.FragmentManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.view.ActionMode;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 
+import com.davidecirillo.multichoicerecyclerview.MultiChoiceToolbar;
 import com.example.jose.updated.R;
 import com.example.jose.updated.controller.BaseActivity;
-import com.example.jose.updated.controller.CustomMultiChoiceListener;
 import com.example.jose.updated.controller.NotificationService;
 import com.example.jose.updated.controller.PageAdapter;
+import com.example.jose.updated.controller.RealmDatabaseHelper;
 import com.example.jose.updated.controller.UpdateBroadcastReceiver;
 import com.example.jose.updated.controller.UpdateRefresher;
-import com.example.jose.updated.controller.RealmDatabaseHelper;
 
 import io.realm.Realm;
 
-public class MainActivity extends BaseActivity implements UpdateBroadcastReceiver.UpdatedCallback, SwipeRefreshLayout.OnRefreshListener,CustomMultiChoiceListener {
+public class MainActivity extends BaseActivity implements UpdateBroadcastReceiver.UpdatedCallback, SwipeRefreshLayout.OnRefreshListener{
     private FragmentManager fragmentManager;
     @SuppressLint("StaticFieldLeak")
     public static PageAdapter adapter;
@@ -51,17 +50,29 @@ public class MainActivity extends BaseActivity implements UpdateBroadcastReceive
         localBroadcastManager.registerReceiver(updateBroadcastReceiver, new IntentFilter("com.example.jose.updated.controller.CUSTOM_INTENT"));
         Intent serviceIntent = new Intent(getApplicationContext(), NotificationService.class);
         startService(serviceIntent);
-
     }
 
     private void setupRecyclerView() {
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         adapter = new PageAdapter(getApplicationContext());
-        adapter.setSingleClickMode(true);
+        adapter.setSingleClickMode(false);
+        adapter.setMultiChoiceToolbar(createMultiChoiceToolbar());
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 15, true));
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(layoutManager);
+    }
+    private MultiChoiceToolbar createMultiChoiceToolbar() {
+        return new MultiChoiceToolbar.Builder(MainActivity.this, toolbar)
+                .setTitles(toolbarTitle(), getResources().getString(R.string.app_name))
+                .setMultiChoiceColours(R.color.colorPrimary, R.color.colorPrimaryDark)
+                .setDefaultIcon(R.drawable.ic_arrow_back_white_24dp, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        onBackPressed();
+                    }
+                })
+                .build();
     }
 
 
@@ -69,16 +80,16 @@ public class MainActivity extends BaseActivity implements UpdateBroadcastReceive
         addPageDialogFragment.show(fragmentManager, "addPageFragment");
     }
 
-//    public static void notifyAdapterDataSetChange(Context context) {
-//        Handler handler = new Handler(context.getMainLooper());
-//        Runnable runnable = new Runnable() {
-//            @Override
-//            public void run() {
-//                adapter.notifyDataSetChanged();
-//            }
-//        };
-//        handler.post(runnable);
-//    }
+    public static void notifyAdapterDataSetChange(Context context) {
+        Handler handler = new Handler(context.getMainLooper());
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                adapter.notifyDataSetChanged();
+            }
+        };
+        handler.post(runnable);
+    }
 
 
     @Override
@@ -110,34 +121,22 @@ public class MainActivity extends BaseActivity implements UpdateBroadcastReceive
         }
     }
 
-    @Override
-    public void onViewRecycled(RecyclerView.ViewHolder holder) {
 
+    @Override
+    protected int setActivityIdentifier() {
+        return R.layout.activity_main;
     }
 
     @Override
-    public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
-
+    protected String toolbarTitle() {
+        return getString(R.string.app_name);
     }
 
     @Override
-    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+    protected boolean showBackHomeAsUpIndicator() {
         return false;
     }
 
-    @Override
-    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-        return false;
-    }
 
-    @Override
-    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-        return false;
-    }
-
-    @Override
-    public void onDestroyActionMode(ActionMode mode) {
-
-    }
 }
 

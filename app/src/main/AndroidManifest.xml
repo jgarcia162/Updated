@@ -18,7 +18,7 @@
         </activity>
         <activity
             android:name=".view.SecondActivity"
-            android:parentActivityName=".view.MainActivity" />
+            android:parentActivityName=".controller.Activity" />
 
         <service android:name=".controller.NotificationService" />
         <receiver

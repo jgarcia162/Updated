@@ -9,27 +9,25 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.customtabs.CustomTabsIntent;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
-import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.jose.updated.R;
 import com.example.jose.updated.controller.RealmDatabaseHelper;
 import com.example.jose.updated.model.Page;
 
-public class PageViewHolder extends RecyclerView.ViewHolder implements AdapterView.OnLongClickListener,View.OnClickListener{
+public class PageViewHolder extends RecyclerView.ViewHolder{
 
     private TextView pageTitleTextView;
     private TextView pageUrlTextView;
     public TextView updatedStatusTextView;
     private TextView timeOfLastUpdateTextView;
-    private CardView itemLayout;
+    private RelativeLayout itemLayout;
     private Context context;
     private ImageView imageView;
     private WebView webView;
@@ -51,9 +49,7 @@ public class PageViewHolder extends RecyclerView.ViewHolder implements AdapterVi
                 openPageDetails();
             }
         });
-        itemLayout = (CardView) view.findViewById(R.id.item_layout);
-        itemLayout.setOnLongClickListener(this);
-        itemLayout.setOnClickListener(this);
+        itemLayout = (RelativeLayout) view.findViewById(R.id.card_view_layout);
         context = view.getContext();
 
     }
@@ -61,11 +57,11 @@ public class PageViewHolder extends RecyclerView.ViewHolder implements AdapterVi
     public void bind(Page page) {
         this.page = page;
         pageTitleTextView.setText(page.getTitle());
-        Bitmap bitmap = loadFavicon(page);
-        if (bitmap != null) {
-            imageView.setImageBitmap(bitmap);
-            page.setBitmapIcon(bitmap);
-        }
+//        Bitmap bitmap = loadFavicon(page);
+//        if (bitmap != null) {
+//            imageView.setImageBitmap(bitmap);
+//            page.setBitmapIcon(bitmap);
+//        }
 
         if (realmDatabaseHelper.getUpdatedPages().contains(page)) {
             updatedStatusTextView.setText(R.string.page_updated);
@@ -93,11 +89,6 @@ public class PageViewHolder extends RecyclerView.ViewHolder implements AdapterVi
         return BitmapFactory.decodeResource(context.getResources(), id);
     }
 
-//    @Override
-//    public void onClick(View v) {
-//        openInBrowser();
-//    }
-
     private void openPageDetails() {
         Bundle bundle = new Bundle();
         bundle.putString("page", page.getPageUrl());
@@ -105,13 +96,6 @@ public class PageViewHolder extends RecyclerView.ViewHolder implements AdapterVi
         intent.putExtra("page_bundle", bundle);
         context.startActivity(intent);
     }
-
-//    @Override
-//    public boolean onLongClick(View v) {
-//        //TODO add long click editable
-//        Toast.makeText(context,"LONG CLICK", Toast.LENGTH_SHORT).show();
-//        return true;
-//    }
 
     public void openInBrowser() {
         Uri pageUri = Uri.parse(page.getPageUrl());
@@ -128,14 +112,5 @@ public class PageViewHolder extends RecyclerView.ViewHolder implements AdapterVi
     }
 
 
-    @Override
-    public boolean onLongClick(View v) {
-        Toast.makeText(context,"LONG CLICK", Toast.LENGTH_SHORT).show();
-        return true;
-    }
 
-    @Override
-    public void onClick(View v) {
-        openInBrowser();
-    }
 }

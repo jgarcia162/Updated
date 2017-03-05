@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/settings_fragment_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,8 +10,8 @@
         style="@style/SettingFragmentTitles"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/settings_title_marginTop"
+        android:layout_gravity="center"
         android:text="@string/settings_title_text"
         android:textSize="@dimen/settings_title_tv_text_size" />
 
@@ -19,9 +19,8 @@
         android:id="@+id/settings_top_half"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/settings_title"
         android:paddingTop="@dimen/top_half_paddingtop"
-        android:gravity="center_horizontal">
+        android:gravity="center">
 
         <TextView
             android:id="@+id/update_frequency_title"
@@ -85,9 +84,8 @@
         android:id="@+id/contact_setting_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/settings_top_half"
-        android:layout_centerHorizontal="true"
         android:layout_marginTop="50dp"
+        android:layout_gravity="center"
         android:text="@string/contact_setting_title"
         style="@style/SettingFragmentTitles"
         android:textSize="25sp" />
@@ -96,7 +94,8 @@
         android:id="@+id/contact_icons"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
         android:orientation="horizontal">
 
         <ImageView
@@ -131,7 +130,6 @@
         android:id="@+id/save_settings_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/contact_icons"
         android:layout_marginTop="50dp"
         android:text="@string/save_settings_text"
         android:background="@color/transparent"/>
@@ -139,7 +137,6 @@
         android:id="@+id/reset_defaults_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/save_settings_button"
         android:text="@string/reset_defaults_text"
         android:textColor="@color/deadRed"
         android:background="@color/transparent"/>
@@ -147,10 +144,9 @@
         android:id="@+id/version_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/reset_defaults_button"
-        android:layout_centerHorizontal="true"
         android:layout_margin="10dp"
+        android:layout_gravity="center"
         android:text="@string/version_number" />
 
 
-</RelativeLayout>
+</LinearLayout>

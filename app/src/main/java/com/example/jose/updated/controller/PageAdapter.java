@@ -1,11 +1,16 @@
 package com.example.jose.updated.controller;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.CardView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Toast;
 
 import com.davidecirillo.multichoicerecyclerview.MultiChoiceAdapter;
 import com.example.jose.updated.R;
@@ -18,10 +23,11 @@ public class PageAdapter extends MultiChoiceAdapter<PageViewHolder> {
     private List<Page> listOfPages;
     private int lastPosition;
     private Context context;
-    private RealmDatabaseHelper realmDatabaseHelper;
+    private PageViewHolder holderForOnClick;
+    private int holderPosition;
 
     public PageAdapter(Context context){
-        realmDatabaseHelper = new RealmDatabaseHelper();
+        RealmDatabaseHelper realmDatabaseHelper = new RealmDatabaseHelper();
         listOfPages = realmDatabaseHelper.getAllPages();
         this.context = context;
         lastPosition = -1;
@@ -39,7 +45,8 @@ public class PageAdapter extends MultiChoiceAdapter<PageViewHolder> {
         Page page = listOfPages.get(position);
         holder.bind(page);
         setAnimation(holder.itemView,position);
-        super.onBindViewHolder(holder,position);
+
+//        super.onBindViewHolder(holder,position);
     }
 
     @Override
@@ -58,23 +65,30 @@ public class PageAdapter extends MultiChoiceAdapter<PageViewHolder> {
             lastPosition = position;
         }
     }
-//
-//    @Override
-//    protected View.OnClickListener defaultItemViewClickListener(PageViewHolder holder, int position) {
-//        return new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Toast.makeText(context, "CLICKED", Toast.LENGTH_SHORT).show();
-//            }
-//        };
-//    }
 
-//    @Override
-//    public void setActive(@NonNull View view, boolean state) {
-//        CardView card = (CardView) view.findViewById(R.id.item_layout);
-//        if(state){
-//            card.setBackgroundColor(Color.red(R.color.deadRed));
-//        }
-//
-//    }
+    @Override
+    public void setActive(@NonNull View view, boolean state) {
+
+        CardView imageView = (CardView) view.findViewById(R.id.item_layout);
+        if (state) {
+            imageView.setBackgroundColor(ContextCompat.getColor(context, R.color.colorPrimaryDark));
+        } else {
+            imageView.setBackgroundColor(ContextCompat.getColor(context, R.color.colorPrimary));
+        }
+    }
+
+    @Override
+    protected View.OnClickListener defaultItemViewClickListener(PageViewHolder holder, int position) {
+        Log.d("PAGEADAPTER", "defaultItemViewClickListener: "+ position);
+        //TODO this thing
+        holderForOnClick = holder;
+        holderPosition = holder.getAdapterPosition();
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Toast.makeText(context, "clicked position "+holderPosition, Toast.LENGTH_SHORT).show();
+            }
+        };
+    }
 }

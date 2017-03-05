@@ -5,11 +5,13 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
 
 import com.example.jose.updated.R;
 import com.example.jose.updated.controller.BaseActivity;
-import com.example.jose.updated.model.Page;
 import com.example.jose.updated.controller.RealmDatabaseHelper;
+import com.example.jose.updated.model.Page;
 
 /**
  * Created by Joe on 2/6/17.
@@ -18,14 +20,14 @@ public class SecondActivity extends BaseActivity {
     private FragmentManager fragmentManager;
     private int container;
     private RealmDatabaseHelper realmDatabaseHelper;
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.second_activity);
-        if(!(getActionBar() == null)){
-            getActionBar().setDisplayHomeAsUpEnabled(true);
-        }
+        toolbar = (Toolbar)findViewById(R.id.toolbar);
+        setToolbar();
         realmDatabaseHelper = new RealmDatabaseHelper();
         fragmentManager = getSupportFragmentManager();
         container = R.id.second_activity_fragment_container;
@@ -64,4 +66,44 @@ public class SecondActivity extends BaseActivity {
             }
         }
     }
+
+    private void setToolbar() {
+        setSupportActionBar(toolbar);
+
+        if (getSupportActionBar() != null && showBackHomeAsUpIndicator()) {
+            getSupportActionBar().setDisplayShowTitleEnabled(true);
+            getSupportActionBar().setHomeButtonEnabled(true);
+            getSupportActionBar().setShowHideAnimationEnabled(true);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
+            if (toolbarTitle() != null) {
+                getSupportActionBar().setTitle(toolbarTitle());
+            }
+
+            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onBackPressed();
+                }
+            });
+        }
+    }
+
+
+    @Override
+    protected int setActivityIdentifier() {
+        return R.layout.second_activity;
+
+    }
+    @Override
+    protected String toolbarTitle() {
+        return getString(R.string.app_name);
+    }
+
+    @Override
+    protected boolean showBackHomeAsUpIndicator() {
+        return true;
+    }
+
+
 }
