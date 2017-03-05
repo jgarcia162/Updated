@@ -21,5 +21,5 @@ public class UpdatedConstants {
     public static int DEFAULT_FAVICON = R.drawable.updated_logo;
     public static String IS_ACTIVE_TAG = "_is_active";
     public static String NOTES_TAG = "_notes";
-
+    public static final int INVALID_RES = -1;
 }
