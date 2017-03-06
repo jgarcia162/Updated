@@ -1,10 +1,15 @@
 package com.example.jose.updated.controller;
 
-import android.app.IntentService;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Looper;
+import android.os.Message;
+import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 
@@ -24,16 +29,16 @@ import static com.example.jose.updated.model.UpdatedConstants.PREFS_NAME;
 import static com.example.jose.updated.model.UpdatedConstants.STOP_NOTIFICATION_PREFERENCE_TAG;
 import static com.example.jose.updated.model.UpdatedConstants.UPDATE_FREQUENCY_PREFERENCE_TAG;
 
-public class NotificationService extends IntentService {
+public class NotificationService extends Service {
     private boolean started = false;
     private Timer updateTimer;
     private TimerTask updateTimerTask;
     private NotificationManager notificationManager;
     public static final int NOTIFICATION_ID = 1;
     private long timerLength;
-    Realm realm;
     private LocalBroadcastManager localBroadcastManager;
     private SharedPreferences preferences;
+    private ServiceHandler mServiceHandler;
 
 
     /**
@@ -43,29 +48,51 @@ public class NotificationService extends IntentService {
      */
 
     public NotificationService(String name) {
-        super(name);
     }
 
     NotificationService() {
-        super("NotificationService");
 
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        localBroadcastManager = LocalBroadcastManager.getInstance(this);
+        preferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        timerLength = preferences.getLong(UPDATE_FREQUENCY_PREFERENCE_TAG, DEFAULT_UPDATE_FREQUENCY);
+        notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        localBroadcastManager = LocalBroadcastManager.getInstance(this);
-        preferences = getSharedPreferences(PREFS_NAME,MODE_PRIVATE);
-        timerLength = preferences.getLong(UPDATE_FREQUENCY_PREFERENCE_TAG,DEFAULT_UPDATE_FREQUENCY);
-        notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        return super.onStartCommand(intent, flags, startId);
-    }
-
-    @Override
-    protected void onHandleIntent(Intent intent) {
+//        localBroadcastManager = LocalBroadcastManager.getInstance(this);
+//        preferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+//        timerLength = preferences.getLong(UPDATE_FREQUENCY_PREFERENCE_TAG, DEFAULT_UPDATE_FREQUENCY);
+//        notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         setStarted(true);
         createTimerTask();
         setUpTimer(updateTimerTask);
+        Message msg = mServiceHandler.obtainMessage();
+        msg.arg1 = startId;
+        mServiceHandler.sendMessage(msg);
+        return Service.START_NOT_STICKY;
     }
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+
+        return null;
+    }
+
+    //
+//    @Override
+//    protected void onHandleIntent(Intent intent) {
+//        setStarted(true);
+//        createTimerTask();
+//        setUpTimer(updateTimerTask);
+//    }
+
     private void setUpTimer(TimerTask task) {
         Timer timer = new Timer();
         //TODO don't forget to change this to timerLength when done testing
@@ -86,12 +113,13 @@ public class NotificationService extends IntentService {
     }
 
     public void refresh() throws Exception {
-        UpdateRefresher.refreshUpdate();
+        UpdateRefresher refresher = new UpdateRefresher();
+        refresher.refreshUpdate();
         Realm realm = Realm.getDefaultInstance();
-        List<Page> updatedPages = realm.where(Page.class).equalTo("isUpdated",true).findAll();
+        List<Page> updatedPages = realm.where(Page.class).equalTo("isUpdated", true).findAll();
         realm.close();
         if (updatedPages.size() > 0) {
-            if(preferences.getBoolean(STOP_NOTIFICATION_PREFERENCE_TAG,DEFAULT_NOTIFICATIONS_ACTIVE)){
+            if (preferences.getBoolean(STOP_NOTIFICATION_PREFERENCE_TAG, DEFAULT_NOTIFICATIONS_ACTIVE)) {
                 createNotification(getNamesOfUpdatedPages(updatedPages));
             }
             Intent broadcastIntent = new Intent();
@@ -114,13 +142,13 @@ public class NotificationService extends IntentService {
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getBaseContext()).setSmallIcon(R.drawable.updated_logo).setContentTitle(getString(R.string.notification_title)).setContentText(namesOfUpdatedPages);
         notificationBuilder.setAutoCancel(true);
         Intent notificationIntent = new Intent(getApplicationContext(), MainActivity.class);
-        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         notificationBuilder.setContentIntent(pendingIntent);
         notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
     }
 
-    private String getNamesOfUpdatedPages(List<Page> updatedPages){
+    private String getNamesOfUpdatedPages(List<Page> updatedPages) {
         String namesOfUpdatedPages = "";
         for (Page p : updatedPages) {
             namesOfUpdatedPages += p.getTitle() + ", ";
@@ -128,5 +156,21 @@ public class NotificationService extends IntentService {
         namesOfUpdatedPages = (updatedPages.size() == 1) ? (namesOfUpdatedPages + " has been updated!") : (namesOfUpdatedPages + " have been updated!");
         return namesOfUpdatedPages;
     }
+
+    private final class ServiceHandler extends Handler {
+        public ServiceHandler(Looper looper) {
+            super(looper);
+        }
+        @Override
+        public void handleMessage(Message msg) {
+            // Normally we would do some work here, like download a file.
+            // For our sample, we just sleep for 5 seconds.
+                setUpTimer(updateTimerTask);
+            // Stop the service using the startId, so that we don't stop
+            // the service in the middle of handling another job
+//            stopSelf(msg.arg1);
+        }
+    }
+
 
 }

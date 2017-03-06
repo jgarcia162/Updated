@@ -1,5 +1,7 @@
 package com.example.jose.updated.controller;
 
+import android.content.Context;
+
 import com.example.jose.updated.model.Page;
 
 import java.util.Date;
@@ -13,9 +15,16 @@ import io.realm.Realm;
 
 public class RealmDatabaseHelper {
     private Realm realm;
+    private Context context;
+    private UpdateRefresher refresher;
 
     public RealmDatabaseHelper() {
         realm = Realm.getDefaultInstance();
+        refresher = new UpdateRefresher();
+    }
+
+    public RealmDatabaseHelper(Context context) {
+        this.context = context;
     }
 
     public List<Page> getAllPages() {
@@ -31,26 +40,33 @@ public class RealmDatabaseHelper {
     }
 
     public void addToAllPages(Page page) {
+        realm.beginTransaction();
         realm.copyToRealmOrUpdate(page);
+        realm.commitTransaction();
+        realm.close();
     }
 
     public void addToUpdatedPages(Page page) {
+        //TODO attempt this with executeTransaction method
         realm.beginTransaction();
         page.setTimeOfLastUpdateInMilliSec(new Date().getTime());
         page.setUpdated(true);
         realm.copyToRealmOrUpdate(page);
         realm.commitTransaction();
+        realm.close();
     }
 
     public void addToPagesToTrack(Page page) {
         realm.beginTransaction();
         try {
-            page.setContents(UpdateRefresher.downloadHtml(page));
+            page.setContents(refresher.downloadHtml(page));
             realm.copyToRealmOrUpdate(page);
         } catch (Exception e) {
             e.printStackTrace();
+            realm.close();
         } finally {
             realm.commitTransaction();
+            realm.close();
         }
     }
 
@@ -63,6 +79,7 @@ public class RealmDatabaseHelper {
         pageToRemove.setUpdated(false);
         realm.copyToRealmOrUpdate(pageToRemove);
         realm.commitTransaction();
+        realm.close();
     }
 
     public void removeFromPagesToTrack(Page page) {
@@ -70,6 +87,7 @@ public class RealmDatabaseHelper {
         realm.beginTransaction();
         pageToDelete.deleteFromRealm();
         realm.commitTransaction();
+        realm.close();
     }
 
     public int getSizeOfUpdatedPages() {
@@ -86,6 +104,7 @@ public class RealmDatabaseHelper {
         page.setIsActive(!page.isActive());
         realm.copyToRealmOrUpdate(page);
         realm.commitTransaction();
+        realm.close();
     }
 
     public Page getPage(Page page) {
@@ -104,7 +123,7 @@ public class RealmDatabaseHelper {
     public void createPage(String titleText, String urlText, long time) {
         Page newPage = new Page(titleText, urlText, time);
         try {
-            newPage.setContents(UpdateRefresher.downloadHtml(newPage));
+            newPage.setContents(refresher.downloadHtml(newPage));
             newPage.setTimeOfLastUpdateInMilliSec(new Date().getTime());
             newPage.setIsActive(true);
             addToPagesToTrack(newPage);
@@ -124,15 +143,17 @@ public class RealmDatabaseHelper {
         pageToUpdate.setContents(html);
         realm.copyToRealmOrUpdate(pageToUpdate);
         realm.commitTransaction();
+        realm.close();
     }
 
     public void savePageSettings(Page page, String title, String notes, boolean isActive) {
-        Page pageToUpdate = realm.where(Page.class).equalTo("pageUrl",page.getPageUrl()).findFirst();
+        Page pageToUpdate = realm.where(Page.class).equalTo("pageUrl", page.getPageUrl()).findFirst();
         realm.beginTransaction();
         pageToUpdate.setTitle(title);
         pageToUpdate.setNotes(notes);
         pageToUpdate.setIsActive(isActive);
         realm.copyToRealmOrUpdate(pageToUpdate);
         realm.commitTransaction();
+        realm.close();
     }
 }

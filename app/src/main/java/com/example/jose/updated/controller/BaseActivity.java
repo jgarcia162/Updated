@@ -11,6 +11,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.example.jose.updated.R;
 import com.example.jose.updated.view.MainActivity;
@@ -49,7 +50,9 @@ public abstract class BaseActivity extends AppCompatActivity {
             case R.id.refresh_menu:
                 try {
                     MainActivity.swipeRefreshLayout.setRefreshing(true);
-                    UpdateRefresher.refreshUpdate();
+                    UpdateRefresher refresher = new UpdateRefresher(getApplicationContext());
+                    refresher.refreshUpdate();
+                    Toast.makeText(getApplicationContext(), R.string.refreshed_toast_text, Toast.LENGTH_SHORT).show();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -72,7 +75,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         if (getSupportActionBar() != null && showBackHomeAsUpIndicator()) {
             getSupportActionBar().setDisplayShowTitleEnabled(true);
             getSupportActionBar().setHomeButtonEnabled(true);
-            getSupportActionBar().setShowHideAnimationEnabled(true);
+//            getSupportActionBar().setShowHideAnimationEnabled(true);
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
             getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
             if (toolbarTitle() != null) {

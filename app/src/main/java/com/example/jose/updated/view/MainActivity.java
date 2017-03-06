@@ -25,6 +25,7 @@ import com.example.jose.updated.controller.UpdateBroadcastReceiver;
 import com.example.jose.updated.controller.UpdateRefresher;
 
 import io.realm.Realm;
+import okhttp3.OkHttpClient;
 
 public class MainActivity extends BaseActivity implements UpdateBroadcastReceiver.UpdatedCallback, SwipeRefreshLayout.OnRefreshListener {
     private FragmentManager fragmentManager;
@@ -115,7 +116,8 @@ public class MainActivity extends BaseActivity implements UpdateBroadcastReceive
     @Override
     public void onRefresh() {
         try {
-            UpdateRefresher.refreshUpdate();
+            UpdateRefresher updateRefresher = new UpdateRefresher();
+            updateRefresher.refreshUpdate();
             Toast.makeText(getApplicationContext(), "Refreshed", Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             e.printStackTrace();
@@ -135,6 +137,11 @@ public class MainActivity extends BaseActivity implements UpdateBroadcastReceive
     @Override
     protected boolean showBackHomeAsUpIndicator() {
         return false;
+    }
+
+    public void connectViaOkHttp(){
+        OkHttpClient okHttpClient = new OkHttpClient();
+
     }
 
 

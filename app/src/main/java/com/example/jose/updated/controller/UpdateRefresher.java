@@ -1,6 +1,8 @@
 package com.example.jose.updated.controller;
 
+import android.content.Context;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 
 import com.example.jose.updated.model.Page;
 import com.example.jose.updated.view.MainActivity;
@@ -9,22 +11,31 @@ import io.realm.Realm;
 
 
 public class UpdateRefresher {
+    private Context context;
 
-    public static void refreshUpdate() throws Exception {
+    public UpdateRefresher(){
+
+    }
+
+    public UpdateRefresher(Context context){
+        this.context = context;
+    }
+
+    public void refreshUpdate() {
         RealmDatabaseHelper realmDatabaseHelper = new RealmDatabaseHelper();
         SwipeRefreshLayout swipeRefreshLayout = MainActivity.swipeRefreshLayout;
         for (Page page : realmDatabaseHelper.getAllPages()) {
             if (!page.isUpdated()) {
-                if (isPageUpdated(page)) {
-                    realmDatabaseHelper.addToUpdatedPages(page);
-                }
+                    if (isPageUpdated(page)) {
+                        realmDatabaseHelper.addToUpdatedPages(page);
+                    }
             }
         }
-        if(swipeRefreshLayout.isRefreshing())
+        if (swipeRefreshLayout.isRefreshing())
             swipeRefreshLayout.setRefreshing(false);
     }
 
-    private static boolean isPageUpdated(Page page) throws Exception {
+    private boolean isPageUpdated(Page page){
         RealmDatabaseHelper realmDatabaseHelper = new RealmDatabaseHelper();
         if (page.isActive()) {
             String htmlToCheck = downloadHtml(page);
@@ -42,10 +53,17 @@ public class UpdateRefresher {
         return false;
     }
 
-    private static String downloadHtml(Page page) throws Exception {
+    String downloadHtml(Page page)  {
         DownloadTask task = new DownloadTask();
         task.execute(page.getPageUrl());
-        return task.get();
+        try {
+
+            return task.get();
+        } catch (Exception e) {
+            Log.d("DOWNLOADTASK", "downloadHtml: Exception");
+            e.printStackTrace();
+            return "Error Downloading";
+        }
     }
 
 

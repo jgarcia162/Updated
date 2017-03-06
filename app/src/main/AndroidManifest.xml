@@ -20,7 +20,9 @@
             android:name=".view.SecondActivity"
             android:parentActivityName=".controller.Activity" />
 
-        <service android:name=".controller.NotificationService" />
+        <service android:name=".controller.NotificationService"
+            android:exported="false"
+            android:description="Updated Website Downloader Service"/>
         <receiver
             android:name=".controller.UpdateBroadcastReceiver"
             android:enabled="true"
