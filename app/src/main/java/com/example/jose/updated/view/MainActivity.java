@@ -13,6 +13,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
+import android.widget.Toast;
 
 import com.davidecirillo.multichoicerecyclerview.MultiChoiceToolbar;
 import com.example.jose.updated.R;
@@ -25,14 +26,14 @@ import com.example.jose.updated.controller.UpdateRefresher;
 
 import io.realm.Realm;
 
-public class MainActivity extends BaseActivity implements UpdateBroadcastReceiver.UpdatedCallback, SwipeRefreshLayout.OnRefreshListener{
+public class MainActivity extends BaseActivity implements UpdateBroadcastReceiver.UpdatedCallback, SwipeRefreshLayout.OnRefreshListener {
     private FragmentManager fragmentManager;
     @SuppressLint("StaticFieldLeak")
     public static PageAdapter adapter;
     private AddPageDialogFragment addPageDialogFragment;
     private RealmDatabaseHelper realmDatabaseHelper;
     private SharedPreferences preferences;
-    private SwipeRefreshLayout swipeRefreshLayout;
+    public static SwipeRefreshLayout swipeRefreshLayout;
     public static UpdateBroadcastReceiver updateBroadcastReceiver;
 
     @Override
@@ -62,6 +63,7 @@ public class MainActivity extends BaseActivity implements UpdateBroadcastReceive
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(layoutManager);
     }
+
     private MultiChoiceToolbar createMultiChoiceToolbar() {
         return new MultiChoiceToolbar.Builder(MainActivity.this, toolbar)
                 .setTitles(toolbarTitle(), getResources().getString(R.string.app_name))
@@ -110,17 +112,15 @@ public class MainActivity extends BaseActivity implements UpdateBroadcastReceive
         adapter.notifyDataSetChanged();
     }
 
-    //TODO refresh progress bar stays on forever
     @Override
     public void onRefresh() {
         try {
             UpdateRefresher.refreshUpdate();
-            swipeRefreshLayout.setRefreshing(false);
+            Toast.makeText(getApplicationContext(), "Refreshed", Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
 
     @Override
     protected int setActivityIdentifier() {

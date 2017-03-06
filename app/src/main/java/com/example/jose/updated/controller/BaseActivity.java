@@ -48,6 +48,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                 break;
             case R.id.refresh_menu:
                 try {
+                    MainActivity.swipeRefreshLayout.setRefreshing(true);
                     UpdateRefresher.refreshUpdate();
                 } catch (Exception e) {
                     e.printStackTrace();

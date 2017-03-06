@@ -34,7 +34,6 @@ public class PageViewHolder extends RecyclerView.ViewHolder{
     private ImageView editPageButton;
     private Page page;
     private RealmDatabaseHelper realmDatabaseHelper = new RealmDatabaseHelper();
-//TODO default click listener
     public PageViewHolder(View view) {
         super(view);
         updatedStatusTextView = (TextView) view.findViewById(R.id.update_status_text_view);
