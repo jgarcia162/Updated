@@ -6,12 +6,15 @@ import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
+import android.os.Process;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
 import com.example.jose.updated.R;
 import com.example.jose.updated.model.Page;
@@ -39,16 +42,19 @@ public class NotificationService extends Service {
     private LocalBroadcastManager localBroadcastManager;
     private SharedPreferences preferences;
     private ServiceHandler mServiceHandler;
+    private Looper mServiceLooper;
 
+    //TODO keep service alive in bakcground after app is closed, ask for help
 
-    /**
-     * Creates an IntentService.  Invoked by your subclass's constructor.
-     *
-     * @param name Used to name the worker thread, important only for debugging.
-     */
-
-    public NotificationService(String name) {
-    }
+//
+//    /**
+//     * Creates an IntentService.  Invoked by your subclass's constructor.
+//     *
+//     * @param name Used to name the worker thread, important only for debugging.
+//     */
+//
+//    public NotificationService(String name) {
+//    }
 
     NotificationService() {
 
@@ -61,6 +67,13 @@ public class NotificationService extends Service {
         preferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         timerLength = preferences.getLong(UPDATE_FREQUENCY_PREFERENCE_TAG, DEFAULT_UPDATE_FREQUENCY);
         notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        HandlerThread thread = new HandlerThread("ServiceStartArguments",
+                Process.THREAD_PRIORITY_BACKGROUND);
+        thread.start();
+
+        // Get the HandlerThread's Looper and use it for our Handler
+        mServiceLooper = thread.getLooper();
+        mServiceHandler = new ServiceHandler(mServiceLooper);
     }
 
     @Override
@@ -71,11 +84,11 @@ public class NotificationService extends Service {
 //        notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         setStarted(true);
         createTimerTask();
-        setUpTimer(updateTimerTask);
+//        setUpTimer(updateTimerTask);
         Message msg = mServiceHandler.obtainMessage();
         msg.arg1 = startId;
         mServiceHandler.sendMessage(msg);
-        return Service.START_NOT_STICKY;
+        return Service.START_STICKY;
     }
 
     @Nullable
@@ -158,7 +171,7 @@ public class NotificationService extends Service {
     }
 
     private final class ServiceHandler extends Handler {
-        public ServiceHandler(Looper looper) {
+        ServiceHandler(Looper looper) {
             super(looper);
         }
         @Override
@@ -168,9 +181,13 @@ public class NotificationService extends Service {
                 setUpTimer(updateTimerTask);
             // Stop the service using the startId, so that we don't stop
             // the service in the middle of handling another job
-//            stopSelf(msg.arg1);
+            stopSelf(msg.arg1);
         }
     }
 
-
+    @Override
+    public void onDestroy() {
+        Log.d("SERVICE DESTROYED", "onDestroy: ");
+        super.onDestroy();
+    }
 }

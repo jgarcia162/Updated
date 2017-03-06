@@ -21,8 +21,7 @@
             android:parentActivityName=".controller.Activity" />
 
         <service android:name=".controller.NotificationService"
-            android:exported="false"
-            android:description="Updated Website Downloader Service"/>
+            android:exported="false"/>
         <receiver
             android:name=".controller.UpdateBroadcastReceiver"
             android:enabled="true"
