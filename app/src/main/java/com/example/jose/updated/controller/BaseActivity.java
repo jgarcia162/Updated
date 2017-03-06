@@ -1,6 +1,9 @@
 package com.example.jose.updated.controller;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
@@ -14,6 +17,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.jose.updated.R;
+import com.example.jose.updated.view.ExceptionDialogBox;
 import com.example.jose.updated.view.MainActivity;
 import com.example.jose.updated.view.SecondActivity;
 
@@ -50,7 +54,11 @@ public abstract class BaseActivity extends AppCompatActivity {
             case R.id.refresh_menu:
                 try {
                     MainActivity.swipeRefreshLayout.setRefreshing(true);
-                    UpdateRefresher refresher = new UpdateRefresher(getApplicationContext());
+                    if(!isNetworkConnected()){
+                        buildAlertDialog(this);
+
+                    }
+                    UpdateRefresher refresher = new UpdateRefresher();
                     refresher.refreshUpdate();
                     Toast.makeText(getApplicationContext(), R.string.refreshed_toast_text, Toast.LENGTH_SHORT).show();
                 } catch (Exception e) {
@@ -66,6 +74,19 @@ public abstract class BaseActivity extends AppCompatActivity {
                 LocalBroadcastManager.getInstance(this).unregisterReceiver(MainActivity.updateBroadcastReceiver);
         }
         return true;
+    }
+
+    public void buildAlertDialog(Context context){
+        ExceptionDialogBox box = new ExceptionDialogBox(context);
+        box.buildAlertDialog();
+    }
+
+    private boolean isNetworkConnected(){
+        ConnectivityManager cm =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+
     }
 
 

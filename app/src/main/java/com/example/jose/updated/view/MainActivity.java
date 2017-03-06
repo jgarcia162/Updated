@@ -6,12 +6,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -25,7 +27,6 @@ import com.example.jose.updated.controller.UpdateBroadcastReceiver;
 import com.example.jose.updated.controller.UpdateRefresher;
 
 import io.realm.Realm;
-import okhttp3.OkHttpClient;
 
 public class MainActivity extends BaseActivity implements UpdateBroadcastReceiver.UpdatedCallback, SwipeRefreshLayout.OnRefreshListener {
     private FragmentManager fragmentManager;
@@ -36,10 +37,12 @@ public class MainActivity extends BaseActivity implements UpdateBroadcastReceive
     private SharedPreferences preferences;
     public static SwipeRefreshLayout swipeRefreshLayout;
     public static UpdateBroadcastReceiver updateBroadcastReceiver;
+    private String TAG = this.getClass().getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate: ");
         Realm.init(getApplicationContext());
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
         updateBroadcastReceiver = new UpdateBroadcastReceiver(this);
@@ -83,22 +86,22 @@ public class MainActivity extends BaseActivity implements UpdateBroadcastReceive
         addPageDialogFragment.show(fragmentManager, "addPageFragment");
     }
 
-    public static void notifyAdapterDataSetChange(Context context) {
-        Handler handler = new Handler(context.getMainLooper());
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                adapter.notifyDataSetChanged();
-            }
-        };
-        handler.post(runnable);
-    }
+//    public static void notifyAdapterDataSetChange(Context context) {
+//        Handler handler = new Handler(context.getMainLooper());
+//        Runnable runnable = new Runnable() {
+//            @Override
+//            public void run() {
+//                adapter.notifyDataSetChanged();
+//            }
+//        };
+//        handler.post(runnable);
+//    }
 
 
     @Override
     protected void onResume() {
         super.onResume();
-        adapter.notifyDataSetChanged();
+//        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -110,18 +113,29 @@ public class MainActivity extends BaseActivity implements UpdateBroadcastReceive
 
     @Override
     public void onUpdateDetected() {
-        adapter.notifyDataSetChanged();
+//        adapter.notifyDataSetChanged();
     }
 
     @Override
     public void onRefresh() {
-        try {
-            UpdateRefresher updateRefresher = new UpdateRefresher();
-            updateRefresher.refreshUpdate();
-            Toast.makeText(getApplicationContext(), "Refreshed", Toast.LENGTH_SHORT).show();
-        } catch (Exception e) {
-            e.printStackTrace();
+        if(!isNetworkConnected()){
+            super.buildAlertDialog(this);
+            resetSwipeRefreshLayout();
+        }else{
+            try {
+                UpdateRefresher updateRefresher = new UpdateRefresher();
+                updateRefresher.refreshUpdate();
+                resetSwipeRefreshLayout();
+                Toast.makeText(getApplicationContext(), "Refreshed", Toast.LENGTH_SHORT).show();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
+    }
+
+    private void resetSwipeRefreshLayout() {
+        if (swipeRefreshLayout.isRefreshing())
+            swipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
@@ -139,11 +153,14 @@ public class MainActivity extends BaseActivity implements UpdateBroadcastReceive
         return false;
     }
 
-    public void connectViaOkHttp(){
-        OkHttpClient okHttpClient = new OkHttpClient();
+    private boolean isNetworkConnected(){
+        ConnectivityManager cm =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
 
     }
-
 
 }
 

@@ -14,7 +14,6 @@ import android.os.Process;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 
 import com.example.jose.updated.R;
 import com.example.jose.updated.model.Page;
@@ -43,19 +42,9 @@ public class NotificationService extends Service {
     private SharedPreferences preferences;
     private ServiceHandler mServiceHandler;
     private Looper mServiceLooper;
+    private String TAG = this.getClass().getCanonicalName();
 
     //TODO keep service alive in bakcground after app is closed, ask for help
-
-//
-//    /**
-//     * Creates an IntentService.  Invoked by your subclass's constructor.
-//     *
-//     * @param name Used to name the worker thread, important only for debugging.
-//     */
-//
-//    public NotificationService(String name) {
-//    }
-
     NotificationService() {
 
     }
@@ -88,7 +77,7 @@ public class NotificationService extends Service {
         Message msg = mServiceHandler.obtainMessage();
         msg.arg1 = startId;
         mServiceHandler.sendMessage(msg);
-        return Service.START_STICKY;
+        return Service.START_NOT_STICKY;
     }
 
     @Nullable
@@ -97,14 +86,6 @@ public class NotificationService extends Service {
 
         return null;
     }
-
-    //
-//    @Override
-//    protected void onHandleIntent(Intent intent) {
-//        setStarted(true);
-//        createTimerTask();
-//        setUpTimer(updateTimerTask);
-//    }
 
     private void setUpTimer(TimerTask task) {
         Timer timer = new Timer();
@@ -174,20 +155,16 @@ public class NotificationService extends Service {
         ServiceHandler(Looper looper) {
             super(looper);
         }
+
         @Override
         public void handleMessage(Message msg) {
-            // Normally we would do some work here, like download a file.
-            // For our sample, we just sleep for 5 seconds.
-                setUpTimer(updateTimerTask);
-            // Stop the service using the startId, so that we don't stop
-            // the service in the middle of handling another job
+            setUpTimer(updateTimerTask);
             stopSelf(msg.arg1);
         }
     }
 
     @Override
     public void onDestroy() {
-        Log.d("SERVICE DESTROYED", "onDestroy: ");
         super.onDestroy();
     }
 }

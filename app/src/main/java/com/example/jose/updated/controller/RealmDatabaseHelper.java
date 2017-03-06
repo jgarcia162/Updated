@@ -1,6 +1,7 @@
 package com.example.jose.updated.controller;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.example.jose.updated.model.Page;
 
@@ -17,6 +18,7 @@ public class RealmDatabaseHelper {
     private Realm realm;
     private Context context;
     private UpdateRefresher refresher;
+    private String TAG = this.getClass().getSimpleName();
 
     public RealmDatabaseHelper() {
         realm = Realm.getDefaultInstance();

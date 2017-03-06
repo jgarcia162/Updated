@@ -9,6 +9,8 @@ import java.net.URL;
 
 class DownloadTask extends AsyncTask<String,Void,String>{
 
+    private String TAG = this.getClass().getSimpleName();
+
     DownloadTask(){
 
     }
@@ -34,7 +36,6 @@ class DownloadTask extends AsyncTask<String,Void,String>{
 
     @Override
     protected void onPostExecute(String taskResult) {
-
     }
 
 
