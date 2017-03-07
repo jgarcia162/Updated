@@ -5,10 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.customtabs.CustomTabsIntent;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
@@ -96,19 +93,7 @@ public class PageViewHolder extends RecyclerView.ViewHolder{
         context.startActivity(intent);
     }
 
-    public void openInBrowser() {
-        Uri pageUri = Uri.parse(page.getPageUrl());
-        CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-        builder.addDefaultShareMenuItem();
-        builder.setToolbarColor(Color.BLUE);
-        // set toolbar color and/or setting custom actions before invoking build()
-        CustomTabsIntent customTabsIntent = builder.build();
-        if (page.isUpdated()) {
-            updatedStatusTextView.setText(R.string.not_updated);
-            realmDatabaseHelper.removeFromUpdatedPages(page);
-        }
-        customTabsIntent.launchUrl(context, pageUri);
-    }
+
 
 
 

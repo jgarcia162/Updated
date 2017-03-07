@@ -1,8 +1,10 @@
 package com.example.jose.updated.controller;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
+import android.support.customtabs.CustomTabsIntent;
 import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Toast;
 
 import com.davidecirillo.multichoicerecyclerview.MultiChoiceAdapter;
 import com.example.jose.updated.R;
@@ -25,6 +26,7 @@ public class PageAdapter extends MultiChoiceAdapter<PageViewHolder> {
     private Context context;
     private PageViewHolder holderForOnClick;
     private int holderPosition;
+    private RealmDatabaseHelper realmDatabaseHelper = new RealmDatabaseHelper();
 
     public PageAdapter(Context context){
         RealmDatabaseHelper realmDatabaseHelper = new RealmDatabaseHelper();
@@ -46,7 +48,7 @@ public class PageAdapter extends MultiChoiceAdapter<PageViewHolder> {
         holder.bind(page);
         setAnimation(holder.itemView,position);
 
-//        super.onBindViewHolder(holder,position);
+        super.onBindViewHolder(holder,position);
     }
 
     @Override
@@ -69,26 +71,40 @@ public class PageAdapter extends MultiChoiceAdapter<PageViewHolder> {
     @Override
     public void setActive(@NonNull View view, boolean state) {
 
-        CardView imageView = (CardView) view.findViewById(R.id.item_layout);
+        CardView card = (CardView) view.findViewById(R.id.item_layout);
         if (state) {
-            imageView.setBackgroundColor(ContextCompat.getColor(context, R.color.colorPrimaryDark));
+            card.setAlpha(0.25f);
         } else {
-            imageView.setBackgroundColor(ContextCompat.getColor(context, R.color.colorPrimary));
+            card.setAlpha(1f);
         }
     }
 
     @Override
-    protected View.OnClickListener defaultItemViewClickListener(PageViewHolder holder, int position) {
+    protected View.OnClickListener defaultItemViewClickListener(final PageViewHolder holder, final int position) {
         Log.d("PAGEADAPTER", "defaultItemViewClickListener: "+ position);
         //TODO this thing
-        holderForOnClick = holder;
-        holderPosition = holder.getAdapterPosition();
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                openInBrowser(listOfPages.get(position),holder);
 
-                Toast.makeText(context, "clicked position "+holderPosition, Toast.LENGTH_SHORT).show();
             }
         };
     }
+
+    public void openInBrowser(Page page,PageViewHolder holder) {
+        Uri pageUri = Uri.parse(page.getPageUrl());
+        CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+        builder.addDefaultShareMenuItem();
+        builder.setToolbarColor(Color.BLUE);
+        // set toolbar color and/or setting custom actions before invoking build()
+        CustomTabsIntent customTabsIntent = builder.build();
+        if (page.isUpdated()) {
+            holder.updatedStatusTextView.setText(R.string.not_updated);
+            realmDatabaseHelper.removeFromUpdatedPages(page);
+        }
+        customTabsIntent.launchUrl(context, pageUri);
+    }
+
+
 }
