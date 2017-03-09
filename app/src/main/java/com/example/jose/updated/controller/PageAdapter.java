@@ -1,6 +1,7 @@
 package com.example.jose.updated.controller;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -27,6 +28,7 @@ public class PageAdapter extends MultiChoiceAdapter<PageViewHolder> {
     private PageViewHolder holderForOnClick;
     private int holderPosition;
     private RealmDatabaseHelper realmDatabaseHelper = new RealmDatabaseHelper();
+    private String TAG = this.getClass().getSimpleName();
 
     public PageAdapter(Context context){
         RealmDatabaseHelper realmDatabaseHelper = new RealmDatabaseHelper();
@@ -81,13 +83,11 @@ public class PageAdapter extends MultiChoiceAdapter<PageViewHolder> {
 
     @Override
     protected View.OnClickListener defaultItemViewClickListener(final PageViewHolder holder, final int position) {
-        Log.d("PAGEADAPTER", "defaultItemViewClickListener: "+ position);
-        //TODO this thing
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openInBrowser(listOfPages.get(position),holder);
-
+                Page page = listOfPages.get(position);
+                openInBrowser(page,holder);
             }
         };
     }
@@ -102,7 +102,10 @@ public class PageAdapter extends MultiChoiceAdapter<PageViewHolder> {
         if (page.isUpdated()) {
             holder.updatedStatusTextView.setText(R.string.not_updated);
             realmDatabaseHelper.removeFromUpdatedPages(page);
+            //TODO updated pages size is accurate after this point
+            Log.d(TAG, "openInBrowser: "+ realmDatabaseHelper.getSizeOfUpdatedPages());
         }
+        customTabsIntent.intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         customTabsIntent.launchUrl(context, pageUri);
     }
 

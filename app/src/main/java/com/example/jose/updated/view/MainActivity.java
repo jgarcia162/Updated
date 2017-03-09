@@ -68,16 +68,11 @@ public class MainActivity extends BaseActivity implements UpdateBroadcastReceive
         recyclerView.setLayoutManager(layoutManager);
     }
 
+
     private MultiChoiceToolbar createMultiChoiceToolbar() {
         return new MultiChoiceToolbar.Builder(MainActivity.this, toolbar)
                 .setTitles(toolbarTitle(), getResources().getString(R.string.app_name))
                 .setMultiChoiceColours(R.color.colorPrimary, R.color.colorPrimaryDark)
-                .setDefaultIcon(R.drawable.ic_arrow_back_white_24dp, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        onBackPressed();
-                    }
-                })
                 .build();
     }
 
@@ -113,7 +108,8 @@ public class MainActivity extends BaseActivity implements UpdateBroadcastReceive
 
     @Override
     public void onUpdateDetected() {
-//        adapter.notifyDataSetChanged();
+        adapter.notifyDataSetChanged();
+        Toast.makeText(getApplicationContext(), "There's been an update!", Toast.LENGTH_SHORT).show();
     }
 
     @Override

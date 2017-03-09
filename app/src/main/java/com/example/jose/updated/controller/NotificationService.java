@@ -14,6 +14,7 @@ import android.os.Process;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
 import com.example.jose.updated.R;
 import com.example.jose.updated.model.Page;
@@ -110,7 +111,9 @@ public class NotificationService extends Service {
         UpdateRefresher refresher = new UpdateRefresher();
         refresher.refreshUpdate();
         Realm realm = Realm.getDefaultInstance();
+        //TODO this is not updating after clicking viewholder
         List<Page> updatedPages = realm.where(Page.class).equalTo("isUpdated", true).findAll();
+        Log.d(TAG, "refresh: "+ updatedPages.toArray().length);
         realm.close();
         if (updatedPages.size() > 0) {
             if (preferences.getBoolean(STOP_NOTIFICATION_PREFERENCE_TAG, DEFAULT_NOTIFICATIONS_ACTIVE)) {

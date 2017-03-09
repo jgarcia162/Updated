@@ -31,7 +31,6 @@ public class UpdateRefresher {
                 }
             }
         }
-
     }
 
     private boolean isPageUpdated(Page page) {
