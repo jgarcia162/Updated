@@ -71,7 +71,7 @@ public class MainActivity extends BaseActivity implements UpdateBroadcastReceive
 
     private MultiChoiceToolbar createMultiChoiceToolbar() {
         return new MultiChoiceToolbar.Builder(MainActivity.this, toolbar)
-                .setTitles(toolbarTitle(), getResources().getString(R.string.app_name))
+                .setTitles(toolbarTitle(), getString(R.string.selected_toolbar_title))
                 .setMultiChoiceColours(R.color.colorPrimary, R.color.colorPrimaryDark)
                 .build();
     }
@@ -109,7 +109,6 @@ public class MainActivity extends BaseActivity implements UpdateBroadcastReceive
     @Override
     public void onUpdateDetected() {
         adapter.notifyDataSetChanged();
-        Toast.makeText(getApplicationContext(), "There's been an update!", Toast.LENGTH_SHORT).show();
     }
 
     @Override

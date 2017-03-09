@@ -56,6 +56,7 @@
     <string name="defaults_reset_text">Defaults Reset</string>
     <string name="details_saved_text">Details Saved!</string>
     <string name="refreshed_toast_text">Refreshed</string>
+    <string name="selected_toolbar_title">Selected</string>
     <string-array name="frequency_spinner_array">
         <item>24</item>
         <item>48</item>

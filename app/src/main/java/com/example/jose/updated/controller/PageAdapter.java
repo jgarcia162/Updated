@@ -35,7 +35,6 @@ public class PageAdapter extends MultiChoiceAdapter<PageViewHolder> {
         listOfPages = realmDatabaseHelper.getAllPages();
         this.context = context;
         lastPosition = -1;
-
     }
 
     @Override
