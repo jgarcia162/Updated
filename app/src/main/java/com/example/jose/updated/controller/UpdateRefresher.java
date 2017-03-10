@@ -39,6 +39,9 @@ public class UpdateRefresher {
             try {
                 String htmlToCheck = downloadHtml(page);
                 Page currentlyStoredPage = realmDatabaseHelper.getPage(page);
+                if(htmlToCheck.equals("Error")){
+                    return false;
+                }
                 if (!htmlToCheck.equals(currentlyStoredPage.getContents())) {
                     Realm realm = Realm.getDefaultInstance();
                     realm.beginTransaction();

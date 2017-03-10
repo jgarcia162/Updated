@@ -112,7 +112,7 @@ public class AddPageDialogFragment extends DialogFragment {
 
     private void resetTextFields() {
         titleInputEditText.setText(null);
-        urlInputEditText.setText(null);
+        urlInputEditText.setText(R.string.url_input_et_default_text);
     }
 
     private void onClickPreviewButton(String urlText, String titleText) {
@@ -132,6 +132,7 @@ public class AddPageDialogFragment extends DialogFragment {
         } else {
             Toast.makeText(getActivity(), getString(R.string.enter_url_toast), Toast.LENGTH_SHORT).show();
         }
+
     }
 
     public void displayPageInPreviewWebView(String url) {

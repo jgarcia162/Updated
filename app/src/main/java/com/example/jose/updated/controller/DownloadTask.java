@@ -31,7 +31,7 @@ class DownloadTask extends AsyncTask<String,Void,String>{
         }catch(Exception e){
             e.printStackTrace();
         }
-        return null;
+        return "Error";
     }
 
     @Override

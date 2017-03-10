@@ -2,10 +2,12 @@ package com.example.jose.updated.controller;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.customtabs.CustomTabsIntent;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -94,8 +96,12 @@ public class PageAdapter extends MultiChoiceAdapter<PageViewHolder> {
     public void openInBrowser(Page page,PageViewHolder holder) {
         Uri pageUri = Uri.parse(page.getPageUrl());
         CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+        builder.setCloseButtonIcon(BitmapFactory.decodeResource(
+                context.getResources(), R.drawable.ic_arrow_back_white_24dp));
         builder.addDefaultShareMenuItem();
-        builder.setToolbarColor(Color.BLUE);
+        builder.setStartAnimations(context,R.anim.slide_in_bottom,R.anim.slide_out_bottom);
+        builder.enableUrlBarHiding();
+        builder.setToolbarColor(ContextCompat.getColor(context, R.color.colorPrimary));
         // set toolbar color and/or setting custom actions before invoking build()
         CustomTabsIntent customTabsIntent = builder.build();
         if (page.isUpdated()) {
@@ -104,7 +110,10 @@ public class PageAdapter extends MultiChoiceAdapter<PageViewHolder> {
             //TODO updated pages size is accurate after this point
             Log.d(TAG, "openInBrowser: "+ realmDatabaseHelper.getSizeOfUpdatedPages());
         }
-        customTabsIntent.intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+            customTabsIntent.intent.putExtra(Intent.EXTRA_REFERRER,
+                    Uri.parse(Intent.URI_ANDROID_APP_SCHEME + "//" + context.getPackageName()));
+        }
         customTabsIntent.launchUrl(context, pageUri);
     }
 

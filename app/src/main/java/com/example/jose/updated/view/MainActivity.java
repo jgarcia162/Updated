@@ -60,7 +60,7 @@ public class MainActivity extends BaseActivity implements UpdateBroadcastReceive
     private void setupRecyclerView() {
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-        adapter = new PageAdapter(getApplicationContext());
+        adapter = new PageAdapter(this);
         adapter.setSingleClickMode(false);
         adapter.setMultiChoiceToolbar(createMultiChoiceToolbar());
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 15, true));

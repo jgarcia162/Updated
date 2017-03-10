@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/title_input_edit_text"
         android:inputType="text"
-        android:hint="@string/enter_url_here"/>
+        android:text="@string/url_input_et_default_text" />
 
     <Button
         android:id="@+id/preview_button"

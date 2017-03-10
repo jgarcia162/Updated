@@ -158,7 +158,6 @@ public class NotificationService extends Service {
         ServiceHandler(Looper looper) {
             super(looper);
         }
-
         @Override
         public void handleMessage(Message msg) {
             setUpTimer(updateTimerTask);
