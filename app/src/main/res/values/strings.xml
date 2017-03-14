@@ -40,7 +40,6 @@
     <string name="email_et_hint">Send Us A Message</string>
     <string name="settings_update_units">hours</string>
     <string name="twitter_settings_icon_description">Twitter Settings Icon</string>
-    <string name="ig_settings_icon_description">IG Settings Icond Description</string>
     <string name="github_icon_description">GitHub Icon</string>
     <string name="email_icon_description">Email Icon</string>
     <string name="on_text">On</string>

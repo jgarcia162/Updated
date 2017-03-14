@@ -102,14 +102,6 @@
             android:contentDescription="@string/twitter_settings_icon_description"/>
 
         <ImageView
-            android:id="@+id/instagram_icon"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_margin="10dp"
-            android:src="@drawable/ig_icon"
-            android:contentDescription="@string/ig_settings_icon_description"/>
-
-        <ImageView
             android:id="@+id/github_icon"
             android:layout_width="50dp"
             android:layout_height="50dp"

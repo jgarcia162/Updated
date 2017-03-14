@@ -46,7 +46,6 @@ public class SettingsFragment extends Fragment {
     private Button resetDefaultsButton;
     private TextView notificationsTV;
     private ImageView twitterIV;
-    private ImageView instagramIV;
     private ImageView githubIV;
     private ImageView emailIV;
     String onSwitchStatus;
@@ -78,7 +77,6 @@ public class SettingsFragment extends Fragment {
         resetDefaultsButton = (Button) view.findViewById(R.id.reset_defaults_button);
         notificationsTV = (TextView) view.findViewById(R.id.notifications_settings_title);
         twitterIV = (ImageView) view.findViewById(R.id.twitter_icon);
-        instagramIV = (ImageView) view.findViewById(R.id.instagram_icon);
         githubIV = (ImageView) view.findViewById(R.id.github_icon);
         emailIV = (ImageView) view.findViewById(R.id.email_icon);
         layout = (ViewGroup) view.findViewById(R.id.settings_fragment_layout);
@@ -161,5 +159,16 @@ public class SettingsFragment extends Fragment {
             }
         }
         return index;
+    }
+
+    public void setContactClickListeners(){
+        twitterIV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+
     }
 }
