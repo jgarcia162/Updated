@@ -107,8 +107,6 @@ public class PageAdapter extends MultiChoiceAdapter<PageViewHolder> {
         if (page.isUpdated()) {
             holder.updatedStatusTextView.setText(R.string.not_updated);
             realmDatabaseHelper.removeFromUpdatedPages(page);
-            //TODO updated pages size is accurate after this point
-            Log.d(TAG, "openInBrowser: "+ realmDatabaseHelper.getSizeOfUpdatedPages());
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
             customTabsIntent.intent.putExtra(Intent.EXTRA_REFERRER,
@@ -116,6 +114,4 @@ public class PageAdapter extends MultiChoiceAdapter<PageViewHolder> {
         }
         customTabsIntent.launchUrl(context, pageUri);
     }
-
-
 }

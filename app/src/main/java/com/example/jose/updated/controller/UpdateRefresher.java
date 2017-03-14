@@ -1,6 +1,7 @@
 package com.example.jose.updated.controller;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.example.jose.updated.model.Page;
 
@@ -45,10 +46,11 @@ public class UpdateRefresher {
                 if (!htmlToCheck.equals(currentlyStoredPage.getContents())) {
                     Realm realm = Realm.getDefaultInstance();
                     realm.beginTransaction();
-                    page.setUpdated(true);
+                    currentlyStoredPage.setUpdated(true);
                     realm.commitTransaction();
-                    realmDatabaseHelper.updatePageHtml(currentlyStoredPage, htmlToCheck);
                     realm.close();
+                    realmDatabaseHelper.addToUpdatedPages(currentlyStoredPage);
+                    realmDatabaseHelper.updatePageHtml(currentlyStoredPage, htmlToCheck);
                     return true;
                 }
             } catch (Exception e) {

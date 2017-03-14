@@ -53,7 +53,6 @@ public class RealmDatabaseHelper {
 
     public void addToUpdatedPages(Page page) {
         Realm realm = Realm.getDefaultInstance();
-        //TODO attempt this with executeTransaction method
         realm.beginTransaction();
         page.setTimeOfLastUpdateInMilliSec(new Date().getTime());
         page.setUpdated(true);
