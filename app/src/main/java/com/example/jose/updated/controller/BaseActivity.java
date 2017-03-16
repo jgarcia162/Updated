@@ -2,6 +2,7 @@ package com.example.jose.updated.controller;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -20,6 +21,8 @@ import com.example.jose.updated.R;
 import com.example.jose.updated.view.ExceptionDialogBox;
 import com.example.jose.updated.view.MainActivity;
 import com.example.jose.updated.view.SecondActivity;
+
+import static com.example.jose.updated.model.UpdatedConstants.*;
 
 /**
  * Created by Joe on 2/18/17.
@@ -72,6 +75,12 @@ public abstract class BaseActivity extends AppCompatActivity {
             case R.id.logout_menu:
                 //logout and unregister receiver
                 LocalBroadcastManager.getInstance(this).unregisterReceiver(MainActivity.updateBroadcastReceiver);
+                SharedPreferences.Editor e = getPreferences(0).edit();
+                e.remove(PREF_KEY_OAUTH_TOKEN);
+                e.remove(PREF_KEY_OAUTH_SECRET);
+                e.remove(PREF_KEY_TWITTER_LOGIN);
+                e.apply();
+                Toast.makeText(this, "logged out", Toast.LENGTH_SHORT).show();
         }
         return true;
     }

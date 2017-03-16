@@ -1,143 +1,158 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/settings_fragment_layout"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/settings_fragment_framelayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/settings_title"
-        style="@style/SettingFragmentTitles"
+    <ProgressBar
+        android:id="@+id/settings_fragment_progress_bar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/settings_title_marginTop"
-        android:layout_gravity="center"
-        android:text="@string/settings_title_text"
-        android:textSize="@dimen/settings_title_tv_text_size" />
-
-    <RelativeLayout
-        android:id="@+id/settings_top_half"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="@dimen/top_half_paddingtop"
-        android:gravity="center">
-
-        <TextView
-            android:id="@+id/update_frequency_title"
-            style="@style/SettingFragmentTitles"
-            android:textStyle="normal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/update_frequency_title"
-            android:textSize="@dimen/settings_frequency_title_textsize"/>
-
-        <Spinner
-            android:id="@+id/frequency_spinner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_alignBottom="@id/update_frequency_title"
-            android:layout_toEndOf="@id/update_frequency_title"
-            android:popupBackground="@color/grey"
-            android:background="@color/grey"/>
-        <TextView
-            android:id="@+id/settings_update_units_tv"
-            style="@style/SettingFragmentTitles"
-            android:textStyle="normal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@id/update_frequency_title"
-            android:layout_marginStart="10dp"
-            android:layout_toEndOf="@id/frequency_spinner"
-            android:text="@string/settings_update_units"
-            android:textSize="16sp"/>
-
-
-        <TextView
-            android:id="@+id/notifications_settings_title"
-            style="@style/SettingFragmentTitles"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/frequency_spinner"
-            android:layout_alignBottom="@+id/notifications_switch"
-            android:gravity="center"
-            android:layout_marginTop="15dp"
-            android:textStyle="normal"
-            android:text="@string/notifications_settings_title"
-            android:textSize="16sp"/>
-
-        <Switch
-            android:id="@+id/notifications_switch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:layout_alignEnd="@id/settings_update_units_tv"
-            android:layout_below="@id/frequency_spinner" />
-    </RelativeLayout>
-
-    <TextView
-        android:id="@+id/contact_setting_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:layout_gravity="center"
-        android:text="@string/contact_setting_title"
-        style="@style/SettingFragmentTitles"
-        android:textSize="25sp" />
+        android:layout_gravity="center_horizontal|center_vertical"
+        android:visibility="invisible" />
 
     <LinearLayout
-        android:id="@+id/contact_icons"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="20dp"
-        android:orientation="horizontal">
+        android:id="@+id/settings_fragment_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/twitter_icon"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_margin="10dp"
-            android:src="@drawable/twitter_icon"
-            android:contentDescription="@string/twitter_settings_icon_description"/>
+        <TextView
+            android:id="@+id/settings_title"
+            style="@style/SettingFragmentTitles"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/settings_title_marginTop"
+            android:text="@string/settings_title_text"
+            android:textSize="@dimen/settings_title_tv_text_size" />
 
-        <ImageView
-            android:id="@+id/github_icon"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+        <RelativeLayout
+            android:id="@+id/settings_top_half"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingTop="@dimen/top_half_paddingtop">
+
+            <TextView
+                android:id="@+id/update_frequency_title"
+                style="@style/SettingFragmentTitles"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/update_frequency_title"
+                android:textSize="@dimen/settings_frequency_title_textsize"
+                android:textStyle="normal" />
+
+            <Spinner
+                android:id="@+id/frequency_spinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@id/update_frequency_title"
+                android:layout_marginStart="10dp"
+                android:layout_toEndOf="@id/update_frequency_title"
+                android:background="@color/grey"
+                android:popupBackground="@color/grey" />
+
+            <TextView
+                android:id="@+id/settings_update_units_tv"
+                style="@style/SettingFragmentTitles"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@id/update_frequency_title"
+                android:layout_marginStart="10dp"
+                android:layout_toEndOf="@id/frequency_spinner"
+                android:text="@string/settings_update_units"
+                android:textSize="16sp"
+                android:textStyle="normal" />
+
+
+            <TextView
+                android:id="@+id/notifications_settings_title"
+                style="@style/SettingFragmentTitles"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/notifications_switch"
+                android:layout_below="@id/frequency_spinner"
+                android:layout_marginTop="15dp"
+                android:gravity="center"
+                android:text="@string/notifications_settings_title"
+                android:textSize="16sp"
+                android:textStyle="normal" />
+
+            <Switch
+                android:id="@+id/notifications_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignEnd="@id/settings_update_units_tv"
+                android:layout_below="@id/frequency_spinner"
+                android:layout_marginTop="15dp" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/contact_setting_tv"
+            style="@style/SettingFragmentTitles"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="50dp"
+            android:text="@string/contact_setting_title"
+            android:textSize="25sp" />
+
+        <LinearLayout
+            android:id="@+id/contact_icons"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/twitter_icon"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_margin="10dp"
+                android:contentDescription="@string/twitter_settings_icon_description"
+                android:src="@drawable/twitter_icon" />
+
+            <ImageView
+                android:id="@+id/github_icon"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_margin="10dp"
+                android:contentDescription="@string/github_icon_description"
+                android:src="@drawable/github_icon" />
+
+            <ImageView
+                android:id="@+id/email_icon"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_margin="10dp"
+                android:contentDescription="@string/email_icon_description"
+                android:src="@drawable/email_icon" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/save_settings_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:background="@color/transparent"
+            android:text="@string/save_settings_text" />
+
+        <Button
+            android:id="@+id/reset_defaults_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/transparent"
+            android:text="@string/reset_defaults_text"
+            android:textColor="@color/deadRed" />
+
+        <TextView
+            android:id="@+id/version_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:layout_margin="10dp"
-            android:src="@drawable/github_icon"
-            android:contentDescription="@string/github_icon_description"/>
-        <ImageView
-            android:id="@+id/email_icon"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_margin="10dp"
-            android:src="@drawable/email_icon"
-            android:contentDescription="@string/email_icon_description" />
+            android:text="@string/version_number" />
     </LinearLayout>
-
-    <Button
-        android:id="@+id/save_settings_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:text="@string/save_settings_text"
-        android:background="@color/transparent"/>
-    <Button
-        android:id="@+id/reset_defaults_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/reset_defaults_text"
-        android:textColor="@color/deadRed"
-        android:background="@color/transparent"/>
-    <TextView
-        android:id="@+id/version_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:layout_gravity="center"
-        android:text="@string/version_number" />
-
-
-</LinearLayout>
+</FrameLayout>
