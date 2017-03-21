@@ -31,7 +31,6 @@ import io.realm.Realm;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
-import twitter4j.User;
 import twitter4j.auth.AccessToken;
 import twitter4j.auth.RequestToken;
 import twitter4j.conf.Configuration;
@@ -40,8 +39,6 @@ import twitter4j.conf.ConfigurationBuilder;
 import static com.example.jose.updated.model.UpdatedConstants.DEFAULT_NOTIFICATIONS_ACTIVE;
 import static com.example.jose.updated.model.UpdatedConstants.DEFAULT_UPDATE_FREQUENCY_SPINNER_POSITION;
 import static com.example.jose.updated.model.UpdatedConstants.PREFS_NAME;
-import static com.example.jose.updated.model.UpdatedConstants.PREF_KEY_OAUTH_SECRET;
-import static com.example.jose.updated.model.UpdatedConstants.PREF_KEY_OAUTH_TOKEN;
 import static com.example.jose.updated.model.UpdatedConstants.PREF_KEY_TWITTER_LOGGED_IN;
 import static com.example.jose.updated.model.UpdatedConstants.SPINNER_POSITION_PREFERENCE_TAG;
 import static com.example.jose.updated.model.UpdatedConstants.STOP_NOTIFICATION_PREFERENCE_TAG;
@@ -63,6 +60,7 @@ public class SettingsFragment extends Fragment {
     private AccessToken accessToken;
     private int spinnerPosition;
     private boolean stopNotifications;
+    private boolean loggedIn;
     private SharedPreferences preferences;
     private Spinner spinner;
     private Switch notificationSwitch;
@@ -88,6 +86,8 @@ public class SettingsFragment extends Fragment {
         spinnerPosition = preferences.getInt(SPINNER_POSITION_PREFERENCE_TAG, DEFAULT_UPDATE_FREQUENCY_SPINNER_POSITION); // aka default spinner position
         adapter = ArrayAdapter.createFromResource(getContext(), R.array.frequency_spinner_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+        loggedIn = getActivity().getSharedPreferences(PREFS_NAME,0).getBoolean(PREF_KEY_TWITTER_LOGGED_IN,false);
+
     }
 
     @Nullable
@@ -194,14 +194,16 @@ public class SettingsFragment extends Fragment {
         twitterIV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!twitterAlreadyLoggedIn()) {
-                    Log.d("NOT LOGGED IN", "onClick: ");
+//                if (!twitterAlreadyLoggedIn()) {
                     loginToTwitter();
-                    sendTwitterMessage();
-                }else{
-                    Log.d("ALREADY LOGGED IN", "onClick: ");
-                    sendTwitterMessage();
-                }
+//                    preferences.edit().putBoolean(PREF_KEY_TWITTER_LOGGED_IN,true).apply();
+//                    sendTwitterMessage();
+//                }else{
+//                    Log.d("ALREADY LOGGED IN", "onClick: ");
+//                    RequestTask requestTask = new RequestTask();
+//                    requestTask.execute(TWITTER_CALLBACK_URL);
+////                    sendTwitterMessage();
+//                }
 
 //                sendTwitterMessage();
 
@@ -238,49 +240,45 @@ public class SettingsFragment extends Fragment {
         Configuration configuration = builder.build();
         TwitterFactory factory = new TwitterFactory(configuration);
         twitter = factory.getInstance();
+        preferences.edit().putBoolean(PREF_KEY_TWITTER_LOGGED_IN,!loggedIn).apply();
         RequestTask requestTask = new RequestTask();
         requestTask.execute(TWITTER_CALLBACK_URL);
     }
 
-    private boolean twitterAlreadyLoggedIn() {
-        return preferences.getBoolean(PREF_KEY_TWITTER_LOGGED_IN, false);
-    }
+
 
     public void afterLogin(Intent intent) {
-        Log.d("AFTER LOGIN", "afterLogin: ");
-        if (twitterAlreadyLoggedIn()) {
-            Log.d("AFTER LOGIN", "afterLogin: 2");
+        if (loggedIn) {
             Uri uri = intent.getData();
             if (uri != null && uri.toString().startsWith(TWITTER_CALLBACK_URL)) {
                 // oAuth verifier
                 Log.d("VERIFIER", "afterLogin: ");
                 String verifier = uri.getQueryParameter(URL_TWITTER_OAUTH_VERIFIER);
-                try {
-                    // Get the access token
-                    accessToken = twitter.getOAuthAccessToken(requestToken, verifier);
-
-                    // Shared Preferences
-                    SharedPreferences.Editor editor = preferences.edit();
-
-                    // After getting access token, access token secret
-                    // store them in application preferences
-                    editor.putString(PREF_KEY_OAUTH_TOKEN, accessToken.getToken());
-                    editor.putString(PREF_KEY_OAUTH_SECRET, accessToken.getTokenSecret());
-                    // Store login status - true
-                    editor.putBoolean(PREF_KEY_TWITTER_LOGGED_IN, true);
-                    editor.apply();
-
-                    // Getting user details from twitter
-                    // For now i am getting his name only
-                    long userID = accessToken.getUserId();
-                    User user = twitter.showUser(userID);
-                    Log.d("AFTER LOGIN", "afterLogin: " + user.getScreenName());
-                    String username = user.getName();
-                    Toast.makeText(getContext(), username, Toast.LENGTH_SHORT).show();
-
-                } catch (Exception e) {
-                    Log.e("Twitter Login Error", "> " + e.getMessage());
-                }
+//                try {
+//                    // Get the access token
+//                    accessToken = twitter.getOAuthAccessToken(requestToken, verifier);
+//
+//                    // Shared Preferences
+//                    SharedPreferences.Editor editor = preferences.edit();
+//
+//                    // After getting access token, access token secret
+//                    // store them in application preferences
+//                    editor.putString(PREF_KEY_OAUTH_TOKEN, accessToken.getToken());
+//                    editor.putString(PREF_KEY_OAUTH_SECRET, accessToken.getTokenSecret());
+//                    // Store login status - true
+//                    editor.putBoolean(PREF_KEY_TWITTER_LOGGED_IN, true);
+//                    editor.apply();
+//
+//                    // Getting user details from twitter
+//                    // For now i am getting his name only
+//                    long userID = accessToken.getUserId();
+//                    User user = twitter.showUser(userID);
+//                    String username = user.getName();
+//                    Toast.makeText(getContext(), username, Toast.LENGTH_SHORT).show();
+//
+//                } catch (Exception e) {
+//                    Log.e("Twitter Login Error", "> " + e.getMessage());
+//                }
             }
         }
     }
@@ -293,7 +291,7 @@ public class SettingsFragment extends Fragment {
             openNewIntent.putExtra("user_ids", new long[]{accessToken.getUserId()});
             openNewIntent.putExtra("keyboard_open", true);
             Log.d("SEND MESSAGE", "sendTwitterMessage: "+accessToken.getUserId());
-            afterLogin(openNewIntent);
+//            afterLogin(openNewIntent);
         } catch (Exception e) {
             Log.d("SEND TWEET EXCEPTION", "sendTwitterMessage: ");
             //startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://twitter.com/direct_messages/create/" + "SeeYaGarcia")));

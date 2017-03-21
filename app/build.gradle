@@ -17,10 +17,17 @@ android {
         debug {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField "String", "twitterConsumerSecret", "\"kyWoitJ4j2TPeN1PtbTH8nmuhz9JSUelaZYWXeTg4sgr0K5Dtb\""
+            buildConfigField "String", "twitterConsumerKey", "\"lfIGDxjsZvUiz7BYu0le3qhtE\""
+            buildConfigField "String", "twitterCallbackUrl", "\"https://twitter.com/direct_messages/create/seeyagarcia\""
+
         }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField "String", "twitterConsumerSecret", "\"kyWoitJ4j2TPeN1PtbTH8nmuhz9JSUelaZYWXeTg4sgr0K5Dtb\""
+            buildConfigField "String", "twitterConsumerKey", "\"lfIGDxjsZvUiz7BYu0le3qhtE\""
+            buildConfigField "String", "twitterCallbackUrl", "\"https://twitter.com/direct_messages/create/seeyagarcia\""
         }
     }
 }

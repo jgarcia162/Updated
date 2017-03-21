@@ -2,12 +2,10 @@ package com.example.jose.updated.controller;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -22,7 +20,15 @@ import com.example.jose.updated.view.ExceptionDialogBox;
 import com.example.jose.updated.view.MainActivity;
 import com.example.jose.updated.view.SecondActivity;
 
-import static com.example.jose.updated.model.UpdatedConstants.*;
+import twitter4j.Twitter;
+import twitter4j.TwitterFactory;
+import twitter4j.conf.Configuration;
+import twitter4j.conf.ConfigurationBuilder;
+
+import static com.example.jose.updated.model.UpdatedConstants.PREFS_NAME;
+import static com.example.jose.updated.model.UpdatedConstants.PREF_KEY_TWITTER_LOGGED_IN;
+import static com.example.jose.updated.model.UpdatedConstants.TWITTER_CONSUMER_KEY;
+import static com.example.jose.updated.model.UpdatedConstants.TWITTER_CONSUMER_SECRET;
 
 /**
  * Created by Joe on 2/18/17.
@@ -31,13 +37,16 @@ import static com.example.jose.updated.model.UpdatedConstants.*;
 public abstract class BaseActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     protected Toolbar toolbar;
+    private boolean loggedIn;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        toolbar = (Toolbar)findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setToolbar();
+        loggedIn = getSharedPreferences(PREFS_NAME, 0).getBoolean(PREF_KEY_TWITTER_LOGGED_IN, false);
+
     }
 
     @Override
@@ -57,7 +66,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             case R.id.refresh_menu:
                 try {
                     MainActivity.swipeRefreshLayout.setRefreshing(true);
-                    if(!isNetworkConnected()){
+                    if (!isNetworkConnected()) {
                         buildAlertDialog(this);
 
                     }
@@ -73,24 +82,26 @@ public abstract class BaseActivity extends AppCompatActivity {
                 startActivity(intent);
                 break;
             case R.id.logout_menu:
-                //logout and unregister receiver
-                LocalBroadcastManager.getInstance(this).unregisterReceiver(MainActivity.updateBroadcastReceiver);
-                SharedPreferences.Editor e = getPreferences(0).edit();
-                e.remove(PREF_KEY_OAUTH_TOKEN);
-                e.remove(PREF_KEY_OAUTH_SECRET);
-                e.remove(PREF_KEY_TWITTER_LOGGED_IN);
-                e.apply();
-                Toast.makeText(this, "logged out", Toast.LENGTH_SHORT).show();
+                if (!loggedIn) {
+                    ConfigurationBuilder builder = new ConfigurationBuilder();
+                    builder.setOAuthConsumerKey(TWITTER_CONSUMER_KEY);
+                    builder.setOAuthConsumerSecret(TWITTER_CONSUMER_SECRET);
+                    Configuration configuration = builder.build();
+                    TwitterFactory factory = new TwitterFactory(configuration);
+                    Twitter twitter = factory.getInstance();
+                    twitter.setOAuthAccessToken(null);
+                }
+                break;
         }
         return true;
     }
 
-    public void buildAlertDialog(Context context){
+    public void buildAlertDialog(Context context) {
         ExceptionDialogBox box = new ExceptionDialogBox(context);
         box.buildAlertDialog();
     }
 
-    private boolean isNetworkConnected(){
+    private boolean isNetworkConnected() {
         ConnectivityManager cm =
                 (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
