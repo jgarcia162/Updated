@@ -78,7 +78,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                 SharedPreferences.Editor e = getPreferences(0).edit();
                 e.remove(PREF_KEY_OAUTH_TOKEN);
                 e.remove(PREF_KEY_OAUTH_SECRET);
-                e.remove(PREF_KEY_TWITTER_LOGIN);
+                e.remove(PREF_KEY_TWITTER_LOGGED_IN);
                 e.apply();
                 Toast.makeText(this, "logged out", Toast.LENGTH_SHORT).show();
         }

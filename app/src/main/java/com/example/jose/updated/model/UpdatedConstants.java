@@ -29,8 +29,8 @@ public class UpdatedConstants {
     public static final String PREFERENCE_NAME = "twitter_oauth";
     public static final String PREF_KEY_OAUTH_TOKEN = "oauth_token";
     public static final String PREF_KEY_OAUTH_SECRET = "oauth_token_secret";
-    public static final String PREF_KEY_TWITTER_LOGIN = "isTwitterLoggedIn";
-    public static final String TWITTER_CALLBACK_URL = "oauth://updated";
+    public static final String PREF_KEY_TWITTER_LOGGED_IN = "isTwitterLoggedIn";
+    public static final String TWITTER_CALLBACK_URL = "https://twitter.com/direct_messages/create/seeyagarcia";
     public static final String URL_TWITTER_AUTH = "https://api.twitter.com/oauth/authorize";
     public static final String URL_TWITTER_OAUTH_VERIFIER = "oauth_verifier";
     public static final String URL_TWITTER_OAUTH_TOKEN = "https://api.twitter.com/oauth/access_token";
