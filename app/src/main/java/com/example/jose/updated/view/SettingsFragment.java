@@ -182,7 +182,6 @@ public class SettingsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.github_url))));
-
             }
         });
 
@@ -205,12 +204,15 @@ public class SettingsFragment extends Fragment {
         requestTask.execute(BuildConfig.twitterCallbackUrl);
     }
 
+    private void sendTwitterMessage(){
+
+    }
+
     private class RequestTask extends AsyncTask<String, Void, RequestToken> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             progressBar.setVisibility(View.VISIBLE);
-
         }
 
         @Override
