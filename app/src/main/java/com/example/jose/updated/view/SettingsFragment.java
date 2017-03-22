@@ -55,6 +55,8 @@ public class SettingsFragment extends Fragment {
     private ImageView twitterIV;
     private ImageView githubIV;
     private ImageView emailIV;
+    private Button saveSettingsButton;
+    private Button resetDefaultsButton;
     private String onSwitchStatus;
     private ArrayAdapter adapter;
 
@@ -79,15 +81,7 @@ public class SettingsFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        spinner = (Spinner) view.findViewById(R.id.frequency_spinner);
-        notificationSwitch = (Switch) view.findViewById(R.id.notifications_switch);
-        Button saveSettingsButton = (Button) view.findViewById(R.id.save_settings_button);
-        Button resetDefaultsButton = (Button) view.findViewById(R.id.reset_defaults_button);
-        progressBar = (ProgressBar) view.findViewById(R.id.settings_fragment_progress_bar);
-        notificationsTV = (TextView) view.findViewById(R.id.notifications_settings_title);
-        twitterIV = (ImageView) view.findViewById(R.id.twitter_icon);
-        githubIV = (ImageView) view.findViewById(R.id.github_icon);
-        emailIV = (ImageView) view.findViewById(R.id.email_icon);
+        findViews(view);
         String notificationsStatus = preferences.getBoolean(STOP_NOTIFICATION_PREFERENCE_TAG, DEFAULT_NOTIFICATIONS_ACTIVE) ? getString(R.string.on_text) : getString(R.string.off_text);
         notificationsTV.setText(String.format(getResources().getString(R.string.notifications_settings_title), notificationsStatus));
         spinner.setAdapter(adapter);
@@ -96,6 +90,23 @@ public class SettingsFragment extends Fragment {
         onSwitchStatus = preferences.getBoolean(STOP_NOTIFICATION_PREFERENCE_TAG, DEFAULT_NOTIFICATIONS_ACTIVE) ? getString(R.string.on_text) : getString(R.string.off_text);
         setContactClickListeners();
         notificationSwitch.setChecked(stopNotifications);
+        setButtonClickListeners(saveSettingsButton, resetDefaultsButton);
+        super.onViewCreated(view, savedInstanceState);
+    }
+
+    private void findViews(View view) {
+        spinner = (Spinner) view.findViewById(R.id.frequency_spinner);
+        notificationSwitch = (Switch) view.findViewById(R.id.notifications_switch);
+        saveSettingsButton = (Button) view.findViewById(R.id.save_settings_button);
+        resetDefaultsButton = (Button) view.findViewById(R.id.reset_defaults_button);
+        progressBar = (ProgressBar) view.findViewById(R.id.settings_fragment_progress_bar);
+        notificationsTV = (TextView) view.findViewById(R.id.notifications_settings_title);
+        twitterIV = (ImageView) view.findViewById(R.id.twitter_icon);
+        githubIV = (ImageView) view.findViewById(R.id.github_icon);
+        emailIV = (ImageView) view.findViewById(R.id.email_icon);
+    }
+
+    private void setButtonClickListeners(Button saveSettingsButton, Button resetDefaultsButton) {
         notificationSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -114,10 +125,9 @@ public class SettingsFragment extends Fragment {
         resetDefaultsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                displayAlertDialog();
+                displayResetDefaultsAlertDialog();
             }
         });
-        super.onViewCreated(view, savedInstanceState);
     }
 
     private void resetDefaultSettings() {
@@ -129,7 +139,7 @@ public class SettingsFragment extends Fragment {
         realm.delete(Page.class);
     }
 
-    private void displayAlertDialog() {
+    private void displayResetDefaultsAlertDialog() {
         AlertDialog alert = new AlertDialog.Builder(getActivity()).setTitle(R.string.reset_default_alert_title).setMessage(R.string.reset_defaults_alert_message).setPositiveButton(R.string.reset_defaults_alert_positive, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -202,10 +212,6 @@ public class SettingsFragment extends Fragment {
         twitter = factory.getInstance();
         RequestTask requestTask = new RequestTask();
         requestTask.execute(BuildConfig.twitterCallbackUrl);
-    }
-
-    private void sendTwitterMessage(){
-
     }
 
     private class RequestTask extends AsyncTask<String, Void, RequestToken> {
