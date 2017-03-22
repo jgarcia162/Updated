@@ -12,7 +12,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.jose.updated.R;
@@ -20,24 +19,12 @@ import com.example.jose.updated.view.ExceptionDialogBox;
 import com.example.jose.updated.view.MainActivity;
 import com.example.jose.updated.view.SecondActivity;
 
-import twitter4j.Twitter;
-import twitter4j.TwitterFactory;
-import twitter4j.conf.Configuration;
-import twitter4j.conf.ConfigurationBuilder;
-
-import static com.example.jose.updated.model.UpdatedConstants.PREFS_NAME;
-import static com.example.jose.updated.model.UpdatedConstants.PREF_KEY_TWITTER_LOGGED_IN;
-import static com.example.jose.updated.model.UpdatedConstants.TWITTER_CONSUMER_KEY;
-import static com.example.jose.updated.model.UpdatedConstants.TWITTER_CONSUMER_SECRET;
-
 /**
  * Created by Joe on 2/18/17.
  */
 
 public abstract class BaseActivity extends AppCompatActivity {
-    private ProgressBar progressBar;
     protected Toolbar toolbar;
-    private boolean loggedIn;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -45,8 +32,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setToolbar();
-        loggedIn = getSharedPreferences(PREFS_NAME, 0).getBoolean(PREF_KEY_TWITTER_LOGGED_IN, false);
-
     }
 
     @Override
@@ -80,17 +65,6 @@ public abstract class BaseActivity extends AppCompatActivity {
             case R.id.settings_menu:
                 intent.putExtra("fragment_to_load", "Settings");
                 startActivity(intent);
-                break;
-            case R.id.logout_menu:
-                if (!loggedIn) {
-                    ConfigurationBuilder builder = new ConfigurationBuilder();
-                    builder.setOAuthConsumerKey(TWITTER_CONSUMER_KEY);
-                    builder.setOAuthConsumerSecret(TWITTER_CONSUMER_SECRET);
-                    Configuration configuration = builder.build();
-                    TwitterFactory factory = new TwitterFactory(configuration);
-                    Twitter twitter = factory.getInstance();
-                    twitter.setOAuthAccessToken(null);
-                }
                 break;
         }
         return true;

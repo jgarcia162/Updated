@@ -57,6 +57,8 @@
     <string name="refreshed_toast_text">Refreshed</string>
     <string name="selected_toolbar_title">Selected</string>
     <string name="url_input_et_default_text">http://</string>
+    <string name="github_url">http://www.github.com/jgarcia162/updated</string>
+    <string name="email_intent">mailto:jogarciadev@gmail.com</string>
     <string-array name="frequency_spinner_array">
         <item>24</item>
         <item>48</item>
