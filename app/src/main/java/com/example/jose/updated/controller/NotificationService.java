@@ -111,7 +111,6 @@ public class NotificationService extends Service {
         UpdateRefresher refresher = new UpdateRefresher();
         refresher.refreshUpdate();
         Realm realm = Realm.getDefaultInstance();
-        //TODO this is not updating after clicking viewholder
         List<Page> updatedPages = realm.where(Page.class).equalTo("isUpdated", true).findAll();
         Log.d(TAG, "refresh: "+ updatedPages.toArray().length);
         realm.close();

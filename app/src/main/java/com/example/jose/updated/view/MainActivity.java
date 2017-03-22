@@ -70,9 +70,8 @@ public class MainActivity extends BaseActivity implements UpdateBroadcastReceive
 
 
     private MultiChoiceToolbar createMultiChoiceToolbar() {
-        return new MultiChoiceToolbar.Builder(MainActivity.this, toolbar)
+        return new MultiChoiceToolbar.Builder(this, toolbar)
                 .setTitles(toolbarTitle(), getString(R.string.selected_toolbar_title))
-                .setMultiChoiceColours(R.color.colorPrimary, R.color.colorPrimaryDark)
                 .build();
     }
 
