@@ -8,5 +8,5 @@ import android.widget.AbsListView;
  */
 
 public interface CustomMultiChoiceListener extends RecyclerView.RecyclerListener, AbsListView.MultiChoiceModeListener {
-
+//TODO what was this for?
 }

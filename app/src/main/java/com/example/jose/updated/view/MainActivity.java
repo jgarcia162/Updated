@@ -1,6 +1,5 @@
 package com.example.jose.updated.view;
 
-import android.annotation.SuppressLint;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
@@ -15,11 +14,14 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.davidecirillo.multichoicerecyclerview.MultiChoiceToolbar;
 import com.example.jose.updated.R;
 import com.example.jose.updated.controller.BaseActivity;
+import com.example.jose.updated.controller.ButtonListener;
 import com.example.jose.updated.controller.NotificationService;
 import com.example.jose.updated.controller.PageAdapter;
 import com.example.jose.updated.controller.RealmDatabaseHelper;
@@ -28,16 +30,20 @@ import com.example.jose.updated.controller.UpdateRefresher;
 
 import io.realm.Realm;
 
-public class MainActivity extends BaseActivity implements UpdateBroadcastReceiver.UpdatedCallback, SwipeRefreshLayout.OnRefreshListener {
+public class MainActivity extends BaseActivity implements UpdateBroadcastReceiver.UpdatedCallback, SwipeRefreshLayout.OnRefreshListener, ButtonListener {
     private FragmentManager fragmentManager;
-    @SuppressLint("StaticFieldLeak")
-    public static PageAdapter adapter;
+    private PageAdapter adapter;
+    private Button selectAllButton;
+    private Button deleteButton;
+    private Button untrackButton;
+    private ViewGroup buttonLayout;
     private AddPageDialogFragment addPageDialogFragment;
     private RealmDatabaseHelper realmDatabaseHelper;
     private SharedPreferences preferences;
-    public static SwipeRefreshLayout swipeRefreshLayout;
+    private SwipeRefreshLayout swipeRefreshLayout;
     public static UpdateBroadcastReceiver updateBroadcastReceiver;
     private String TAG = this.getClass().getSimpleName();
+    private boolean buttonsHidden = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,16 +57,48 @@ public class MainActivity extends BaseActivity implements UpdateBroadcastReceive
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
         swipeRefreshLayout.setOnRefreshListener(this);
         setupRecyclerView();
+        setupViews();
+        setButtonClickListeners();
         addPageDialogFragment = new AddPageDialogFragment();
         localBroadcastManager.registerReceiver(updateBroadcastReceiver, new IntentFilter("com.example.jose.updated.controller.CUSTOM_INTENT"));
         Intent serviceIntent = new Intent(getApplicationContext(), NotificationService.class);
         startService(serviceIntent);
     }
 
+    private void setButtonClickListeners(){
+        selectAllButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                adapter.selectAll();
+            }
+        });
+
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO delete selected items
+            }
+        });
+
+        untrackButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO untrack selected items
+            }
+        });
+    }
+
+    private void setupViews() {
+        buttonLayout = (ViewGroup) findViewById(R.id.buttons_layout);
+        selectAllButton = (Button) findViewById(R.id.select_all_button);
+        deleteButton = (Button) findViewById(R.id.delete_all_button);
+        untrackButton = (Button) findViewById(R.id.untrack_all_button);
+    }
+
     private void setupRecyclerView() {
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-        adapter = new PageAdapter(this);
+        adapter = new PageAdapter(getApplicationContext(), this);
         adapter.setSingleClickMode(false);
         adapter.setMultiChoiceToolbar(createMultiChoiceToolbar());
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 15, true));
@@ -112,10 +150,10 @@ public class MainActivity extends BaseActivity implements UpdateBroadcastReceive
 
     @Override
     public void onRefresh() {
-        if(!isNetworkConnected()){
-            super.buildAlertDialog(this);
+        if (!isNetworkConnected()) {
+            super.buildAlertDialog();
             resetSwipeRefreshLayout();
-        }else{
+        } else {
             try {
                 UpdateRefresher updateRefresher = new UpdateRefresher();
                 updateRefresher.refreshUpdate();
@@ -147,14 +185,27 @@ public class MainActivity extends BaseActivity implements UpdateBroadcastReceive
         return false;
     }
 
-    private boolean isNetworkConnected(){
-        ConnectivityManager cm =
-                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
-
     }
 
+    @Override
+    public void hideButtons() {
+        if (!buttonsHidden) {
+            buttonLayout.setVisibility(View.GONE);
+            adapter.notifyDataSetChanged();
+            buttonsHidden = true;
+        }
+    }
+
+    @Override
+    public void showButtons() {
+        if (buttonsHidden) {
+            buttonLayout.setVisibility(View.VISIBLE);
+            buttonsHidden = false;
+        }
+    }
 }
 

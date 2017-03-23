@@ -60,6 +60,9 @@
     <string name="github_url">http://www.github.com/jgarcia162/updated</string>
     <string name="email_intent">mailto:jogarciadev@gmail.com</string>
     <string name="remove_toolbar_button_text">Remove</string>
+    <string name="untrack_all_button_text">Untrack All</string>
+    <string name="delete_all_button_text">Delete All</string>
+    <string name="select_all_button_text">Select All</string>
     <string-array name="frequency_spinner_array">
         <item>24</item>
         <item>48</item>

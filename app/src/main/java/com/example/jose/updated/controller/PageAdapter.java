@@ -9,7 +9,6 @@ import android.support.annotation.NonNull;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,15 +26,14 @@ public class PageAdapter extends MultiChoiceAdapter<PageViewHolder> {
     private List<Page> listOfPages;
     private int lastPosition;
     private Context context;
-    private PageViewHolder holderForOnClick;
-    private int holderPosition;
     private RealmDatabaseHelper realmDatabaseHelper = new RealmDatabaseHelper();
-    private String TAG = this.getClass().getSimpleName();
+    private ButtonListener listener;
 
-    public PageAdapter(Context context){
+    public PageAdapter(Context context,ButtonListener listener){
         RealmDatabaseHelper realmDatabaseHelper = new RealmDatabaseHelper();
         listOfPages = realmDatabaseHelper.getAllPages();
         this.context = context;
+        this.listener = listener;
         lastPosition = -1;
     }
 
@@ -73,11 +71,18 @@ public class PageAdapter extends MultiChoiceAdapter<PageViewHolder> {
 
     @Override
     public void setActive(@NonNull View view, boolean state) {
-
         CardView card = (CardView) view.findViewById(R.id.item_layout);
         if (state) {
+            //listener listens for active state. when state is active if number of selected items is 0 then show buttons.
+            if(getSelectedItemCount()==1){
+                listener.showButtons();
+            }
             card.setAlpha(0.25f);
         } else {
+            //llistener listens for inactive state, if number of selected items is 0, hide buttons
+            if(getSelectedItemCount()==0){
+                listener.hideButtons();
+            }
             card.setAlpha(1f);
         }
     }
@@ -93,7 +98,7 @@ public class PageAdapter extends MultiChoiceAdapter<PageViewHolder> {
         };
     }
 
-    public void openInBrowser(Page page,PageViewHolder holder) {
+    private void openInBrowser(Page page, PageViewHolder holder) {
         Uri pageUri = Uri.parse(page.getPageUrl());
         CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
         builder.setCloseButtonIcon(BitmapFactory.decodeResource(

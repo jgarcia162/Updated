@@ -10,24 +10,34 @@
     <include layout="@layout/toolbar" />
 
     <LinearLayout
+        android:id="@+id/buttons_layout"
+        style="@android:style/ButtonBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+        android:visibility="gone">
 
         <Button
             android:id="@+id/select_all_button"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            style="?android:attr/borderlessButtonStyle"
+            android:text="@string/select_all_button_text"/>
 
         <Button
             android:id="@+id/delete_all_button"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            style="?android:attr/borderlessButtonStyle"
+            android:text="@string/delete_all_button_text"/>
 
         <Button
             android:id="@+id/untrack_all_button"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            style="?android:attr/borderlessButtonStyle"
+            android:text="@string/untrack_all_button_text"/>
     </LinearLayout>
 
     <FrameLayout
@@ -45,7 +55,6 @@
                 android:layout_height="match_parent" />
         </android.support.v4.widget.SwipeRefreshLayout>
 
-
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/floating_action_button"
             android:layout_width="75dp"
@@ -54,7 +63,6 @@
             android:layout_margin="20dp"
             android:onClick="showAddPageDialog"
             tools:targetApi="lollipop" />
-
 
         <ProgressBar
             android:id="@+id/progress_bar"

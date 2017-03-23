@@ -1,7 +1,6 @@
 package com.example.jose.updated.controller;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.example.jose.updated.model.Page;
 
