@@ -44,6 +44,7 @@ public class MainActivity extends BaseActivity implements UpdateBroadcastReceive
     public static UpdateBroadcastReceiver updateBroadcastReceiver;
     private String TAG = this.getClass().getSimpleName();
     private boolean buttonsHidden = true;
+    private boolean selectAllClicked = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,11 +66,19 @@ public class MainActivity extends BaseActivity implements UpdateBroadcastReceive
         startService(serviceIntent);
     }
 
-    private void setButtonClickListeners(){
+    private void setButtonClickListeners() {
         selectAllButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                adapter.selectAll();
+                if (!selectAllClicked) {
+                    adapter.selectAll();
+                    selectAllClicked = true;
+                    selectAllButton.setText(R.string.deselect_button_text);
+                }else{
+                    adapter.deselectAll();
+                    selectAllClicked = false;
+                    selectAllButton.setText(R.string.select_all_button_text);
+                }
             }
         });
 
@@ -77,6 +86,7 @@ public class MainActivity extends BaseActivity implements UpdateBroadcastReceive
             @Override
             public void onClick(View v) {
                 //TODO delete selected items
+
             }
         });
 
@@ -195,7 +205,6 @@ public class MainActivity extends BaseActivity implements UpdateBroadcastReceive
     public void hideButtons() {
         if (!buttonsHidden) {
             buttonLayout.setVisibility(View.GONE);
-            adapter.notifyDataSetChanged();
             buttonsHidden = true;
         }
     }

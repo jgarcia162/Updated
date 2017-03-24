@@ -30,14 +30,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             style="?android:attr/borderlessButtonStyle"
-            android:text="@string/delete_all_button_text"/>
+            android:text="@string/delete_button_text"/>
 
         <Button
             android:id="@+id/untrack_all_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             style="?android:attr/borderlessButtonStyle"
-            android:text="@string/untrack_all_button_text"/>
+            android:text="@string/untrack_button_text"/>
     </LinearLayout>
 
     <FrameLayout
