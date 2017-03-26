@@ -25,7 +25,6 @@ import android.widget.Toast;
 
 import com.example.jose.updated.BuildConfig;
 import com.example.jose.updated.R;
-import com.example.jose.updated.model.Page;
 
 import io.realm.Realm;
 import twitter4j.Twitter;
@@ -34,7 +33,12 @@ import twitter4j.auth.RequestToken;
 import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
 
-import static com.example.jose.updated.model.UpdatedConstants.*;
+import static com.example.jose.updated.model.UpdatedConstants.DEFAULT_NOTIFICATIONS_ACTIVE;
+import static com.example.jose.updated.model.UpdatedConstants.DEFAULT_UPDATE_FREQUENCY_SPINNER_POSITION;
+import static com.example.jose.updated.model.UpdatedConstants.PREFS_NAME;
+import static com.example.jose.updated.model.UpdatedConstants.SPINNER_POSITION_PREFERENCE_TAG;
+import static com.example.jose.updated.model.UpdatedConstants.STOP_NOTIFICATION_PREFERENCE_TAG;
+import static com.example.jose.updated.model.UpdatedConstants.UPDATE_FREQUENCY_PREFERENCE_TAG;
 
 
 /**
@@ -61,6 +65,7 @@ public class SettingsFragment extends Fragment {
     private ArrayAdapter adapter;
 
     public SettingsFragment() {
+
     }
 
     @Override
@@ -136,7 +141,10 @@ public class SettingsFragment extends Fragment {
         spinner.setSelection(0);
         notificationsTV.setText(getResources().getString(R.string.notifications_settings_title, onSwitchStatus));
         Realm realm = Realm.getDefaultInstance();
-        realm.delete(Page.class);
+        realm.beginTransaction();
+        realm.deleteAll();
+        realm.close();
+//        pageAdapterListener.onDataChanged();
     }
 
     private void displayResetDefaultsAlertDialog() {

@@ -113,7 +113,7 @@ public class RealmDatabaseHelper {
         Realm realm = Realm.getDefaultInstance();
         page = realm.where(Page.class).equalTo("title", page.getTitle()).findFirst();
         realm.beginTransaction();
-        page.setIsActive(!page.isActive());
+        page.setIsActive(false);
         realm.copyToRealmOrUpdate(page);
         realm.commitTransaction();
         realm.close();

@@ -31,7 +31,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_base);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setToolbar();
     }
@@ -52,7 +52,6 @@ public abstract class BaseActivity extends AppCompatActivity {
                 break;
             case R.id.refresh_menu:
                 try {
-
                     swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
                     swipeRefreshLayout.setRefreshing(true);
                     if (!isNetworkConnected()) {

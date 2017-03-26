@@ -20,7 +20,7 @@ public class SecondActivity extends BaseActivity {
     private FragmentManager fragmentManager;
     private int container;
     private RealmDatabaseHelper realmDatabaseHelper;
-    Toolbar toolbar;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -73,7 +73,7 @@ public class SecondActivity extends BaseActivity {
         if (getSupportActionBar() != null && showBackHomeAsUpIndicator()) {
             getSupportActionBar().setDisplayShowTitleEnabled(true);
             getSupportActionBar().setHomeButtonEnabled(true);
-            getSupportActionBar().setShowHideAnimationEnabled(true);
+//            getSupportActionBar().setShowHideAnimationEnabled(true);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
             if (toolbarTitle() != null) {

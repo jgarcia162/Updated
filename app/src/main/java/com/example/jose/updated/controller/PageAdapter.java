@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Toast;
 
 import com.davidecirillo.multichoicerecyclerview.MultiChoiceAdapter;
 import com.example.jose.updated.R;
@@ -22,16 +23,16 @@ import com.example.jose.updated.view.PageViewHolder;
 
 import java.util.List;
 
-public class PageAdapter extends MultiChoiceAdapter<PageViewHolder> {
-    private List<Page> listOfPages;
-    private int lastPosition;
-    private Context context;
+public class PageAdapter extends MultiChoiceAdapter<PageViewHolder>{
     private RealmDatabaseHelper realmDatabaseHelper = new RealmDatabaseHelper();
+    private List<Page> listOfPages = realmDatabaseHelper.getAllPages();
+    private int lastPosition;
+    private int defaultClickListenerPosition;
+    private PageViewHolder defaultClickListenerHolder;
+    private Context context;
     private ButtonListener listener;
 
-    public PageAdapter(Context context,ButtonListener listener){
-        RealmDatabaseHelper realmDatabaseHelper = new RealmDatabaseHelper();
-        listOfPages = realmDatabaseHelper.getAllPages();
+    public PageAdapter(Context context, ButtonListener listener) {
         this.context = context;
         this.listener = listener;
         lastPosition = -1;
@@ -39,7 +40,7 @@ public class PageAdapter extends MultiChoiceAdapter<PageViewHolder> {
 
     @Override
     public PageViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_view_layout,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_view_layout, parent, false);
         return new PageViewHolder(view);
     }
 
@@ -47,9 +48,8 @@ public class PageAdapter extends MultiChoiceAdapter<PageViewHolder> {
     public void onBindViewHolder(PageViewHolder holder, int position) {
         Page page = listOfPages.get(position);
         holder.bind(page);
-        setAnimation(holder.itemView,position);
-
-        super.onBindViewHolder(holder,position);
+        setAnimation(holder.itemView, position);
+        super.onBindViewHolder(holder, position);
     }
 
     @Override
@@ -57,13 +57,11 @@ public class PageAdapter extends MultiChoiceAdapter<PageViewHolder> {
         return listOfPages.size();
     }
 
-    private void setAnimation(View viewToAnimate, int position)
-    {
+    private void setAnimation(View viewToAnimate, int position) {
         // If the bound view wasn't previously displayed on screen, it's animated
-        if (position > lastPosition)
-        {
+        if (position > lastPosition) {
             Animation animation = AnimationUtils.loadAnimation(context, R.anim.slide_in_bottom);
-            animation.setDuration(1000);
+            animation.setDuration(500);
             viewToAnimate.startAnimation(animation);
             lastPosition = position;
         }
@@ -73,14 +71,12 @@ public class PageAdapter extends MultiChoiceAdapter<PageViewHolder> {
     public void setActive(@NonNull View view, boolean state) {
         CardView card = (CardView) view.findViewById(R.id.item_layout);
         if (state) {
-            //listener listens for active state. when state is active if number of selected items is 0 then show buttons.
-            if(getSelectedItemCount()==1){
+            if (getSelectedItemCount() == 1) {
                 listener.showButtons();
             }
             card.setAlpha(0.25f);
         } else {
-            //llistener listens for inactive state, if number of selected items is 0, hide buttons
-            if(getSelectedItemCount()==0){
+            if (getSelectedItemCount() == 0) {
                 listener.hideButtons();
             }
             card.setAlpha(1f);
@@ -88,12 +84,11 @@ public class PageAdapter extends MultiChoiceAdapter<PageViewHolder> {
     }
 
     @Override
-    protected View.OnClickListener defaultItemViewClickListener(final PageViewHolder holder, final int position) {
+    protected View.OnClickListener defaultItemViewClickListener(final PageViewHolder holder,final int position) {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Page page = listOfPages.get(position);
-                openInBrowser(page,holder);
+                pageClicked(holder,position);
             }
         };
     }
@@ -104,11 +99,12 @@ public class PageAdapter extends MultiChoiceAdapter<PageViewHolder> {
         builder.setCloseButtonIcon(BitmapFactory.decodeResource(
                 context.getResources(), R.drawable.ic_arrow_back_white_24dp));
         builder.addDefaultShareMenuItem();
-        builder.setStartAnimations(context,R.anim.slide_in_bottom,R.anim.slide_out_bottom);
+        builder.setStartAnimations(context, R.anim.slide_in_bottom, R.anim.slide_out_bottom);
         builder.enableUrlBarHiding();
         builder.setToolbarColor(ContextCompat.getColor(context, R.color.colorPrimary));
         // set toolbar color and/or setting custom actions before invoking build()
         CustomTabsIntent customTabsIntent = builder.build();
+        customTabsIntent.intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         if (page.isUpdated()) {
             holder.updatedStatusTextView.setText(R.string.not_updated);
             realmDatabaseHelper.removeFromUpdatedPages(page);
@@ -118,5 +114,11 @@ public class PageAdapter extends MultiChoiceAdapter<PageViewHolder> {
                     Uri.parse(Intent.URI_ANDROID_APP_SCHEME + "//" + context.getPackageName()));
         }
         customTabsIntent.launchUrl(context, pageUri);
+    }
+
+    private void pageClicked(PageViewHolder holder,int position) {
+        Toast.makeText(context, "clicked " + position, Toast.LENGTH_SHORT).show();
+        Page page = listOfPages.get(position);
+        openInBrowser(page, holder);
     }
 }

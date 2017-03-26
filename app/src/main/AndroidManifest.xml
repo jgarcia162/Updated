@@ -20,10 +20,10 @@
         </activity>
         <activity
             android:name=".view.SecondActivity"
-            android:parentActivityName=".controller.Activity" >
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-            </intent-filter>
+            android:parentActivityName=".controller.MainActivity" >
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.VIEW" />-->
+            <!--</intent-filter>-->
         </activity>
 
         <service android:name=".controller.NotificationService"
