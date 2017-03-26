@@ -45,10 +45,11 @@ public class UpdateRefresher {
                 if (!htmlToCheck.equals(currentlyStoredPage.getContents())) {
                     Realm realm = Realm.getDefaultInstance();
                     realm.beginTransaction();
-                    page.setUpdated(true);
+                    currentlyStoredPage.setUpdated(true);
                     realm.commitTransaction();
-                    realmDatabaseHelper.updatePageHtml(currentlyStoredPage, htmlToCheck);
                     realm.close();
+                    realmDatabaseHelper.addToUpdatedPages(currentlyStoredPage);
+                    realmDatabaseHelper.updatePageHtml(currentlyStoredPage, htmlToCheck);
                     return true;
                 }
             } catch (Exception e) {

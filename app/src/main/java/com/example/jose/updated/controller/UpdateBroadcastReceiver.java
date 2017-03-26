@@ -20,10 +20,5 @@ public class UpdateBroadcastReceiver extends BroadcastReceiver {
         this.callback = callback;
     }
 
-    /**
-     * Created by Joe on 12/8/16.
-     */
-    public interface UpdatedCallback {
-        void onUpdateDetected();
-    }
+
 }

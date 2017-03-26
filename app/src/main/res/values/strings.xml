@@ -40,7 +40,6 @@
     <string name="email_et_hint">Send Us A Message</string>
     <string name="settings_update_units">hours</string>
     <string name="twitter_settings_icon_description">Twitter Settings Icon</string>
-    <string name="ig_settings_icon_description">IG Settings Icond Description</string>
     <string name="github_icon_description">GitHub Icon</string>
     <string name="email_icon_description">Email Icon</string>
     <string name="on_text">On</string>
@@ -57,7 +56,14 @@
     <string name="details_saved_text">Details Saved!</string>
     <string name="refreshed_toast_text">Refreshed</string>
     <string name="selected_toolbar_title">Selected</string>
-    <string name="url_input_et_default_text">http://</string>
+    <string name="url_input_et_default_text">http://www.</string>
+    <string name="github_url">http://www.github.com/jgarcia162/updated</string>
+    <string name="email_intent">mailto:jogarciadev@gmail.com</string>
+    <string name="remove_toolbar_button_text">Remove</string>
+    <string name="untrack_button_text">Untrack</string>
+    <string name="delete_button_text">Delete</string>
+    <string name="select_all_button_text">Select All</string>
+    <string name="deselect_button_text">Deselect All</string>
     <string-array name="frequency_spinner_array">
         <item>24</item>
         <item>48</item>

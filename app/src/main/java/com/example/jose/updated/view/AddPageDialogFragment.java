@@ -1,6 +1,7 @@
 package com.example.jose.updated.view;
 
 import android.app.DialogFragment;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
@@ -15,12 +16,14 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.jose.updated.R;
-import com.example.jose.updated.model.Page;
+import com.example.jose.updated.controller.PageAdapter;
 import com.example.jose.updated.controller.RealmDatabaseHelper;
+import com.example.jose.updated.controller.UpdatedCallback;
+import com.example.jose.updated.model.Page;
 
 import java.util.Date;
 
-public class AddPageDialogFragment extends DialogFragment {
+public class AddPageDialogFragment extends DialogFragment{
     private Button addPageButton, previewButton;
     private WebView pagePreviewWebView;
     private TextInputEditText urlInputEditText, titleInputEditText;
@@ -28,7 +31,9 @@ public class AddPageDialogFragment extends DialogFragment {
     private RealmDatabaseHelper realmDatabaseHelper;
     private String urlText;
     private String titleText;
+    private PageAdapter adapter;
     private boolean previewButtonClicked;
+    private UpdatedCallback callback;
 
     public AddPageDialogFragment() {
 
@@ -97,8 +102,7 @@ public class AddPageDialogFragment extends DialogFragment {
             } else {
                 Toast.makeText(getActivity(), R.string.enter_url_toast, Toast.LENGTH_SHORT).show();
             }
-        }
-        if (previewButtonClicked) { //this means user has previewed page
+        }else { //this means user has previewed page
             if (!URLUtil.isValidUrl(newPage.getPageUrl())) {
                 Toast.makeText(getActivity(), R.string.invalid_url_string, Toast.LENGTH_SHORT).show();
                 return;
@@ -108,6 +112,13 @@ public class AddPageDialogFragment extends DialogFragment {
             resetTextFields();
             this.dismiss();
         }
+        callback.onUpdateDetected();
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        callback.showFloatingActionButton();
+        super.onDismiss(dialog);
     }
 
     private void resetTextFields() {
@@ -139,4 +150,7 @@ public class AddPageDialogFragment extends DialogFragment {
         pagePreviewWebView.loadUrl(url);
     }
 
+    public void setCallback(UpdatedCallback callback){
+        this.callback = callback;
+    }
 }

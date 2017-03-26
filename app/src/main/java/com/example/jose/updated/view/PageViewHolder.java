@@ -30,7 +30,7 @@ public class PageViewHolder extends RecyclerView.ViewHolder{
     private WebView webView;
     private ImageView editPageButton;
     private Page page;
-    private RealmDatabaseHelper realmDatabaseHelper = new RealmDatabaseHelper();
+    private RealmDatabaseHelper realmDatabaseHelper;
     public PageViewHolder(View view) {
         super(view);
         updatedStatusTextView = (TextView) view.findViewById(R.id.update_status_text_view);
@@ -47,7 +47,7 @@ public class PageViewHolder extends RecyclerView.ViewHolder{
         });
         itemLayout = (RelativeLayout) view.findViewById(R.id.card_view_layout);
         context = view.getContext();
-
+        realmDatabaseHelper = new RealmDatabaseHelper();
     }
 
     public void bind(Page page) {

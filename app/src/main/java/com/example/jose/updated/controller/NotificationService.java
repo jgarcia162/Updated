@@ -91,7 +91,7 @@ public class NotificationService extends Service {
     private void setUpTimer(TimerTask task) {
         Timer timer = new Timer();
         //TODO don't forget to change this to timerLength when done testing
-        timer.scheduleAtFixedRate(task, 0, 10000);
+        timer.scheduleAtFixedRate(task, 0, timerLength);
     }
 
     private void createTimerTask() {
@@ -111,7 +111,6 @@ public class NotificationService extends Service {
         UpdateRefresher refresher = new UpdateRefresher();
         refresher.refreshUpdate();
         Realm realm = Realm.getDefaultInstance();
-        //TODO this is not updating after clicking viewholder
         List<Page> updatedPages = realm.where(Page.class).equalTo("isUpdated", true).findAll();
         Log.d(TAG, "refresh: "+ updatedPages.toArray().length);
         realm.close();

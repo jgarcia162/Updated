@@ -53,7 +53,6 @@ public class RealmDatabaseHelper {
 
     public void addToUpdatedPages(Page page) {
         Realm realm = Realm.getDefaultInstance();
-        //TODO attempt this with executeTransaction method
         realm.beginTransaction();
         page.setTimeOfLastUpdateInMilliSec(new Date().getTime());
         page.setUpdated(true);
@@ -114,7 +113,7 @@ public class RealmDatabaseHelper {
         Realm realm = Realm.getDefaultInstance();
         page = realm.where(Page.class).equalTo("title", page.getTitle()).findFirst();
         realm.beginTransaction();
-        page.setIsActive(!page.isActive());
+        page.setIsActive(false);
         realm.copyToRealmOrUpdate(page);
         realm.commitTransaction();
         realm.close();

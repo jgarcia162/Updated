@@ -1,12 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_root_view"
     android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:background="@color/main_activity_background"
     android:orientation="vertical"
     tools:context=".view.MainActivity">
-    <include layout="@layout/toolbar"/>
+
+    <include layout="@layout/toolbar" />
+
+    <LinearLayout
+        android:id="@+id/buttons_layout"
+        style="@android:style/ButtonBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <Button
+            android:id="@+id/select_all_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="?android:attr/borderlessButtonStyle"
+            android:text="@string/select_all_button_text"/>
+
+        <Button
+            android:id="@+id/delete_all_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="?android:attr/borderlessButtonStyle"
+            android:text="@string/delete_button_text"/>
+
+        <Button
+            android:id="@+id/untrack_all_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="?android:attr/borderlessButtonStyle"
+            android:text="@string/untrack_button_text"/>
+    </LinearLayout>
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -23,23 +57,22 @@
                 android:layout_height="match_parent" />
         </android.support.v4.widget.SwipeRefreshLayout>
 
-
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/floating_action_button"
             android:layout_width="75dp"
             android:layout_height="75dp"
             android:layout_gravity="bottom|end"
             android:layout_margin="20dp"
+            android:elevation="6dp"
             android:onClick="showAddPageDialog"
             tools:targetApi="lollipop" />
-
 
         <ProgressBar
             android:id="@+id/progress_bar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal|center_vertical"
-            android:visibility="invisible" />
+            android:visibility="gone" />
 
     </FrameLayout>
 </LinearLayout>
