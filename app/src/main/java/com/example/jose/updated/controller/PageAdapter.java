@@ -46,10 +46,10 @@ public class PageAdapter extends MultiChoiceAdapter<PageViewHolder>{
 
     @Override
     public void onBindViewHolder(PageViewHolder holder, int position) {
+        super.onBindViewHolder(holder, position);
         Page page = listOfPages.get(position);
         holder.bind(page);
         setAnimation(holder.itemView, position);
-        super.onBindViewHolder(holder, position);
     }
 
     @Override

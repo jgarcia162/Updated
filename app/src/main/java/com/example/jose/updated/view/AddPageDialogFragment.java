@@ -102,8 +102,7 @@ public class AddPageDialogFragment extends DialogFragment{
             } else {
                 Toast.makeText(getActivity(), R.string.enter_url_toast, Toast.LENGTH_SHORT).show();
             }
-        }
-        if (previewButtonClicked) { //this means user has previewed page
+        }else { //this means user has previewed page
             if (!URLUtil.isValidUrl(newPage.getPageUrl())) {
                 Toast.makeText(getActivity(), R.string.invalid_url_string, Toast.LENGTH_SHORT).show();
                 return;

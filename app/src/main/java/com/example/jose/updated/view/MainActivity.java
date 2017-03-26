@@ -112,7 +112,6 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
         untrackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO untrack selected items
                 if (adapter.getSelectedItemCount() > 0) {
                     List<Page> allPages = realmDatabaseHelper.getAllPages();
                     List<Page> pagesToUntrack = new ArrayList<>();
@@ -149,31 +148,17 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
         adapter.notifyDataSetChanged();
     }
 
-
     private MultiChoiceToolbar createMultiChoiceToolbar() {
         return new MultiChoiceToolbar.Builder(this, toolbar)
                 .setTitles(toolbarTitle(), getString(R.string.selected_toolbar_title))
                 .build();
     }
 
-
     public void showAddPageDialog(View view) {
         addPageDialogFragment.show(fragmentManager, "addPageFragment");
         addPageDialogFragment.setCallback(this);
         view.setVisibility(View.GONE);
     }
-
-//    public static void notifyAdapterDataSetChange(Context context) {
-//        Handler handler = new Handler(context.getMainLooper());
-//        Runnable runnable = new Runnable() {
-//            @Override
-//            public void run() {
-//                adapter.notifyDataSetChanged();
-//            }
-//        };
-//        handler.post(runnable);
-//    }
-
 
     @Override
     protected void onResume() {
@@ -261,6 +246,5 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
             buttonsHidden = false;
         }
     }
-
 }
 
