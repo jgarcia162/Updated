@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/main_activity_background"
     tools:context=".view.MainActivity">
 
     <include layout="@layout/toolbar" />
@@ -73,7 +74,7 @@
             android:layout_gravity="bottom|end"
             android:layout_margin="20dp"
             android:onClick="showAddPageDialog"
-            
+
             tools:targetApi="lollipop" />
 
         <ProgressBar
