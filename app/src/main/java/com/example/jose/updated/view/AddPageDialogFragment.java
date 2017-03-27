@@ -112,7 +112,7 @@ public class AddPageDialogFragment extends DialogFragment{
             resetTextFields();
             this.dismiss();
         }
-        callback.onUpdateDetected();
+        callback.onItemInserted();
     }
 
     @Override

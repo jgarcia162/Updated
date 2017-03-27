@@ -38,6 +38,7 @@ import io.realm.Realm;
 public class MainActivity extends BaseActivity implements UpdatedCallback, SwipeRefreshLayout.OnRefreshListener, ButtonListener {
     private FragmentManager fragmentManager;
     private PageAdapter adapter;
+    private RecyclerView recyclerView;
     private StaggeredGridLayoutManager layoutManager;
     private Button selectAllButton;
     private Button deleteButton;
@@ -54,7 +55,6 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_main);
         if (savedInstanceState == null) {
             Realm.init(getApplicationContext());
             LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
@@ -137,7 +137,7 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
     }
 
     private void setupRecyclerView() {
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         adapter = new PageAdapter(this, this);
         adapter.setSingleClickMode(false);
@@ -187,6 +187,7 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
     public void onItemInserted() {
         adapter.notifyItemInserted(adapter.getItemCount()-1);
     }
+
 
     @Override
     public void onRefresh() {

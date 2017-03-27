@@ -33,7 +33,7 @@
         android:layout_below="@id/details_page_title_tv"
         android:layout_centerHorizontal="true"
         android:layout_toEndOf="@id/page_active_tv"
-        android:layout_toRightOf="@id/page_active_tv" />
+        android:layout_toRightOf="@id/page_active_tv"/>
 
     <TextView
         android:id="@+id/details_timelastupdated_tv"

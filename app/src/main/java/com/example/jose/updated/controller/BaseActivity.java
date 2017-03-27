@@ -81,7 +81,6 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     }
 
-
     private void setToolbar() {
         setSupportActionBar(toolbar);
 
@@ -129,6 +128,4 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     protected abstract int setActivityIdentifier();
-
-
 }
