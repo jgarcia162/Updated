@@ -19,8 +19,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.jose.updated.R;
-import com.example.jose.updated.model.Page;
 import com.example.jose.updated.controller.RealmDatabaseHelper;
+import com.example.jose.updated.model.Page;
 
 import static com.example.jose.updated.model.UpdatedConstants.PREFS_NAME;
 
@@ -119,5 +119,5 @@ public class PageDetailsFragment extends Fragment {
         realmDatabaseHelper.removeFromPagesToTrack(page);
         getActivity().onBackPressed();
     }
-    
+
 }

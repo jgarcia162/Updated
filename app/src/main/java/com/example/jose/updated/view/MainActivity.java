@@ -54,7 +54,6 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (savedInstanceState == null) {
             Realm.init(getApplicationContext());
             LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
             updateBroadcastReceiver = new UpdateBroadcastReceiver(this);
@@ -69,7 +68,6 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
             localBroadcastManager.registerReceiver(updateBroadcastReceiver, new IntentFilter("com.example.jose.updated.controller.CUSTOM_INTENT"));
             Intent serviceIntent = new Intent(getApplicationContext(), NotificationService.class);
             startService(serviceIntent);
-        }
     }
 
     private void setButtonClickListeners() {
@@ -161,6 +159,13 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
         addPageDialogFragment.show(fragmentManager, "addPageFragment");
         addPageDialogFragment.setCallback(this);
         view.setVisibility(View.GONE);
+    }
+
+    //needed to refresh adapter after deleting a page from its detail fragment
+    @Override
+    protected void onResume() {
+        super.onResume();
+        adapter.notifyDataSetChanged();
     }
 
     @Override

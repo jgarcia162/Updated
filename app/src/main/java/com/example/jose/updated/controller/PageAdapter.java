@@ -28,8 +28,6 @@ public class PageAdapter extends MultiChoiceAdapter<PageViewHolder>{
     private RealmDatabaseHelper realmDatabaseHelper = new RealmDatabaseHelper();
     private List<Page> listOfPages = realmDatabaseHelper.getAllPages();
     private int lastPosition;
-    private int defaultClickListenerPosition;
-    private PageViewHolder defaultClickListenerHolder;
     private Context context;
     private ButtonListener listener;
 
@@ -78,7 +76,7 @@ public class PageAdapter extends MultiChoiceAdapter<PageViewHolder>{
             }
             checkBox.setVisibility(View.VISIBLE);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                card.setElevation(8f);
+                card.setCardElevation(8f);
             }
         } else {
             if (getSelectedItemCount() < 1) {
@@ -86,7 +84,7 @@ public class PageAdapter extends MultiChoiceAdapter<PageViewHolder>{
             }
             checkBox.setVisibility(View.GONE);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                card.setElevation(2f);
+                card.setCardElevation(R.dimen.cardview_default_elevation);
             }
         }
     }

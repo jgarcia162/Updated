@@ -14,4 +14,5 @@
     <dimen name="default_button_elevation">2dp</dimen>
     <dimen name="clicked_button_elevation">8dp</dimen>
     <dimen name="button_layout_padding">10dp</dimen>
+    <dimen name="cardview_updated_elevation">30dp</dimen>
 </resources>
