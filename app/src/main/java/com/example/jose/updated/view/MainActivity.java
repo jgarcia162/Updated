@@ -11,7 +11,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -104,11 +103,9 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
                     adapter.notifyDataSetChanged();
                     toolbar.postInvalidate();
                 }
-                Log.d("ADAPTER ", "onClick: "+adapter.getItemCount());
-                adapter.deselectAll();
+                resetButtonLayout();
             }
         });
-
         untrackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -123,9 +120,15 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
                     }
                     adapter.notifyDataSetChanged();
                 }
-                adapter.deselectAll();
+                resetButtonLayout();
             }
         });
+    }
+
+    private void resetButtonLayout() {
+        adapter.deselectAll();
+        selectAllButton.setText(R.string.select_all_button_text);
+        buttonLayout.setVisibility(View.GONE);
     }
 
     private void setupViews() {
@@ -161,12 +164,6 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        adapter.notifyDataSetChanged();
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
         Realm realm = Realm.getDefaultInstance();
@@ -187,7 +184,6 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
     public void onItemInserted() {
         adapter.notifyItemInserted(adapter.getItemCount()-1);
     }
-
 
     @Override
     public void onRefresh() {

@@ -55,13 +55,15 @@
             android:layout_below="@id/update_status_text_view"
             android:layout_centerHorizontal="true"
             android:textIsSelectable="true"
-            android:textSize="12sp" />
+            android:textSize="12sp"
+            tools:text="22 Minutes Ago"/>
 
         <ImageButton
             android:id="@+id/edit_page_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingEnd="20dp"
+            android:paddingStart="0dp"
             android:layout_alignParentEnd="true"
             android:background="@color/transparent"
             android:contentDescription="@string/settings_icon"

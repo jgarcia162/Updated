@@ -9,4 +9,9 @@
     <dimen name="settings_title_tv_text_size">25sp</dimen>
     <dimen name="settings_title_marginTop">30dp</dimen>
     <dimen name="settings_frequency_title_textsize">16sp</dimen>
+    <dimen name="button_padding">10dp</dimen>
+    <dimen name="button_height">40dp</dimen>
+    <dimen name="default_button_elevation">2dp</dimen>
+    <dimen name="clicked_button_elevation">8dp</dimen>
+    <dimen name="button_layout_padding">10dp</dimen>
 </resources>
