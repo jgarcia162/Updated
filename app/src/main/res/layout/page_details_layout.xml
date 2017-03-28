@@ -97,7 +97,7 @@
         style="@style/UpdatedButtonsStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/delete_page_button"
+        android:layout_above="@+id/delete_page_button"
         android:layout_centerHorizontal="true"
         android:layout_margin="10dp"
         android:text="@string/save_page_settings_text" />

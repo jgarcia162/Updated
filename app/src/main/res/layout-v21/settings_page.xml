@@ -33,8 +33,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:layout_above="@id/version_tv"
-            android:text="@string/reset_defaults_text"
-            android:textColor="@color/deadRed" />
+            android:text="@string/reset_defaults_text"/>
     </RelativeLayout>
 
     <ProgressBar

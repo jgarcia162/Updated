@@ -13,7 +13,7 @@
     <RelativeLayout
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:background="@color/mainActivityBackground">
+        android:background="@color/cardview_light_background">
 
         <TextView
             android:id="@+id/page_title_text_view"
@@ -38,7 +38,8 @@
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:src="@drawable/updated_logo"
-            android:contentDescription="@string/page_favicon">
+            android:tint="@color/darkFontColor"
+            android:contentDescription="@string/image_logo">
         </ImageView>
 
         <TextView

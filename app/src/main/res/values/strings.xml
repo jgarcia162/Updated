@@ -31,7 +31,7 @@
     <string name="notifications_settings_title">Notifications %1$s</string>
     <string name="details_update_frequency_text">Update Frequency %1$s</string>
     <string name="settings_icon">Settings Icon</string>
-    <string name="page_favicon">Page Favicon</string>
+    <string name="image_logo">Logo</string>
     <string name="delete_page_button">Delete Page</string>
     <string name="contact_setting_title">Contact</string>
     <string name="send_message_button_text">Send</string>
