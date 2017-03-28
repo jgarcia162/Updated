@@ -69,7 +69,7 @@ public class PageDetailsFragment extends Fragment {
         timeLastUpdatedTV = (TextView) view.findViewById(R.id.details_timelastupdated_tv);
         urlTextView = (TextView) view.findViewById(R.id.details_url_tv);
         trackingSwitch = (Switch) view.findViewById(R.id.page_active_switch);
-        saveSettingsButton = (Button) view.findViewById(R.id.details_settings_button);
+        saveSettingsButton = (Button) view.findViewById(R.id.details_save_settings_button);
         deleteButton = (Button) view.findViewById(R.id.delete_page_button);
         notesEditText = (EditText) view.findViewById(R.id.details_notes_et);
     }

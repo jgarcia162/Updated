@@ -27,7 +27,7 @@
             android:layout_centerVertical="true"
             android:text="@string/delete_button_text"
             android:textAlignment="center"
-            android:elevation="8dp"
+            android:elevation="3dp"
             android:stateListAnimator="@null"
             style="@style/Widget.AppCompat.Button.Colored"/>
 
@@ -38,7 +38,7 @@
             android:layout_centerInParent="true"
             android:text="@string/select_all_button_text"
             android:textAlignment="center"
-            android:elevation="8dp"
+            android:elevation="3dp"
             android:stateListAnimator="@null"
             style="@style/Widget.AppCompat.Button.Colored"/>
 
@@ -50,7 +50,7 @@
             android:layout_centerVertical="true"
             android:text="@string/untrack_button_text"
             android:textAlignment="center"
-            android:elevation="8dp"
+            android:elevation="3dp"
             android:stateListAnimator="@null"
             style="@style/Widget.AppCompat.Button.Colored"/>
     </RelativeLayout>
