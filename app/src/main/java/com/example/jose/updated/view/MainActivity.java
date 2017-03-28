@@ -15,6 +15,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -238,6 +240,9 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
     @Override
     public void hideButtons() {
         if (!buttonsHidden) {
+            Animation animation = AnimationUtils.loadAnimation(this, R.anim.slide_out_left);
+            animation.setDuration(500);
+            buttonLayout.startAnimation(animation);
             buttonLayout.setVisibility(View.GONE);
             buttonsHidden = true;
         }
@@ -246,6 +251,9 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
     @Override
     public void showButtons() {
         if (buttonsHidden) {
+            Animation animation = AnimationUtils.loadAnimation(this, R.anim.slide_in_left);
+            animation.setDuration(500);
+            buttonLayout.startAnimation(animation);
             buttonLayout.setVisibility(View.VISIBLE);
             buttonsHidden = false;
         }

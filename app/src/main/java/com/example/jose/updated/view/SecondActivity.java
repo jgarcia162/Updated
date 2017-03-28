@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.View;
 
 import com.example.jose.updated.R;
@@ -79,7 +80,6 @@ public class SecondActivity extends BaseActivity {
             if (toolbarTitle() != null) {
                 getSupportActionBar().setTitle(toolbarTitle());
             }
-
             toolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -89,6 +89,17 @@ public class SecondActivity extends BaseActivity {
         }
     }
 
+    @Override
+    public boolean onPrepareOptionsMenu (Menu menu) {
+            menu.findItem(R.id.add_page_menu).setEnabled(false);
+            menu.findItem(R.id.add_page_menu).setVisible(false);
+        return true;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return super.onCreateOptionsMenu(menu);
+    }
 
     @Override
     protected int setActivityIdentifier() {
@@ -104,6 +115,4 @@ public class SecondActivity extends BaseActivity {
     protected boolean showBackHomeAsUpIndicator() {
         return true;
     }
-
-
 }

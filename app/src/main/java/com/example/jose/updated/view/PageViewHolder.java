@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
@@ -23,10 +22,8 @@ public class PageViewHolder extends RecyclerView.ViewHolder{
     private Context context;
     private Page page;
     private RealmDatabaseHelper realmDatabaseHelper;
-    private CardView card;
     public PageViewHolder(View view) {
         super(view);
-        card = (CardView) view;
         updatedStatusTextView = (TextView) view.findViewById(R.id.update_status_text_view);
         pageTitleTextView = (TextView) view.findViewById(R.id.page_title_text_view);
         timeOfLastUpdateTextView = (TextView) view.findViewById(R.id.time_of_last_update_text_view);
