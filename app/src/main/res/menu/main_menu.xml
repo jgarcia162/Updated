@@ -9,7 +9,7 @@
         android:title="@string/settings_menu_text" />
 
     <item android:id="@+id/add_page_menu"
-        android:icon="@android:drawable/ic_input_add"
+        android:icon="@drawable/add_button_white"
         app:showAsAction="always"
         android:title="@string/add_page_string"/>
 
