@@ -34,4 +34,10 @@
         <item name="android:windowEnterAnimation">@anim/slide_in_right</item>
         <item name="android:windowExitAnimation">@anim/slide_out_right</item>
     </style>
+
+    <style name="UpdatedButtonsStyle" parent="Widget.AppCompat.Button.Colored">
+        <item name="android:background">@drawable/buttons_background_shape</item>
+        <item name="android:elevation">@dimen/default_button_elevation</item>
+        <item name="android:stateListAnimator">@null</item>
+    </style>
 </resources>

@@ -35,7 +35,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/details_page_title_tv"
         android:layout_centerHorizontal="true"
-        android:layout_toEndOf="@id/page_active_tv" />
+        android:layout_toRightOf="@id/page_active_tv" />
 
     <TextView
         android:id="@+id/details_timelastupdated_tv"
@@ -75,40 +75,44 @@
     </LinearLayout>
 
     <RelativeLayout
+        android:id="@+id/details_notes"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_below="@id/notes_title_layout">
 
         <EditText
             android:id="@+id/details_notes_et"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/details_settings_button"
             android:layout_alignParentTop="true"
+            android:padding="10dp"
             android:layout_margin="10dp"
-            android:background="@color/transparent"
+            android:background="@drawable/edit_text_depth_drawable"
             android:gravity="start"
-            android:inputType="textAutoCorrect"
+            android:inputType="text|textMultiLine"
+            android:maxLines="10"
             android:scrollHorizontally="false"
-            tools:text="TESTING THIS" />
-
-        <Button
-            android:id="@+id/details_settings_button"
-            style="@style/Widget.AppCompat.Button.Colored"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/delete_page_button"
-            android:layout_centerHorizontal="true"
-            android:text="@string/save_page_settings_text" />
-
-        <Button
-            android:id="@+id/delete_page_button"
-            style="@style/Widget.AppCompat.Button.Colored"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:text="@string/delete_page_button"
-            android:textColor="@color/deadRed" />
+            android:hint="@string/add_notes_text"/>
     </RelativeLayout>
+    <Button
+        android:id="@+id/details_save_settings_button"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/details_notes"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="10dp"
+        android:background="@drawable/buttons_background_shape"
+        android:text="@string/save_page_settings_text" />
+
+    <Button
+        android:id="@+id/delete_page_button"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/details_save_settings_button"
+        android:layout_margin="10dp"
+        android:text="@string/delete_page_button"
+        android:background="@drawable/buttons_background_shape"
+        android:textColor="@color/deadRed" />
 </RelativeLayout>
