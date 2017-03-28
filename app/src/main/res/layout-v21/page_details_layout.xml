@@ -3,16 +3,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+    <include layout="@layout/toolbar"/>
 
     <android.support.design.widget.TextInputEditText
         android:id="@+id/details_page_title_tv"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
         android:layout_centerHorizontal="true"
+        android:layout_below="@id/toolbar"
         android:layout_marginTop="10dp"
         android:inputType="text"
         android:textAlignment="center"
         android:textSize="30sp"
+        android:background="@color/transparent"
         tools:text="Page Title" />
 
     <TextView
@@ -32,15 +35,13 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/details_page_title_tv"
         android:layout_centerHorizontal="true"
-        android:layout_toEndOf="@id/page_active_tv"
-        android:layout_toRightOf="@id/page_active_tv" />
+        android:layout_toEndOf="@id/page_active_tv"/>
 
     <TextView
         android:id="@+id/details_timelastupdated_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/page_active_switch"
-        android:layout_marginLeft="10dp"
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
         android:text="@string/details_last_updated"
@@ -53,6 +54,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/details_timelastupdated_tv"
+        android:background="@color/transparent"
         android:text="@string/details_url_tv_text" />
 
     <LinearLayout
@@ -88,6 +90,7 @@
             android:gravity="start"
             android:inputType="textAutoCorrect"
             android:scrollHorizontally="false"
+            android:background="@color/transparent"
             tools:text="TESTING THIS" />
 
         <Button
@@ -106,8 +109,8 @@
             android:layout_alignParentBottom="true"
             android:text="@string/delete_page_button"
             android:textColor="@color/deadRed"
+            android:stateListAnimator="@null"
             style="@style/UpdatedButtons"/>
     </RelativeLayout>
-
 
 </RelativeLayout>
