@@ -49,8 +49,7 @@ public class AddPageDialogFragment extends DialogFragment{
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getDialog().getWindow()
-                .getAttributes().windowAnimations = R.style.DialogAnimation;
+        getDialog().getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
     }
 
     @Nullable
