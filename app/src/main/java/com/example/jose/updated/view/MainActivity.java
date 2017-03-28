@@ -11,10 +11,13 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.davidecirillo.multichoicerecyclerview.MultiChoiceToolbar;
@@ -39,6 +42,7 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
     private PageAdapter adapter;
     private RecyclerView recyclerView;
     private StaggeredGridLayoutManager layoutManager;
+    private TextView addPagesTextView;
     private Button selectAllButton;
     private Button deleteButton;
     private Button untrackButton;
@@ -63,6 +67,8 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
         swipeRefreshLayout.setOnRefreshListener(this);
         setupViews();
         setupRecyclerView();
+        if (adapter.getItemCount() > 0)
+            addPagesTextView.setVisibility(View.GONE);
         setButtonClickListeners();
         addPageDialogFragment = new AddPageDialogFragment();
         localBroadcastManager.registerReceiver(updateBroadcastReceiver, new IntentFilter("com.example.jose.updated.controller.CUSTOM_INTENT"));
@@ -130,6 +136,7 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
     }
 
     private void setupViews() {
+        addPagesTextView = (TextView) findViewById(R.id.add_pages_text_view);
         buttonLayout = (ViewGroup) findViewById(R.id.buttons_layout);
         selectAllButton = (Button) findViewById(R.id.select_all_button);
         deleteButton = (Button) findViewById(R.id.delete_all_button);
@@ -150,18 +157,14 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
     }
 
     private MultiChoiceToolbar createMultiChoiceToolbar() {
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//            toolbar.setBackground(getDrawable(R.drawable.main_gradient_background));
-//        }
         return new MultiChoiceToolbar.Builder(this, toolbar)
                 .setTitles(toolbarTitle(), getString(R.string.selected_toolbar_title))
                 .build();
     }
 
-    public void showAddPageDialog(View view) {
+    public void showAddPageDialog() {
         addPageDialogFragment.show(fragmentManager, "addPageFragment");
         addPageDialogFragment.setCallback(this);
-        view.setVisibility(View.GONE);
     }
 
     //needed to refresh adapter after deleting a page from its detail fragment
@@ -183,10 +186,6 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
         adapter.notifyDataSetChanged();
     }
 
-    @Override
-    public void showFloatingActionButton() {
-        findViewById(R.id.floating_action_button).setVisibility(View.VISIBLE);
-    }
 
     @Override
     public void onItemInserted() {
@@ -253,8 +252,18 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
     }
 
     @Override
-    public void resetToolbar() {
-        adapter.setMultiChoiceToolbar(createMultiChoiceToolbar());
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.add_page_menu:
+                showAddPageDialog();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
 

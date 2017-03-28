@@ -6,6 +6,5 @@ package com.example.jose.updated.controller;
 
 public interface UpdatedCallback {
     void onUpdateDetected();
-    void showFloatingActionButton();
     void onItemInserted();
 }

@@ -90,10 +90,10 @@ public abstract class BaseActivity extends AppCompatActivity {
 //            getSupportActionBar().setShowHideAnimationEnabled(true);
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
             getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
+            getSupportActionBar().setElevation(4f);
             if (toolbarTitle() != null) {
                 getSupportActionBar().setTitle(toolbarTitle());
             }
-
             toolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

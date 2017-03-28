@@ -18,7 +18,6 @@ import android.widget.CheckBox;
 import android.widget.Toast;
 
 import com.davidecirillo.multichoicerecyclerview.MultiChoiceAdapter;
-import com.davidecirillo.multichoicerecyclerview.MultiChoiceToolbar;
 import com.example.jose.updated.R;
 import com.example.jose.updated.model.Page;
 import com.example.jose.updated.view.PageViewHolder;
@@ -66,14 +65,7 @@ public class PageAdapter extends MultiChoiceAdapter<PageViewHolder>{
             lastPosition = position;
         }
     }
-
-    @Override
-    public void setMultiChoiceToolbar(MultiChoiceToolbar multiChoiceToolbar) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            multiChoiceToolbar.getToolbar().setBackground(context.getResources().getDrawable(R.drawable.main_gradient_background,null));
-        }
-        super.setMultiChoiceToolbar(multiChoiceToolbar);
-    }
+    
 
     @Override
     public void setActive(@NonNull View view, boolean state) {
@@ -90,7 +82,6 @@ public class PageAdapter extends MultiChoiceAdapter<PageViewHolder>{
         } else {
             if (getSelectedItemCount() < 1) {
                 listener.hideButtons();
-                listener.resetToolbar();
             }
             checkBox.setVisibility(View.GONE);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

@@ -117,7 +117,6 @@ public class AddPageDialogFragment extends DialogFragment{
 
     @Override
     public void onDismiss(DialogInterface dialog) {
-        callback.showFloatingActionButton();
         super.onDismiss(dialog);
     }
 

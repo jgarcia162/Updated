@@ -43,7 +43,7 @@ dependencies {
     compile 'com.squareup.okhttp3:okhttp:3.6.0'
     compile 'com.android.support:support-v4:25.3.0'
     compile 'com.android.support:customtabs:25.3.0'
-    compile 'com.davidecirillo.multichoicerecyclerview:multichoicerecyclerview:2.0.0'
+    compile 'com.davidecirillo.multichoicerecyclerview:multichoicerecyclerview:2.3.0'
     compile 'io.reactivex:rxandroid:1.0.1'
     compile 'io.reactivex:rxjava:1.0.14'
     compile 'org.twitter4j:twitter4j-core:4.0.2'

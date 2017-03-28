@@ -7,5 +7,4 @@ package com.example.jose.updated.controller;
 public interface ButtonListener {
     void hideButtons();
     void showButtons();
-    void resetToolbar();
 }

@@ -135,17 +135,25 @@
             android:id="@+id/save_settings_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
+            android:layout_marginStart="20dp"
             android:layout_marginTop="50dp"
-            android:background="@color/transparent"
-            android:text="@string/save_settings_text" />
+            android:text="@string/save_settings_text"
+            android:elevation="3dp"
+            android:stateListAnimator="@null"
+            style="@style/Widget.AppCompat.Button.Colored" />
 
         <Button
             android:id="@+id/reset_defaults_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/transparent"
+            android:layout_marginEnd="20dp"
+            android:layout_marginStart="20dp"
             android:text="@string/reset_defaults_text"
-            android:textColor="@color/deadRed" />
+            android:textColor="@color/deadRed"
+            android:elevation="3dp"
+            android:stateListAnimator="@null"
+            style="@style/Widget.AppCompat.Button.Colored" />
 
         <TextView
             android:id="@+id/version_tv"

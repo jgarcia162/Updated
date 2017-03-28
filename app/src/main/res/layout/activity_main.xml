@@ -1,43 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_root_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/main_activity_background"
     tools:context=".view.MainActivity">
 
-    <include layout="@layout/toolbar"/>
+    <include layout="@layout/toolbar" />
 
     <RelativeLayout
         android:id="@+id/buttons_layout"
-        style="@android:style/ButtonBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:visibility="visible">
-
-        <Button
-            android:id="@+id/select_all_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="@string/select_all_button_text"/>
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
+        android:background="@android:color/transparent"
+        android:visibility="gone">
 
         <Button
             android:id="@+id/delete_all_button"
-            android:layout_width="wrap_content"
+            android:layout_width="120dp"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:text="@string/delete_button_text"/>
+            android:layout_centerVertical="true"
+            android:text="@string/delete_button_text"
+            android:textAlignment="center"
+            style="@style/Widget.AppCompat.Button.Colored"/>
+
+        <Button
+            android:id="@+id/select_all_button"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/select_all_button_text"
+            android:textAlignment="center"
+            style="@style/Widget.AppCompat.Button.Colored"/>
 
         <Button
             android:id="@+id/untrack_all_button"
-            android:layout_width="wrap_content"
+            android:layout_width="120dp"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:text="@string/untrack_button_text"/>
+            android:layout_centerVertical="true"
+            android:text="@string/untrack_button_text"
+            android:textAlignment="center"
+            style="@style/Widget.AppCompat.Button.Colored"/>
     </RelativeLayout>
 
     <FrameLayout
@@ -55,22 +64,19 @@
                 android:layout_height="match_parent" />
         </android.support.v4.widget.SwipeRefreshLayout>
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/floating_action_button"
-            android:layout_width="75dp"
-            android:layout_height="75dp"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="20dp"
-            android:elevation="6dp"
-            android:onClick="showAddPageDialog"
-            tools:targetApi="lollipop" />
-
         <ProgressBar
             android:id="@+id/progress_bar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal|center_vertical"
             android:visibility="gone" />
+        <TextView
+            android:id="@+id/add_pages_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:text="@string/add_pages_text"
+            android:visibility="visible"/>
 
     </FrameLayout>
 </LinearLayout>

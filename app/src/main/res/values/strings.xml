@@ -65,6 +65,7 @@
     <string name="select_all_button_text">Select All</string>
     <string name="deselect_button_text">Deselect All</string>
     <string name="add_page_string">Add Page</string>
+    <string name="add_pages_text">Add some pages to get started</string>
     <string-array name="frequency_spinner_array">
         <item>24</item>
         <item>48</item>
