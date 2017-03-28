@@ -87,7 +87,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         if (getSupportActionBar() != null && showBackHomeAsUpIndicator()) {
             getSupportActionBar().setDisplayShowTitleEnabled(true);
             getSupportActionBar().setHomeButtonEnabled(true);
-//            getSupportActionBar().setShowHideAnimationEnabled(true);
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
             getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
             getSupportActionBar().setElevation(4f);

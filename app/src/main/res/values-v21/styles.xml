@@ -12,10 +12,10 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="SettingFragmentTitles">
+    <style name="UpdatedCustomFontStyle">
         <item name="android:textSize">20sp</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:textColor">@color/settingsTitlesColor</item>
+        <item name="android:textColor">@color/darkFontColor</item>
     </style>
 
     <style name="PageDetailsEditTextStyle">
@@ -39,5 +39,15 @@
         <item name="android:background">@drawable/buttons_background_shape</item>
         <item name="android:elevation">@dimen/default_button_elevation</item>
         <item name="android:stateListAnimator">@null</item>
+        <item name="android:textColor">@color/lightFontColor</item>
+    </style>
+
+    <style name="CustomToolbarStyle" parent="ThemeOverlay.AppCompat.ActionBar">
+        <item name="android:textColorPrimary">@color/darkFontColor</item>
+        <item name="colorControlNormal">@color/lightFontColor</item>
+    </style>
+
+    <style name="MyActionButtonOverflow">
+        <item name="android:colorBackground">@color/darkFontColor</item>
     </style>
 </resources>

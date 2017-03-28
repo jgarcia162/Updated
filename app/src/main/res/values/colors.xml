@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#038694</color>
-    <color name="colorPrimaryDark">#00353b</color>
-    <color name="colorAccent">#c9af31</color>
-    <color name="main_activity_background">#b6b6b6</color>
-    <color name="settingsTitlesColor">#000000</color>
-    <color name="transparent">#00232323</color>
+    <color name="colorPrimary">#39A0ED</color>
+    <color name="colorPrimaryDark">#435363</color>
+    <color name="colorAccent">#D12A2F</color>
+    <color name="mainActivityBackground">#E7E1E6</color>
+    <color name="darkFontColor">#202830</color>
+    <color name="lightFontColor">#E7E1E6</color>
     <color name="grey">#4DFFFFFF</color>
-    <color name="dark_grey">#464646</color>
-    <color name="deadRed">#ca1f1f</color>
+    <color name="darkGrey">#464646</color>
     <color name="white">#FFFFFF</color>
+    <color name="editTextBackground">#CFE8EF</color>
+    <color name="transparent">#00232323</color>
 </resources>
