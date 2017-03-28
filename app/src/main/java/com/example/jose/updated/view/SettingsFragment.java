@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.text.format.DateUtils;
@@ -33,12 +34,7 @@ import twitter4j.auth.RequestToken;
 import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
 
-import static com.example.jose.updated.model.UpdatedConstants.DEFAULT_NOTIFICATIONS_ACTIVE;
-import static com.example.jose.updated.model.UpdatedConstants.DEFAULT_UPDATE_FREQUENCY_SPINNER_POSITION;
-import static com.example.jose.updated.model.UpdatedConstants.PREFS_NAME;
-import static com.example.jose.updated.model.UpdatedConstants.SPINNER_POSITION_PREFERENCE_TAG;
-import static com.example.jose.updated.model.UpdatedConstants.STOP_NOTIFICATION_PREFERENCE_TAG;
-import static com.example.jose.updated.model.UpdatedConstants.UPDATE_FREQUENCY_PREFERENCE_TAG;
+import static com.example.jose.updated.model.UpdatedConstants.*;
 
 
 /**
@@ -47,12 +43,15 @@ import static com.example.jose.updated.model.UpdatedConstants.UPDATE_FREQUENCY_P
 
 public class SettingsFragment extends Fragment {
 
+
     private Twitter twitter;
     private RequestToken requestToken;
     private int spinnerPosition;
+    private int frequencyNumber;
     private boolean stopNotifications;
     private SharedPreferences preferences;
     private Spinner spinner;
+    private TextInputEditText frequencyEditText;
     private Switch notificationSwitch;
     private ProgressBar progressBar;
     private TextView notificationsTV;
@@ -75,6 +74,7 @@ public class SettingsFragment extends Fragment {
         preferences = getContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         stopNotifications = preferences.getBoolean(STOP_NOTIFICATION_PREFERENCE_TAG, DEFAULT_NOTIFICATIONS_ACTIVE);
         spinnerPosition = preferences.getInt(SPINNER_POSITION_PREFERENCE_TAG, DEFAULT_UPDATE_FREQUENCY_SPINNER_POSITION);
+        frequencyNumber = preferences.getInt(SPINNER_NUMBER_PREFERENCE_TAG, DEFAULT_SPINNER_NUMBER);
         adapter = ArrayAdapter.createFromResource(getContext(), R.array.frequency_spinner_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
     }
@@ -91,9 +91,10 @@ public class SettingsFragment extends Fragment {
         String notificationsStatus = preferences.getBoolean(STOP_NOTIFICATION_PREFERENCE_TAG, DEFAULT_NOTIFICATIONS_ACTIVE) ? getString(R.string.on_text) : getString(R.string.off_text);
         notificationsTV.setText(String.format(getResources().getString(R.string.notifications_settings_title), notificationsStatus));
         spinner.setAdapter(adapter);
-        spinnerPosition = preferences.getInt(SPINNER_POSITION_PREFERENCE_TAG, DEFAULT_UPDATE_FREQUENCY_SPINNER_POSITION);
         spinner.setSelection(spinnerPosition);
-        onSwitchStatus = preferences.getBoolean(STOP_NOTIFICATION_PREFERENCE_TAG, DEFAULT_NOTIFICATIONS_ACTIVE) ? getString(R.string.on_text) : getString(R.string.off_text);
+        frequencyEditText.setText(String.valueOf(frequencyNumber));
+        //save value to prefs
+        onSwitchStatus = (preferences.getBoolean(STOP_NOTIFICATION_PREFERENCE_TAG, DEFAULT_NOTIFICATIONS_ACTIVE) ? getString(R.string.on_text) : getString(R.string.off_text));
         setContactClickListeners();
         notificationSwitch.setChecked(stopNotifications);
         setButtonClickListeners(saveSettingsButton, resetDefaultsButton);
@@ -101,7 +102,8 @@ public class SettingsFragment extends Fragment {
     }
 
     private void findViews(View view) {
-        spinner = (Spinner) view.findViewById(R.id.frequency_spinner);
+        spinner = (Spinner) view.findViewById(R.id.frequency_units_spinner);
+        frequencyEditText = (TextInputEditText) view.findViewById(R.id.frequency_edit_text);
         notificationSwitch = (Switch) view.findViewById(R.id.notifications_switch);
         saveSettingsButton = (Button) view.findViewById(R.id.save_settings_button);
         resetDefaultsButton = (Button) view.findViewById(R.id.reset_defaults_button);
@@ -138,8 +140,8 @@ public class SettingsFragment extends Fragment {
 
     private void resetDefaultSettings() {
         preferences.edit().clear().apply();
-        notificationSwitch.setChecked(true);
-        spinner.setSelection(0);
+        notificationSwitch.setChecked(DEFAULT_NOTIFICATIONS_ACTIVE);
+        spinner.setSelection(DEFAULT_UPDATE_FREQUENCY_SPINNER_POSITION);
         notificationsTV.setText(getResources().getString(R.string.notifications_settings_title, onSwitchStatus));
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
@@ -165,12 +167,16 @@ public class SettingsFragment extends Fragment {
     }
 
     private void saveSettingsButtonClicked() {
+        int spinnerNumber = Integer.parseInt(String.valueOf(frequencyEditText.getText()));
         spinnerPosition = getIndex(spinner, spinner.getSelectedItem().toString());
         preferences.edit().putInt(SPINNER_POSITION_PREFERENCE_TAG, spinnerPosition).apply();
+        preferences.edit().putInt(SPINNER_NUMBER_PREFERENCE_TAG,spinnerNumber).apply();
         if (spinnerPosition == 0) {
-            preferences.edit().putLong(UPDATE_FREQUENCY_PREFERENCE_TAG, DateUtils.DAY_IN_MILLIS).apply();
+            preferences.edit().putLong(UPDATE_FREQUENCY_PREFERENCE_TAG, DateUtils.MINUTE_IN_MILLIS * spinnerNumber).apply();
         } else if (spinnerPosition == 1) {
-            preferences.edit().putLong(UPDATE_FREQUENCY_PREFERENCE_TAG, DateUtils.DAY_IN_MILLIS * 2).apply();
+            preferences.edit().putLong(UPDATE_FREQUENCY_PREFERENCE_TAG, DateUtils.HOUR_IN_MILLIS * spinnerNumber).apply();
+        } else if (spinnerPosition == 2) {
+            preferences.edit().putLong(UPDATE_FREQUENCY_PREFERENCE_TAG, DateUtils.DAY_IN_MILLIS * spinnerNumber).apply();
         }
         preferences.edit().putInt(SPINNER_POSITION_PREFERENCE_TAG, spinnerPosition).apply();
         preferences.edit().putBoolean(STOP_NOTIFICATION_PREFERENCE_TAG, !stopNotifications).apply();
@@ -178,9 +184,7 @@ public class SettingsFragment extends Fragment {
     }
 
     private int getIndex(Spinner spinner, String myString) {
-
         int index = 0;
-
         for (int i = 0; i < spinner.getCount(); i++) {
             if (spinner.getItemAtPosition(i).equals(myString)) {
                 index = i;
@@ -207,7 +211,7 @@ public class SettingsFragment extends Fragment {
         emailIV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(Intent.ACTION_VIEW).setData( Uri.parse(getString(R.string.email_intent))));
+                startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(getString(R.string.email_intent))));
             }
         });
     }
