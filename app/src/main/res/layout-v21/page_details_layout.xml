@@ -100,7 +100,7 @@
             android:layout_height="wrap_content"
             android:layout_above="@id/delete_page_button"
             android:layout_centerHorizontal="true"
-            android:elevation="8dp"
+            android:elevation="3dp"
             android:stateListAnimator="@null"
             android:text="@string/save_page_settings_text" />
 
@@ -110,7 +110,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:elevation="8dp"
+            android:elevation="3dp"
             android:stateListAnimator="@null"
             android:text="@string/delete_page_button"
             android:textColor="@color/deadRed" />

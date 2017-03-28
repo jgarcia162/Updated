@@ -54,20 +54,20 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-            Realm.init(getApplicationContext());
-            LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
-            updateBroadcastReceiver = new UpdateBroadcastReceiver(this);
-            fragmentManager = getFragmentManager();
-            realmDatabaseHelper = new RealmDatabaseHelper();
-            swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
-            swipeRefreshLayout.setOnRefreshListener(this);
-            setupViews();
-            setupRecyclerView();
-            setButtonClickListeners();
-            addPageDialogFragment = new AddPageDialogFragment();
-            localBroadcastManager.registerReceiver(updateBroadcastReceiver, new IntentFilter("com.example.jose.updated.controller.CUSTOM_INTENT"));
-            Intent serviceIntent = new Intent(getApplicationContext(), NotificationService.class);
-            startService(serviceIntent);
+        Realm.init(getApplicationContext());
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
+        updateBroadcastReceiver = new UpdateBroadcastReceiver(this);
+        fragmentManager = getFragmentManager();
+        realmDatabaseHelper = new RealmDatabaseHelper();
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
+        swipeRefreshLayout.setOnRefreshListener(this);
+        setupViews();
+        setupRecyclerView();
+        setButtonClickListeners();
+        addPageDialogFragment = new AddPageDialogFragment();
+        localBroadcastManager.registerReceiver(updateBroadcastReceiver, new IntentFilter("com.example.jose.updated.controller.CUSTOM_INTENT"));
+        Intent serviceIntent = new Intent(getApplicationContext(), NotificationService.class);
+        startService(serviceIntent);
     }
 
     private void setButtonClickListeners() {
@@ -150,6 +150,9 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
     }
 
     private MultiChoiceToolbar createMultiChoiceToolbar() {
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//            toolbar.setBackground(getDrawable(R.drawable.main_gradient_background));
+//        }
         return new MultiChoiceToolbar.Builder(this, toolbar)
                 .setTitles(toolbarTitle(), getString(R.string.selected_toolbar_title))
                 .build();
@@ -187,7 +190,7 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
 
     @Override
     public void onItemInserted() {
-        adapter.notifyItemInserted(adapter.getItemCount()-1);
+        adapter.notifyItemInserted(adapter.getItemCount() - 1);
     }
 
     @Override
@@ -247,6 +250,11 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
             buttonLayout.setVisibility(View.VISIBLE);
             buttonsHidden = false;
         }
+    }
+
+    @Override
+    public void resetToolbar() {
+        adapter.setMultiChoiceToolbar(createMultiChoiceToolbar());
     }
 }
 
