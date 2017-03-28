@@ -4,6 +4,38 @@
     android:id="@+id/settings_fragment_framelayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp">
+        <TextView
+            android:id="@+id/version_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:text="@string/version_number" />
+        <Button
+            android:id="@+id/save_settings_button"
+            style="@style/UpdatedButtonsStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_above="@id/reset_defaults_button"
+            android:text="@string/save_settings_text" />
+
+        <Button
+            android:id="@+id/reset_defaults_button"
+            style="@style/UpdatedButtonsStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_above="@id/version_tv"
+            android:text="@string/reset_defaults_text"
+            android:textColor="@color/deadRed" />
+    </RelativeLayout>
 
     <ProgressBar
         android:id="@+id/settings_fragment_progress_bar"
@@ -16,6 +48,8 @@
         android:id="@+id/settings_fragment_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
         android:orientation="vertical">
 
         <TextView
@@ -46,19 +80,19 @@
 
             <android.support.design.widget.TextInputEditText
                 android:id="@+id/frequency_edit_text"
+                style="@style/SettingFragmentTitles"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@id/update_frequency_title"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginStart="5dp"
                 android:layout_toRightOf="@id/update_frequency_title"
+                android:background="@color/transparent"
                 android:inputType="number"
                 android:maxLength="2"
                 android:textSize="@dimen/settings_frequency_title_textsize"
                 android:textStyle="normal"
-                style="@style/SettingFragmentTitles"
-                android:background="@color/transparent"
-                tools:text="45"/>
+                tools:text="45" />
 
             <Spinner
                 android:id="@+id/frequency_units_spinner"
@@ -66,6 +100,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@id/update_frequency_title"
                 android:layout_toRightOf="@id/frequency_edit_text"
+                android:background="@color/transparent"
                 android:popupBackground="@color/white" />
 
             <TextView
@@ -105,6 +140,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_marginBottom="20dp"
             android:layout_marginTop="20dp"
             android:orientation="horizontal">
 
@@ -113,6 +149,7 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_margin="10dp"
+                android:contentDescription="@string/twitter_settings_icon_description"
                 android:src="@drawable/twitter_icon" />
 
             <ImageView
@@ -120,6 +157,7 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_margin="10dp"
+                android:contentDescription="@string/github_icon_description"
                 android:src="@drawable/github_icon" />
 
             <ImageView
@@ -127,35 +165,9 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_margin="10dp"
+                android:contentDescription="@string/email_icon_description"
                 android:src="@drawable/email_icon" />
         </LinearLayout>
-
-        <Button
-            android:id="@+id/save_settings_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="20dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="50dp"
-            android:text="@string/save_settings_text"
-            style="@style/Widget.AppCompat.Button.Colored" />
-
-        <Button
-            android:id="@+id/reset_defaults_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="20dp"
-            android:layout_marginStart="20dp"
-            android:text="@string/reset_defaults_text"
-            android:textColor="@color/deadRed"
-            style="@style/Widget.AppCompat.Button.Colored" />
-
-        <TextView
-            android:id="@+id/version_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_margin="10dp"
-            android:text="@string/version_number" />
     </LinearLayout>
+
 </FrameLayout>
