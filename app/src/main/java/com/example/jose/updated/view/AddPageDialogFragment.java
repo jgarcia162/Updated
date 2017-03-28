@@ -46,6 +46,13 @@ public class AddPageDialogFragment extends DialogFragment{
         previewButtonClicked = false;
     }
 
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        getDialog().getWindow()
+                .getAttributes().windowAnimations = R.style.DialogAnimation;
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -112,12 +119,12 @@ public class AddPageDialogFragment extends DialogFragment{
             resetTextFields();
             this.dismiss();
         }
-        callback.onUpdateDetected();
+        callback.onItemInserted();
     }
 
     @Override
     public void onDismiss(DialogInterface dialog) {
-        callback.showFloatingActionButton();
+        resetTextFields();
         super.onDismiss(dialog);
     }
 

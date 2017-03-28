@@ -3,14 +3,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_gravity="center_horizontal">
+    android:layout_marginEnd="20dp"
+    android:layout_marginStart="20dp"
+    android:gravity="center">
 
     <android.support.design.widget.TextInputEditText
         android:id="@+id/title_input_edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="text"
-        android:hint="@string/enter_title_here"/>
+        android:hint="@string/enter_title_here"
+        android:inputType="text" />
 
     <android.support.design.widget.TextInputEditText
         android:id="@+id/url_input_edit_text"
@@ -19,33 +21,37 @@
         android:layout_below="@id/title_input_edit_text"
         android:inputType="text"
         android:text="@string/url_input_et_default_text" />
+    <LinearLayout
+        android:id="@+id/dialog_buttons_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_below="@id/url_input_edit_text">
 
     <Button
         android:id="@+id/preview_button"
-        android:layout_below="@id/url_input_edit_text"
+        style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_marginRight="10dp"
-        android:text="@string/preview_page"
-        style="@style/Widget.AppCompat.Button.Colored"/>
+        android:layout_marginEnd="10dp"
+        android:elevation="3dp"
+        android:stateListAnimator="@null"
+        android:text="@string/preview_page" />
+
     <Button
         android:id="@+id/track_page_button"
-        android:layout_below="@id/url_input_edit_text"
+        style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_marginLeft="10dp"
-        android:text="@string/track_page"
-        style="@style/Widget.AppCompat.Button.Colored"/>
+        android:layout_marginStart="10dp"
+        android:elevation="3dp"
+        android:stateListAnimator="@null"
+        android:text="@string/track_page" />
+    </LinearLayout>
     <WebView
         android:id="@+id/preview_web_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/track_page_button">
-    </WebView>
-
-
-
-
+        android:layout_centerInParent="true"
+        android:layout_below="@id/dialog_buttons_layout" />
 </RelativeLayout>

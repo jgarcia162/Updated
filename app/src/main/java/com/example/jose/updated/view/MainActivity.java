@@ -11,11 +11,15 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.davidecirillo.multichoicerecyclerview.MultiChoiceToolbar;
@@ -38,7 +42,9 @@ import io.realm.Realm;
 public class MainActivity extends BaseActivity implements UpdatedCallback, SwipeRefreshLayout.OnRefreshListener, ButtonListener {
     private FragmentManager fragmentManager;
     private PageAdapter adapter;
+    private RecyclerView recyclerView;
     private StaggeredGridLayoutManager layoutManager;
+    private TextView addPagesTextView;
     private Button selectAllButton;
     private Button deleteButton;
     private Button untrackButton;
@@ -54,23 +60,22 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_main);
-        if (savedInstanceState == null) {
-            Realm.init(getApplicationContext());
-            LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
-            updateBroadcastReceiver = new UpdateBroadcastReceiver(this);
-            fragmentManager = getFragmentManager();
-            realmDatabaseHelper = new RealmDatabaseHelper();
-            swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
-            swipeRefreshLayout.setOnRefreshListener(this);
-            setupViews();
-            setupRecyclerView();
-            setButtonClickListeners();
-            addPageDialogFragment = new AddPageDialogFragment();
-            localBroadcastManager.registerReceiver(updateBroadcastReceiver, new IntentFilter("com.example.jose.updated.controller.CUSTOM_INTENT"));
-            Intent serviceIntent = new Intent(getApplicationContext(), NotificationService.class);
-            startService(serviceIntent);
-        }
+        Realm.init(getApplicationContext());
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
+        updateBroadcastReceiver = new UpdateBroadcastReceiver(this);
+        fragmentManager = getFragmentManager();
+        realmDatabaseHelper = new RealmDatabaseHelper();
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
+        swipeRefreshLayout.setOnRefreshListener(this);
+        setupViews();
+        setupRecyclerView();
+        if (adapter.getItemCount() > 0)
+            addPagesTextView.setVisibility(View.GONE);
+        setButtonClickListeners();
+        addPageDialogFragment = new AddPageDialogFragment();
+        localBroadcastManager.registerReceiver(updateBroadcastReceiver, new IntentFilter("com.example.jose.updated.controller.CUSTOM_INTENT"));
+        Intent serviceIntent = new Intent(getApplicationContext(), NotificationService.class);
+        startService(serviceIntent);
     }
 
     private void setButtonClickListeners() {
@@ -104,11 +109,9 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
                     adapter.notifyDataSetChanged();
                     toolbar.postInvalidate();
                 }
-                Log.d("ADAPTER ", "onClick: "+adapter.getItemCount());
-                adapter.deselectAll();
+                resetButtonLayout();
             }
         });
-
         untrackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -123,12 +126,19 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
                     }
                     adapter.notifyDataSetChanged();
                 }
-                adapter.deselectAll();
+                resetButtonLayout();
             }
         });
     }
 
+    private void resetButtonLayout() {
+        adapter.deselectAll();
+        selectAllButton.setText(R.string.select_all_button_text);
+        buttonLayout.setVisibility(View.GONE);
+    }
+
     private void setupViews() {
+        addPagesTextView = (TextView) findViewById(R.id.add_pages_text_view);
         buttonLayout = (ViewGroup) findViewById(R.id.buttons_layout);
         selectAllButton = (Button) findViewById(R.id.select_all_button);
         deleteButton = (Button) findViewById(R.id.delete_all_button);
@@ -137,7 +147,7 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
     }
 
     private void setupRecyclerView() {
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         adapter = new PageAdapter(this, this);
         adapter.setSingleClickMode(false);
@@ -154,12 +164,12 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
                 .build();
     }
 
-    public void showAddPageDialog(View view) {
+    public void showAddPageDialog() {
         addPageDialogFragment.show(fragmentManager, "addPageFragment");
         addPageDialogFragment.setCallback(this);
-        view.setVisibility(View.GONE);
     }
 
+    //needed to refresh adapter after deleting a page from its detail fragment
     @Override
     protected void onResume() {
         super.onResume();
@@ -178,14 +188,10 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
         adapter.notifyDataSetChanged();
     }
 
-    @Override
-    public void showFloatingActionButton() {
-        findViewById(R.id.floating_action_button).setVisibility(View.VISIBLE);
-    }
 
     @Override
     public void onItemInserted() {
-        adapter.notifyItemInserted(adapter.getItemCount()-1);
+        adapter.notifyItemInserted(adapter.getItemCount() - 1);
     }
 
     @Override
@@ -234,6 +240,9 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
     @Override
     public void hideButtons() {
         if (!buttonsHidden) {
+            Animation animation = AnimationUtils.loadAnimation(this, R.anim.slide_out_left);
+            animation.setDuration(500);
+            buttonLayout.startAnimation(animation);
             buttonLayout.setVisibility(View.GONE);
             buttonsHidden = true;
         }
@@ -242,9 +251,27 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
     @Override
     public void showButtons() {
         if (buttonsHidden) {
+            Animation animation = AnimationUtils.loadAnimation(this, R.anim.slide_in_left);
+            animation.setDuration(500);
+            buttonLayout.startAnimation(animation);
             buttonLayout.setVisibility(View.VISIBLE);
             buttonsHidden = false;
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.add_page_menu:
+                showAddPageDialog();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
 

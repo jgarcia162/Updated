@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item android:id="@+id/refresh_menu"
-        android:title="@string/refresh_menu_text"/>
+        android:title="@string/refresh_menu_text" />
 
     <item android:id="@+id/settings_menu"
         android:title="@string/settings_menu_text" />
 
-    <item android:id="@+id/logout_menu"
-        android:title="@string/logout_menu_text"/>
+    <item android:id="@+id/add_page_menu"
+        android:icon="@drawable/add_button_white"
+        app:showAsAction="always"
+        android:title="@string/add_page_string"/>
 
 </menu>

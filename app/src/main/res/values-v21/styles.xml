@@ -1,11 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Base application theme. -->
-    Theme.AppCompat.Light.NoActionBar
+    <style name="UpdatedButtons">
+        <item name="android:padding">@dimen/button_padding</item>
+        <item name="android:elevation">@dimen/default_button_elevation</item>
+    </style>
+
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <!-- Customize your theme here. -->
-        <!--TODO set overflow icon color to white-->
-        <item name="android:actionOverflowButtonStyle">@style/MyActionButtonOverflow</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
@@ -33,9 +34,4 @@
         <item name="android:windowEnterAnimation">@anim/slide_in_right</item>
         <item name="android:windowExitAnimation">@anim/slide_out_right</item>
     </style>
-
-    <style name="MyActionButtonOverflow">
-        <item name="android:color">@color/white</item>
-    </style>
-
 </resources>

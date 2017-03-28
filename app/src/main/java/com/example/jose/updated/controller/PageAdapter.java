@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.CheckBox;
 import android.widget.Toast;
 
 import com.davidecirillo.multichoicerecyclerview.MultiChoiceAdapter;
@@ -27,8 +28,6 @@ public class PageAdapter extends MultiChoiceAdapter<PageViewHolder>{
     private RealmDatabaseHelper realmDatabaseHelper = new RealmDatabaseHelper();
     private List<Page> listOfPages = realmDatabaseHelper.getAllPages();
     private int lastPosition;
-    private int defaultClickListenerPosition;
-    private PageViewHolder defaultClickListenerHolder;
     private Context context;
     private ButtonListener listener;
 
@@ -66,20 +65,28 @@ public class PageAdapter extends MultiChoiceAdapter<PageViewHolder>{
             lastPosition = position;
         }
     }
+    
 
     @Override
     public void setActive(@NonNull View view, boolean state) {
         CardView card = (CardView) view.findViewById(R.id.item_layout);
+        CheckBox checkBox = (CheckBox) view.findViewById(R.id.check_box);
         if (state) {
-            if (getSelectedItemCount() == 1) {
+            if (getSelectedItemCount() > 0) {
                 listener.showButtons();
             }
-            card.setAlpha(0.25f);
+            checkBox.setVisibility(View.VISIBLE);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                card.setCardElevation(8f);
+            }
         } else {
-            if (getSelectedItemCount() == 0) {
+            if (getSelectedItemCount() < 1) {
                 listener.hideButtons();
             }
-            card.setAlpha(1f);
+            checkBox.setVisibility(View.GONE);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                card.setCardElevation(R.dimen.cardview_default_elevation);
+            }
         }
     }
 
