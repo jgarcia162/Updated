@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/main_activity_background"
+    android:background="@color/mainActivityBackground"
     tools:context=".view.MainActivity">
 
     <include layout="@layout/toolbar" />
@@ -17,7 +17,7 @@
         android:layout_marginEnd="20dp"
         android:layout_marginStart="20dp"
         android:background="@android:color/transparent"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <Button
             android:id="@+id/delete_all_button"

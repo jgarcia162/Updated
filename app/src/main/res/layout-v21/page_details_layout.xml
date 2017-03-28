@@ -16,6 +16,7 @@
         android:inputType="text"
         android:textAlignment="center"
         android:textSize="30sp"
+        android:textColor="@color/darkFontColor"
         tools:text="Page Title" />
 
     <TextView
@@ -27,7 +28,8 @@
         android:gravity="center"
         android:text="@string/page_active_tv"
         android:textSize="15sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:textColor="@color/darkFontColor"/>
 
     <Switch
         android:id="@+id/page_active_switch"
@@ -46,7 +48,8 @@
         android:layout_marginTop="10dp"
         android:text="@string/details_last_updated"
         android:textSize="20sp"
-        android:textStyle="bold|italic" />
+        android:textStyle="bold|italic"
+        android:textColor="@color/darkFontColor"/>
 
     <EditText
         android:id="@+id/details_url_tv"
@@ -55,7 +58,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/details_timelastupdated_tv"
         android:background="@color/transparent"
-        android:text="@string/details_url_tv_text" />
+        android:text="@string/details_url_tv_text"
+        android:textColor="@color/darkFontColor"/>
 
     <LinearLayout
         android:id="@+id/notes_title_layout"
@@ -72,7 +76,8 @@
             android:layout_marginTop="10dp"
             android:layout_gravity="center_horizontal"
             android:text="@string/details_notes_title_text"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            android:textColor="@color/darkFontColor"/>
         <EditText
             android:id="@+id/details_notes_et"
             android:layout_width="match_parent"
@@ -84,6 +89,7 @@
             android:inputType="text|textMultiLine"
             android:maxLines="10"
             android:scrollHorizontally="false"
+            android:textColor="@color/darkFontColor"
             android:hint="@string/add_notes_text"/>
     </LinearLayout>
     <Button
@@ -103,8 +109,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/empty_space"
         android:layout_margin="10dp"
-        android:text="@string/delete_page_button"
-        android:textColor="@color/deadRed" />
+        android:text="@string/delete_page_button" />
     <android.support.v4.widget.Space
         android:id="@+id/empty_space"
         android:layout_width="match_parent"
