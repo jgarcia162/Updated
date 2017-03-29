@@ -89,7 +89,6 @@ public class NotificationService extends Service {
 
     private void setUpTimer(TimerTask task) {
         Timer timer = new Timer();
-        //TODO don't forget to change this to timerLength when done testing
         timer.scheduleAtFixedRate(task, 0, timerLength);
     }
 

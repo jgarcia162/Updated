@@ -62,7 +62,6 @@ public class SettingsFragment extends Fragment {
     private Button resetDefaultsButton;
     private String onSwitchStatus;
     private ArrayAdapter adapter;
-    //TODO allow user flexibility for setting update frequency
 
     public SettingsFragment() {
 
