@@ -16,4 +16,5 @@ public class UpdatedConstants {
     public static final String STOP_NOTIFICATION_PREFERENCE_TAG = "stop_notifications";
     public static final String SPINNER_NUMBER_PREFERENCE_TAG = "spinner_number";
     public static final int DEFAULT_SPINNER_NUMBER = 24;
+
 }

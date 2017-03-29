@@ -107,7 +107,6 @@ public class PageAdapter extends MultiChoiceAdapter<PageViewHolder>{
                 context.getResources(), R.drawable.ic_arrow_back_white_24dp));
         builder.addDefaultShareMenuItem();
         builder.setStartAnimations(context, R.anim.slide_in_bottom, R.anim.slide_out_bottom);
-        builder.enableUrlBarHiding();
         builder.setToolbarColor(ContextCompat.getColor(context, R.color.colorPrimary));
         // set toolbar color and/or setting custom actions before invoking build()
         CustomTabsIntent customTabsIntent = builder.build();
