@@ -9,4 +9,4 @@ Third party libraries and resources used include <br>
 -[Realm Java 3.0.0](https://realm.io/) database <br>
 -[Calligraphy](https://github.com/chrisjenx/Calligraphy) library for easy integration of custom fonts <br>
 -[MultichoiceRecyclerView](https://github.com/dvdciri/MultiChoiceRecyclerView) library for a custom recyclerview with multichoice functionality <br>
--[](https://realm.io/) for custom font <br>
+-[Misti's Fonts](http://www.mistifonts.com) for custom font <br>
