@@ -67,6 +67,7 @@
     <string name="add_page_string">Add Page</string>
     <string name="add_pages_text">Add some pages to get started</string>
     <string name="add_notes_text">Add notes here</string>
+    <string name="must_enter_number">You must enter a number!</string>
     <string-array name="frequency_spinner_array">
         <item>Minutes</item>
         <item>Hours</item>

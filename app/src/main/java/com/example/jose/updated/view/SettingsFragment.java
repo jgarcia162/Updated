@@ -11,10 +11,12 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -34,7 +36,14 @@ import twitter4j.auth.RequestToken;
 import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
 
-import static com.example.jose.updated.model.UpdatedConstants.*;
+import static com.example.jose.updated.model.UpdatedConstants.DEFAULT_NOTIFICATIONS_ACTIVE;
+import static com.example.jose.updated.model.UpdatedConstants.DEFAULT_SPINNER_NUMBER;
+import static com.example.jose.updated.model.UpdatedConstants.DEFAULT_UPDATE_FREQUENCY_SPINNER_POSITION;
+import static com.example.jose.updated.model.UpdatedConstants.PREFS_NAME;
+import static com.example.jose.updated.model.UpdatedConstants.SPINNER_NUMBER_PREFERENCE_TAG;
+import static com.example.jose.updated.model.UpdatedConstants.SPINNER_POSITION_PREFERENCE_TAG;
+import static com.example.jose.updated.model.UpdatedConstants.STOP_NOTIFICATION_PREFERENCE_TAG;
+import static com.example.jose.updated.model.UpdatedConstants.UPDATE_FREQUENCY_PREFERENCE_TAG;
 
 
 /**
@@ -166,20 +175,29 @@ public class SettingsFragment extends Fragment {
     }
 
     private void saveSettingsButtonClicked() {
-        int spinnerNumber = Integer.parseInt(String.valueOf(frequencyEditText.getText()));
-        spinnerPosition = getIndex(spinner, spinner.getSelectedItem().toString());
-        preferences.edit().putInt(SPINNER_POSITION_PREFERENCE_TAG, spinnerPosition).apply();
-        preferences.edit().putInt(SPINNER_NUMBER_PREFERENCE_TAG,spinnerNumber).apply();
-        if (spinnerPosition == 0) {
-            preferences.edit().putLong(UPDATE_FREQUENCY_PREFERENCE_TAG, DateUtils.MINUTE_IN_MILLIS * spinnerNumber).apply();
-        } else if (spinnerPosition == 1) {
-            preferences.edit().putLong(UPDATE_FREQUENCY_PREFERENCE_TAG, DateUtils.HOUR_IN_MILLIS * spinnerNumber).apply();
-        } else if (spinnerPosition == 2) {
-            preferences.edit().putLong(UPDATE_FREQUENCY_PREFERENCE_TAG, DateUtils.DAY_IN_MILLIS * spinnerNumber).apply();
+        int spinnerNumber;
+        String frequencyString = frequencyEditText.getText().toString();
+        if (TextUtils.isEmpty(frequencyString)) {
+            Toast.makeText(getContext(), R.string.must_enter_number, Toast.LENGTH_SHORT).show();
+            frequencyEditText.requestFocusFromTouch();
+            InputMethodManager lManager = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            lManager.showSoftInput(frequencyEditText, 0);
+        } else {
+            spinnerNumber = Integer.parseInt(frequencyString);
+            spinnerPosition = getIndex(spinner, spinner.getSelectedItem().toString());
+            preferences.edit().putInt(SPINNER_POSITION_PREFERENCE_TAG, spinnerPosition).apply();
+            preferences.edit().putInt(SPINNER_NUMBER_PREFERENCE_TAG, spinnerNumber).apply();
+            if (spinnerPosition == 0) {
+                preferences.edit().putLong(UPDATE_FREQUENCY_PREFERENCE_TAG, DateUtils.MINUTE_IN_MILLIS * spinnerNumber).apply();
+            } else if (spinnerPosition == 1) {
+                preferences.edit().putLong(UPDATE_FREQUENCY_PREFERENCE_TAG, DateUtils.HOUR_IN_MILLIS * spinnerNumber).apply();
+            } else if (spinnerPosition == 2) {
+                preferences.edit().putLong(UPDATE_FREQUENCY_PREFERENCE_TAG, DateUtils.DAY_IN_MILLIS * spinnerNumber).apply();
+            }
+            preferences.edit().putInt(SPINNER_POSITION_PREFERENCE_TAG, spinnerPosition).apply();
+            preferences.edit().putBoolean(STOP_NOTIFICATION_PREFERENCE_TAG, !stopNotifications).apply();
+            Toast.makeText(getContext(), R.string.settings_saved_text, Toast.LENGTH_SHORT).show();
         }
-        preferences.edit().putInt(SPINNER_POSITION_PREFERENCE_TAG, spinnerPosition).apply();
-        preferences.edit().putBoolean(STOP_NOTIFICATION_PREFERENCE_TAG, !stopNotifications).apply();
-        Toast.makeText(getContext(), R.string.settings_saved_text, Toast.LENGTH_SHORT).show();
     }
 
     private int getIndex(Spinner spinner, String myString) {
