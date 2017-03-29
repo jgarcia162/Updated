@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -33,6 +34,7 @@ import com.example.jose.updated.controller.UpdateBroadcastReceiver;
 import com.example.jose.updated.controller.UpdateRefresher;
 import com.example.jose.updated.controller.UpdatedCallback;
 import com.example.jose.updated.model.Page;
+import com.example.jose.updated.model.UpdatedConstants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,6 +62,7 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        boolean firstTime = getSharedPreferences(UpdatedConstants.PREFS_NAME, 0).getBoolean(UpdatedConstants.FIRST_TIME_PREF_TAG, true);
         Realm.init(getApplicationContext());
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
         updateBroadcastReceiver = new UpdateBroadcastReceiver(this);
@@ -67,15 +70,21 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
         realmDatabaseHelper = new RealmDatabaseHelper();
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
         swipeRefreshLayout.setOnRefreshListener(this);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent, null));
+        } else {
+            swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
+        }
         setupViews();
         setupRecyclerView();
-        if (adapter.getItemCount() > 0)
+        if (!firstTime)
             addPagesTextView.setVisibility(View.GONE);
         setButtonClickListeners();
         addPageDialogFragment = new AddPageDialogFragment();
         localBroadcastManager.registerReceiver(updateBroadcastReceiver, new IntentFilter("com.example.jose.updated.controller.CUSTOM_INTENT"));
         Intent serviceIntent = new Intent(getApplicationContext(), NotificationService.class);
         startService(serviceIntent);
+        getSharedPreferences(UpdatedConstants.PREFS_NAME, 0).edit().putBoolean(UpdatedConstants.FIRST_TIME_PREF_TAG, false).apply();
     }
 
     private void setButtonClickListeners() {
