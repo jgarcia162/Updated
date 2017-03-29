@@ -5,12 +5,8 @@ Nevermind those pesky newsletters flooding your inbox; Updated lets you track yo
 
 Project currently a work in progress. 
 
-Technical Components include <br>
--Content Provider <br>
--Intent Service <br>
--Broadcast Receiver <br>
--Android Support Library <br>
--RecyclerView <br>
--Fragments <br>
--Async Task <br>
+Third party libraries and resources used include <br>
 -[Realm Java 3.0.0](https://realm.io/) database <br>
+-[Calligraphy](https://github.com/chrisjenx/Calligraphy) library for easy integration of custom fonts <br>
+-[MultichoiceRecyclerView](https://github.com/dvdciri/MultiChoiceRecyclerView) library for a custom recyclerview with multichoice functionality <br>
+-[](https://realm.io/) for custom font <br>
