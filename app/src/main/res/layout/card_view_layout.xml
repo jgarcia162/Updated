@@ -28,7 +28,7 @@
             android:textSize="25sp"
             android:textStyle="bold"
             tools:text="Page Title"
-            style="@style/UpdatedCustomFontStyle"/>
+            style="@style/UpdatedCustomFontStyle" />
 
         <ImageView
             android:id="@+id/page_icon"
