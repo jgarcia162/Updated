@@ -45,24 +45,22 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
     private FragmentManager fragmentManager;
     private PageAdapter adapter;
     private RecyclerView recyclerView;
-    private StaggeredGridLayoutManager layoutManager;
-    private TextView addPagesTextView;
     private Button selectAllButton;
     private Button deleteButton;
     private Button untrackButton;
     private ProgressBar progressBar;
     private ViewGroup buttonLayout;
-    private AddPageDialogFragment addPageDialogFragment;
     private RealmDatabaseHelper realmDatabaseHelper;
     private SwipeRefreshLayout swipeRefreshLayout;
     public static UpdateBroadcastReceiver updateBroadcastReceiver;
     private boolean buttonsHidden = true;
     private boolean selectAllClicked = false;
+    private boolean firstTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        boolean firstTime = getSharedPreferences(UpdatedConstants.PREFS_NAME, 0).getBoolean(UpdatedConstants.FIRST_TIME_PREF_TAG, true);
+        firstTime = getSharedPreferences(UpdatedConstants.PREFS_NAME, 0).getBoolean(UpdatedConstants.FIRST_TIME_PREF_TAG, true);
         Realm.init(getApplicationContext());
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
         updateBroadcastReceiver = new UpdateBroadcastReceiver(this);
@@ -75,16 +73,13 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
         } else {
             swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
         }
-        setupViews();
-        setupRecyclerView();
-        if (!firstTime)
-            addPagesTextView.setVisibility(View.GONE);
-        setButtonClickListeners();
-        addPageDialogFragment = new AddPageDialogFragment();
         localBroadcastManager.registerReceiver(updateBroadcastReceiver, new IntentFilter("com.example.jose.updated.controller.CUSTOM_INTENT"));
         Intent serviceIntent = new Intent(getApplicationContext(), NotificationService.class);
         startService(serviceIntent);
         getSharedPreferences(UpdatedConstants.PREFS_NAME, 0).edit().putBoolean(UpdatedConstants.FIRST_TIME_PREF_TAG, false).apply();
+        setupViews();
+        setButtonClickListeners();
+        setupRecyclerView();
     }
 
     private void setButtonClickListeners() {
@@ -147,7 +142,10 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
     }
 
     private void setupViews() {
-        addPagesTextView = (TextView) findViewById(R.id.add_pages_text_view);
+        TextView addPagesTextView = (TextView) findViewById(R.id.add_pages_text_view);
+        if (!firstTime) {
+            addPagesTextView.setVisibility(View.GONE);
+        }
         buttonLayout = (ViewGroup) findViewById(R.id.buttons_layout);
         selectAllButton = (Button) findViewById(R.id.select_all_button);
         deleteButton = (Button) findViewById(R.id.delete_all_button);
@@ -156,8 +154,9 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
     }
 
     private void setupRecyclerView() {
+
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         adapter = new PageAdapter(this, this);
         adapter.setSingleClickMode(false);
         adapter.setMultiChoiceToolbar(createMultiChoiceToolbar());
@@ -167,6 +166,15 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
         adapter.notifyDataSetChanged();
     }
 
+    @Override
+    public void onBackPressed() {
+        if(adapter.getSelectedItemCount() > 0){
+            adapter.deselectAll();
+        }else{
+            super.onBackPressed();
+        }
+    }
+
     private MultiChoiceToolbar createMultiChoiceToolbar() {
         return new MultiChoiceToolbar.Builder(this, toolbar)
                 .setTitles(toolbarTitle(), getString(R.string.selected_toolbar_title))
@@ -174,6 +182,7 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
     }
 
     public void showAddPageDialog() {
+        AddPageDialogFragment addPageDialogFragment = new AddPageDialogFragment();
         addPageDialogFragment.show(fragmentManager, "addPageFragment");
         addPageDialogFragment.setCallback(this);
     }
@@ -183,6 +192,11 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
     protected void onResume() {
         super.onResume();
         adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
     }
 
     @Override
