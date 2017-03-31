@@ -23,7 +23,7 @@ import com.example.jose.updated.model.Page;
 
 import java.util.Date;
 
-public class AddPageDialogFragment extends DialogFragment{
+public class AddPageDialogFragment extends DialogFragment {
     private Button addPageButton, previewButton;
     private WebView pagePreviewWebView;
     private TextInputEditText urlInputEditText, titleInputEditText;
@@ -101,19 +101,19 @@ public class AddPageDialogFragment extends DialogFragment{
                 if (TextUtils.isEmpty(titleText)) {
                     titleText = getString(R.string.untitled_page_text);
                 }
-                realmDatabaseHelper.createPage(titleText,urlText,new Date().getTime());
+                realmDatabaseHelper.createPage(titleText, urlText, new Date().getTime());
                 newPage = null;
                 resetTextFields();
                 this.dismiss();
             } else {
                 Toast.makeText(getActivity(), R.string.enter_url_toast, Toast.LENGTH_SHORT).show();
             }
-        }else { //this means user has previewed page
+        } else { //this means user has previewed page
             if (!URLUtil.isValidUrl(newPage.getPageUrl())) {
                 Toast.makeText(getActivity(), R.string.invalid_url_string, Toast.LENGTH_SHORT).show();
                 return;
             }
-            realmDatabaseHelper.createPage(newPage.getTitle(),newPage.getPageUrl(),newPage.getTimeOfLastUpdateInMilliSec());
+            realmDatabaseHelper.createPage(newPage.getTitle(), newPage.getPageUrl(), newPage.getTimeOfLastUpdateInMilliSec());
             newPage = null;
             resetTextFields();
             this.dismiss();
@@ -153,10 +153,11 @@ public class AddPageDialogFragment extends DialogFragment{
     }
 
     public void displayPageInPreviewWebView(String url) {
+        pagePreviewWebView.setVisibility(View.VISIBLE);
         pagePreviewWebView.loadUrl(url);
     }
 
-    public void setCallback(UpdatedCallback callback){
+    public void setCallback(UpdatedCallback callback) {
         this.callback = callback;
     }
 }

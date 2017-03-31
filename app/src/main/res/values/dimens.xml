@@ -13,6 +13,11 @@
     <dimen name="button_height">40dp</dimen>
     <dimen name="default_button_elevation">3dp</dimen>
     <dimen name="clicked_button_elevation">8dp</dimen>
+    <dimen name="card_corner_radius">6dp</dimen>
+    <dimen name="card_elevation">6dp</dimen>
+    <item name="card_elevation_float" format="float" type="dimen">6.0</item>
+    <item name="selected_card_elevation_float" format="float" type="dimen">10.0</item>
+    <item name="selected_card_translationz_float" format="float" type="dimen">30.0</item>
     <dimen name="button_layout_padding">10dp</dimen>
     <dimen name="depth">4dp</dimen>
 </resources>

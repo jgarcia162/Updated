@@ -47,6 +47,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         setContentView(R.layout.activity_base);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setToolbar();
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
     }
 
     @Override
@@ -65,7 +66,6 @@ public abstract class BaseActivity extends AppCompatActivity {
                 break;
             case R.id.refresh_menu:
                 try {
-                    swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
                     swipeRefreshLayout.setRefreshing(true);
                     if (!isNetworkConnected()) {
                         buildAlertDialog();
@@ -116,14 +116,13 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     public void buildAlertDialog(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext(), R.style.custom_dialog);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.custom_dialog);
         builder.setTitle("Whoops!");
         builder.setMessage("Something's broken =[");
         builder.setPositiveButton("Dismiss", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
-                swipeRefreshLayout.setRefreshing(false);
             }
         });
         AlertDialog dialog = builder.create();

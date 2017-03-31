@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -71,13 +72,20 @@ public class PageAdapter extends MultiChoiceAdapter<PageViewHolder>{
     public void setActive(@NonNull View view, boolean state) {
         CardView card = (CardView) view.findViewById(R.id.item_layout);
         CheckBox checkBox = (CheckBox) view.findViewById(R.id.check_box);
+        TypedValue elevationTypedValue = new TypedValue();
+        TypedValue translationtypedValue = new TypedValue();
         if (state) {
             if (getSelectedItemCount() > 0) {
                 listener.showButtons();
             }
             checkBox.setVisibility(View.VISIBLE);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                card.setCardElevation(8f);
+                context.getResources().getValue(R.dimen.selected_card_elevation_float,elevationTypedValue,true);
+                context.getResources().getValue(R.dimen.selected_card_translationz_float,translationtypedValue,true);
+                float elevation = elevationTypedValue.getFloat();
+                float translation = translationtypedValue.getFloat();
+                card.setCardElevation(elevation);
+                card.setTranslationZ(translation);
             }
         } else {
             if (getSelectedItemCount() < 1) {
@@ -85,7 +93,12 @@ public class PageAdapter extends MultiChoiceAdapter<PageViewHolder>{
             }
             checkBox.setVisibility(View.GONE);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                card.setCardElevation(R.dimen.cardview_default_elevation);
+                context.getResources().getValue(R.dimen.selected_card_elevation_float,elevationTypedValue,true);
+                context.getResources().getValue(R.dimen.selected_card_translationz_float,translationtypedValue,true);
+                float elevation = elevationTypedValue.getFloat();
+                float translation = translationtypedValue.getFloat();
+                card.setCardElevation(elevation);
+                card.setTranslationZ(-translation);
             }
         }
     }
