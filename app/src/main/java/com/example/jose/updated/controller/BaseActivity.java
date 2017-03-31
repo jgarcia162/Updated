@@ -3,6 +3,8 @@ package com.example.jose.updated.controller;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -116,7 +118,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     public void buildAlertDialog(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.custom_dialog);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.CustomDialogStyle);
         builder.setTitle("Whoops!");
         builder.setMessage("Something's broken =[");
         builder.setPositiveButton("Dismiss", new DialogInterface.OnClickListener() {
@@ -126,6 +128,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             }
         });
         AlertDialog dialog = builder.create();
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.show();
     }
 

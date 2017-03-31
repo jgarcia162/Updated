@@ -2,6 +2,8 @@ package com.example.jose.updated.view;
 
 import android.app.DialogFragment;
 import android.content.DialogInterface;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
@@ -50,6 +52,7 @@ public class AddPageDialogFragment extends DialogFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         getDialog().getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+        getDialog().getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
     }
 
     @Nullable
