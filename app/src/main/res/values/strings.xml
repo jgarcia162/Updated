@@ -68,6 +68,15 @@
     <string name="add_pages_text">Add some pages to get started</string>
     <string name="add_notes_text">Add notes here</string>
     <string name="must_enter_number">You must enter a number!</string>
+    <string name="login_with_email">Log in with email</string>
+    <string name="log_in_with_google">Log in with Google</string>
+    <string name="skip_log_in">Skip Log in</string>
+    <string name="skip_login_dialog_message">If you choose not to log in your data will be lost if you uninstall the app or change phones</string>
+    <string name="enter_email">Enter email</string>
+    <string name="enter_password">Enter password</string>
+    <string name="invalid_password_dialog_message">Password must be at least 6 characters</string>
+    <string name="log_in">Log in</string>
+    <string name="back">Back</string>
     <string-array name="frequency_spinner_array">
         <item>Minutes</item>
         <item>Hours</item>
