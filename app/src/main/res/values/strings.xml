@@ -77,6 +77,8 @@
     <string name="invalid_password_dialog_message">Password must be at least 6 characters</string>
     <string name="log_in">Log in</string>
     <string name="back">Back</string>
+    <string name="login_failed_message">Login failed, are you using the right email or password?</string>
+    <string name="new_user">New User</string>
     <string-array name="frequency_spinner_array">
         <item>Minutes</item>
         <item>Hours</item>

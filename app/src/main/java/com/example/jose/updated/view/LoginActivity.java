@@ -21,6 +21,9 @@ import android.widget.Toast;
 
 import com.example.jose.updated.R;
 import com.example.jose.updated.model.UpdatedConstants;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -39,10 +42,12 @@ public class LoginActivity extends AppCompatActivity {
     private Button googleLoginButton;
     private Button emailLoginButton;
     private Button loginButton;
+    private Button newUserLoginButton;
     private TextInputEditText emailEditText;
     private TextInputEditText passwordEditText;
     private TextView skipLoginTextView;
     private TextView backTextView;
+    private boolean newUserClicked = false;
 
 
     @Override
@@ -80,6 +85,7 @@ public class LoginActivity extends AppCompatActivity {
         googleLoginButton = (Button) findViewById(R.id.google_login_button);
         emailLoginButton = (Button) findViewById(R.id.email_login_button);
         loginButton = (Button) findViewById(R.id.login_button);
+        newUserLoginButton = (Button) findViewById(R.id.new_user_button);
         emailEditText = (TextInputEditText) findViewById(R.id.enter_email_edittext);
         passwordEditText = (TextInputEditText) findViewById(R.id.enter_password_edittext);
         skipLoginTextView = (TextView) findViewById(R.id.skip_login_text_view);
@@ -97,6 +103,15 @@ public class LoginActivity extends AppCompatActivity {
         emailLoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                newUserClicked = false;
+                showEditTextAndHideButtons();
+            }
+        });
+
+        newUserLoginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                newUserClicked = true;
                 showEditTextAndHideButtons();
             }
         });
@@ -111,7 +126,11 @@ public class LoginActivity extends AppCompatActivity {
                 } else if (TextUtils.isEmpty(password) || !checkValidPassword(password)) {
                     showInvalidPasswordDialog();
                 } else {
-                    loginWithEmail(email, password);
+                    if (newUserClicked) {
+                        createNewUser(email, password);
+                    } else {
+                        loginWithEmail(email, password);
+                    }
                 }
             }
         });
@@ -138,11 +157,15 @@ public class LoginActivity extends AppCompatActivity {
 
         googleLoginButton.startAnimation(slideInRight);
         emailLoginButton.startAnimation(slideInRight);
+        newUserLoginButton.startAnimation(slideInRight);
 
         googleLoginButton.setVisibility(VISIBLE);
         emailLoginButton.setVisibility(VISIBLE);
+        newUserLoginButton.setVisibility(VISIBLE);
+
         googleLoginButton.setClickable(true);
         emailLoginButton.setClickable(true);
+        newUserLoginButton.setClickable(true);
 
         emailEditText.startAnimation(slideOutLeft);
         passwordEditText.startAnimation(slideOutLeft);
@@ -163,10 +186,13 @@ public class LoginActivity extends AppCompatActivity {
 
         googleLoginButton.startAnimation(slideOutRight);
         emailLoginButton.startAnimation(slideOutRight);
+        newUserLoginButton.startAnimation(slideOutRight);
 
         googleLoginButton.setVisibility(INVISIBLE);
         emailLoginButton.setVisibility(INVISIBLE);
+        newUserLoginButton.setVisibility(INVISIBLE);
         googleLoginButton.setClickable(false);
+        newUserLoginButton.setClickable(false);
         emailLoginButton.setClickable(false);
 
         emailEditText.startAnimation(slideInLeft);
@@ -187,8 +213,47 @@ public class LoginActivity extends AppCompatActivity {
         return password.length() >= 6;
     }
 
-    private void loginWithEmail(String email, String password) {
+    private void showLoginFailedDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.CustomDialogStyle);
+        builder.setMessage(R.string.login_failed_message);
+        AlertDialog dialog = builder.create();
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.show();
+    }
 
+    private void loginWithEmail(String email, String password) {
+        firebaseAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        // If sign in fails, display a message to the user. If sign in succeeds
+                        // the auth state listener will be notified and logic to handle the
+                        // signed in user can be handled in the listener.
+                        if (!task.isSuccessful()) {
+                            showLoginFailedDialog();
+                        }
+                    }
+                });
+    }
+
+    private void createNewUser(String email, String password) {
+        firebaseAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        // Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
+                        // If sign in fails, display a message to the user. If sign in succeeds
+                        // the auth state listener will be notified and logic to handle the
+                        // signed in user can be handled in the listener.
+                        if (!task.isSuccessful()) {
+                            showLoginFailedDialog();
+                        }
+
+                        // ...
+                    }
+
+
+                });
     }
 
     private void loginWithGoogle() {
