@@ -159,6 +159,7 @@ public class LoginActivity extends AppCompatActivity {
         passwordEditText.setVisibility(VISIBLE);
         loginButton.setVisibility(VISIBLE);
         backTextView.setVisibility(VISIBLE);
+        backTextView.setClickable(true);
 
         googleLoginButton.startAnimation(slideOutRight);
         emailLoginButton.startAnimation(slideOutRight);
