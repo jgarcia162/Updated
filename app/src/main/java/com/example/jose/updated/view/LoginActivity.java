@@ -20,7 +20,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.jose.updated.R;
-import com.example.jose.updated.model.UpdatedConstants;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -56,29 +55,20 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         firebaseAuth = FirebaseAuth.getInstance();
+        final FirebaseUser user = firebaseAuth.getCurrentUser();
         authStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
                     //user is logged in
-
-                } else {
-                    //user not logged in
+                    Intent intent = new Intent(getBaseContext(), MainActivity.class);
+                    startActivity(intent);
                 }
             }
         };
 
         findViews();
         setClickListeners();
-        preferences = getSharedPreferences(UpdatedConstants.PREFS_NAME, 0);
-        //TODO uncomment this after testing, this skips login activity
-//        if (preferences.getBoolean(UpdatedConstants.FIRST_TIME_PREF_TAG, true)) {
-//            //Login
-//        } else {
-//            Intent intent = new Intent(getBaseContext(), MainActivity.class);
-//            startActivity(intent);
-//        }
     }
 
     private void findViews() {

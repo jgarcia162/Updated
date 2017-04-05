@@ -35,6 +35,8 @@ import com.example.jose.updated.controller.UpdateRefresher;
 import com.example.jose.updated.controller.UpdatedCallback;
 import com.example.jose.updated.model.Page;
 import com.example.jose.updated.model.UpdatedConstants;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +44,7 @@ import java.util.List;
 import io.realm.Realm;
 
 public class MainActivity extends BaseActivity implements UpdatedCallback, SwipeRefreshLayout.OnRefreshListener, ButtonListener {
+    private FirebaseUser firebaseUser;
     private FragmentManager fragmentManager;
     private PageAdapter adapter;
     private RecyclerView recyclerView;
@@ -66,6 +69,10 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
         updateBroadcastReceiver = new UpdateBroadcastReceiver(this);
         fragmentManager = getFragmentManager();
         realmDatabaseHelper = new RealmDatabaseHelper();
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (firebaseUser != null) {
+            loadPagesFromFirebase();
+        }
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
         swipeRefreshLayout.setOnRefreshListener(this);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -80,6 +87,10 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
         setupViews();
         setButtonClickListeners();
         setupRecyclerView();
+    }
+
+    private void loadPagesFromFirebase() {
+        //TODO download pages from firebase and add to realm
     }
 
     private void setButtonClickListeners() {
@@ -154,10 +165,9 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
     }
 
     private void setupRecyclerView() {
-
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-        adapter = new PageAdapter(this, this);
+        adapter = new PageAdapter(this, this, realmDatabaseHelper);
         adapter.setSingleClickMode(false);
         adapter.setMultiChoiceToolbar(createMultiChoiceToolbar());
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 15, true));
@@ -168,9 +178,9 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
 
     @Override
     public void onBackPressed() {
-        if(adapter.getSelectedItemCount() > 0){
+        if (adapter.getSelectedItemCount() > 0) {
             adapter.deselectAll();
-        }else{
+        } else {
             super.onBackPressed();
         }
     }
