@@ -8,6 +8,9 @@
     <item android:id="@+id/settings_menu"
         android:title="@string/settings_menu_text" />
 
+    <item android:id="@+id/logout_menu"
+        android:title="@string/logout" />
+
     <item android:id="@+id/add_page_menu"
         android:icon="@drawable/add_button_white"
         app:showAsAction="always"

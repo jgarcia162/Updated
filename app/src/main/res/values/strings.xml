@@ -22,7 +22,7 @@
     <string name="page_active_tv">Tracking</string>
     <string name="settings_menu_text">Settings</string>
     <string name="about_menu_text">About</string>
-    <string name="logout_menu_text">Log Out</string>
+    <string name="logout">Log Out</string>
     <string name="contact_menu_text">Contact</string>
     <string name="invalid_url_string">Not a valid URL!</string>
     <string name="added_page_string">" Added"</string>
@@ -79,6 +79,11 @@
     <string name="back">Back</string>
     <string name="login_failed_message">Login failed, are you using the right email or password?</string>
     <string name="new_user">New User</string>
+    <string name="logout_dialog_title">You\'re about to logout</string>
+    <string name="logout_dialog_message">You\'ll have to log in again to save data across other devices</string>
+    <string name="cancel">Cancel</string>
+    <string name="network_connection_error">Network Connection Error</string>
+    <string name="dismiss">Dismiss</string>
     <string-array name="frequency_spinner_array">
         <item>Minutes</item>
         <item>Hours</item>

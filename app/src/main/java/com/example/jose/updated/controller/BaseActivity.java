@@ -20,7 +20,9 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.example.jose.updated.R;
+import com.example.jose.updated.view.LoginActivity;
 import com.example.jose.updated.view.SecondActivity;
+import com.google.firebase.auth.FirebaseAuth;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
@@ -70,7 +72,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                 try {
                     swipeRefreshLayout.setRefreshing(true);
                     if (!isNetworkConnected()) {
-                        buildAlertDialog();
+                        showNetworkConnectionDialog();
                     }
                     UpdateRefresher refresher = new UpdateRefresher();
                     refresher.refreshUpdate();
@@ -84,8 +86,38 @@ public abstract class BaseActivity extends AppCompatActivity {
                 intent.putExtra("fragment_to_load", "Settings");
                 startActivity(intent);
                 break;
+            case R.id.logout_menu:
+                //log out of firebase and return to login screen
+                showLogoutDialog();
         }
         return true;
+    }
+
+    private void showLogoutDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.CustomDialogStyle);
+        builder.setTitle(R.string.logout_dialog_title);
+        builder.setMessage(R.string.logout_dialog_message);
+        builder.setPositiveButton(R.string.logout, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (!isNetworkConnected()) {
+                    showNetworkConnectionDialog();
+                } else {
+                    FirebaseAuth.getInstance().signOut();
+                    Intent intent = new Intent(getBaseContext(), LoginActivity.class);
+                    startActivity(intent);
+                }
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.show();
     }
 
     private boolean isNetworkConnected() {
@@ -117,11 +149,10 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
-    public void buildAlertDialog(){
+    public void showNetworkConnectionDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.CustomDialogStyle);
-        builder.setTitle("Whoops!");
-        builder.setMessage("Something's broken =[");
-        builder.setPositiveButton("Dismiss", new DialogInterface.OnClickListener() {
+        builder.setMessage(R.string.network_connection_error);
+        builder.setPositiveButton(R.string.dismiss, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();

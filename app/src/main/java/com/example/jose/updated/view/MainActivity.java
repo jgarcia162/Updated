@@ -230,7 +230,7 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
     @Override
     public void onRefresh() {
         if (!isNetworkConnected()) {
-            super.buildAlertDialog();
+            super.showNetworkConnectionDialog();
             resetSwipeRefreshLayout();
         } else {
             try {
