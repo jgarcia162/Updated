@@ -1,12 +1,10 @@
 package com.example.jose.updated.model;
 
-import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.format.DateUtils;
 
 import io.realm.RealmObject;
-import io.realm.annotations.Ignore;
 import io.realm.annotations.PrimaryKey;
 
 
@@ -21,9 +19,6 @@ public class Page extends RealmObject implements Parcelable{
     private long timeOfLastUpdateInMilliSec;
     private boolean isActive;
     private boolean isUpdated;
-    @Ignore private Bitmap bitmapIcon;
-
-
 
     public Page() {
 
@@ -130,13 +125,6 @@ public class Page extends RealmObject implements Parcelable{
         isUpdated = updated;
     }
 
-    public void setBitmapIcon(Bitmap icon){
-        bitmapIcon = icon;
-    }
-
-    public Bitmap getBitmapIcon(){
-        return bitmapIcon;
-    }
 
     @Override
     public int describeContents() {

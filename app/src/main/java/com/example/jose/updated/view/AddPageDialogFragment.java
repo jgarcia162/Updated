@@ -19,7 +19,7 @@ import android.widget.Toast;
 
 import com.example.jose.updated.R;
 import com.example.jose.updated.controller.PageAdapter;
-import com.example.jose.updated.controller.RealmDatabaseHelper;
+import com.example.jose.updated.controller.DatabaseHelper;
 import com.example.jose.updated.controller.UpdatedCallback;
 import com.example.jose.updated.model.Page;
 
@@ -30,7 +30,7 @@ public class AddPageDialogFragment extends DialogFragment {
     private WebView pagePreviewWebView;
     private TextInputEditText urlInputEditText, titleInputEditText;
     private Page newPage;
-    private RealmDatabaseHelper realmDatabaseHelper;
+    private DatabaseHelper databaseHelper;
     private String urlText;
     private String titleText;
     private PageAdapter adapter;
@@ -44,7 +44,7 @@ public class AddPageDialogFragment extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        realmDatabaseHelper = new RealmDatabaseHelper();
+        databaseHelper = new DatabaseHelper();
         previewButtonClicked = false;
     }
 
@@ -104,7 +104,7 @@ public class AddPageDialogFragment extends DialogFragment {
                 if (TextUtils.isEmpty(titleText)) {
                     titleText = getString(R.string.untitled_page_text);
                 }
-                realmDatabaseHelper.createPage(titleText, urlText, new Date().getTime());
+                databaseHelper.createPage(titleText, urlText, new Date().getTime());
                 newPage = null;
                 resetTextFields();
                 this.dismiss();
@@ -116,7 +116,7 @@ public class AddPageDialogFragment extends DialogFragment {
                 Toast.makeText(getActivity(), R.string.invalid_url_string, Toast.LENGTH_SHORT).show();
                 return;
             }
-            realmDatabaseHelper.createPage(newPage.getTitle(), newPage.getPageUrl(), newPage.getTimeOfLastUpdateInMilliSec());
+            databaseHelper.createPage(newPage.getTitle(), newPage.getPageUrl(), newPage.getTimeOfLastUpdateInMilliSec());
             newPage = null;
             resetTextFields();
             this.dismiss();

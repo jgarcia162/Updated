@@ -22,23 +22,23 @@ public class UpdateRefresher {
 //    }
 
     public void refreshUpdate() {
-        RealmDatabaseHelper realmDatabaseHelper = new RealmDatabaseHelper();
-        List<Page> allPages = realmDatabaseHelper.getAllPages();
+        DatabaseHelper databaseHelper = new DatabaseHelper();
+        List<Page> allPages = databaseHelper.getAllPages();
         for (Page page : allPages) {
             if (!page.isUpdated()) {
                 if (isPageUpdated(page)) {
-                    realmDatabaseHelper.addToUpdatedPages(page);
+                    databaseHelper.addToUpdatedPages(page);
                 }
             }
         }
     }
 
     private boolean isPageUpdated(Page page) {
-        RealmDatabaseHelper realmDatabaseHelper = new RealmDatabaseHelper();
+        DatabaseHelper databaseHelper = new DatabaseHelper();
         if (page.isActive()) {
             try {
                 String htmlToCheck = downloadHtml(page);
-                Page currentlyStoredPage = realmDatabaseHelper.getPage(page);
+                Page currentlyStoredPage = databaseHelper.getPage(page);
                 if(htmlToCheck.equals("Error")){
                     return false;
                 }
@@ -48,8 +48,8 @@ public class UpdateRefresher {
                     currentlyStoredPage.setUpdated(true);
                     realm.commitTransaction();
                     realm.close();
-                    realmDatabaseHelper.addToUpdatedPages(currentlyStoredPage);
-                    realmDatabaseHelper.updatePageHtml(currentlyStoredPage, htmlToCheck);
+                    databaseHelper.addToUpdatedPages(currentlyStoredPage);
+                    databaseHelper.updatePageHtml(currentlyStoredPage, htmlToCheck);
                     return true;
                 }
             } catch (Exception e) {

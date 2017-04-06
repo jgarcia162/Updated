@@ -4,6 +4,8 @@ import android.content.Context;
 
 import com.example.jose.updated.model.Page;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Date;
 import java.util.List;
@@ -14,16 +16,15 @@ import io.realm.Realm;
  * Created by Joe on 1/14/17.
  */
 
-public class RealmDatabaseHelper {
+public class DatabaseHelper {
     private Context context;
     private UpdateRefresher refresher;
-    private String TAG = this.getClass().getSimpleName();
 
-    public RealmDatabaseHelper() {
+    public DatabaseHelper() {
         refresher = new UpdateRefresher();
     }
 
-    public RealmDatabaseHelper(Context context) {
+    public DatabaseHelper(Context context) {
         this.context = context;
     }
 
@@ -50,14 +51,14 @@ public class RealmDatabaseHelper {
         realm.copyToRealmOrUpdate(page);
         realm.commitTransaction();
         realm.close();
-        if(FirebaseAuth.getInstance().getCurrentUser() != null){
-            //TODO add page to firebase
-            addPageToFirebase(page);
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            updateFirebaseContents();
         }
     }
 
-    private void addPageToFirebase(Page page) {
-
+    private void updateFirebaseContents() {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+        databaseReference.child("pages").setValue(getAllPages());
     }
 
     public void addToUpdatedPages(Page page) {
@@ -67,7 +68,7 @@ public class RealmDatabaseHelper {
         page.setUpdated(true);
         realm.copyToRealmOrUpdate(page);
         realm.commitTransaction();
-        List<Page> updatedPages = realm.where(Page.class).equalTo("isUpdated",true).findAll();
+        List<Page> updatedPages = realm.where(Page.class).equalTo("isUpdated", true).findAll();
         realm.close();
         setUpdatedPages(updatedPages);
     }
@@ -106,6 +107,9 @@ public class RealmDatabaseHelper {
         pageToDelete.deleteFromRealm();
         realm.commitTransaction();
         realm.close();
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            updateFirebaseContents();
+        }
     }
 
     public int getSizeOfUpdatedPages() {

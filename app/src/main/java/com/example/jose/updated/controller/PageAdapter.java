@@ -25,16 +25,16 @@ import com.example.jose.updated.view.PageViewHolder;
 import java.util.List;
 
 public class PageAdapter extends MultiChoiceAdapter<PageViewHolder>{
-    private RealmDatabaseHelper realmDatabaseHelper;
-    private List<Page> listOfPages = realmDatabaseHelper.getAllPages();
+    private DatabaseHelper databaseHelper;
+    private List<Page> listOfPages;
     private int lastPosition;
     private Context context;
     private ButtonListener listener;
 
-    public PageAdapter(Context context, ButtonListener listener,RealmDatabaseHelper realmDatabaseHelper) {
+    public PageAdapter(Context context, ButtonListener listener,DatabaseHelper databaseHelper) {
         this.context = context;
         this.listener = listener;
-        this.realmDatabaseHelper = realmDatabaseHelper;
+        this.databaseHelper = databaseHelper;
         lastPosition = -1;
     }
 
@@ -125,7 +125,7 @@ public class PageAdapter extends MultiChoiceAdapter<PageViewHolder>{
         customTabsIntent.intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         if (page.isUpdated()) {
             holder.updatedStatusTextView.setText(R.string.not_updated);
-            realmDatabaseHelper.removeFromUpdatedPages(page);
+            databaseHelper.removeFromUpdatedPages(page);
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
             customTabsIntent.intent.putExtra(Intent.EXTRA_REFERRER,
@@ -137,5 +137,9 @@ public class PageAdapter extends MultiChoiceAdapter<PageViewHolder>{
     private void pageClicked(PageViewHolder holder,int position) {
         Page page = listOfPages.get(position);
         openInBrowser(page, holder);
+    }
+
+    public void setListOfPages(List<Page> listOfPages) {
+        this.listOfPages = listOfPages;
     }
 }

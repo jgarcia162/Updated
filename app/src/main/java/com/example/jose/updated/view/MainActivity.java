@@ -27,9 +27,9 @@ import com.davidecirillo.multichoicerecyclerview.MultiChoiceToolbar;
 import com.example.jose.updated.R;
 import com.example.jose.updated.controller.BaseActivity;
 import com.example.jose.updated.controller.ButtonListener;
+import com.example.jose.updated.controller.DatabaseHelper;
 import com.example.jose.updated.controller.NotificationService;
 import com.example.jose.updated.controller.PageAdapter;
-import com.example.jose.updated.controller.RealmDatabaseHelper;
 import com.example.jose.updated.controller.UpdateBroadcastReceiver;
 import com.example.jose.updated.controller.UpdateRefresher;
 import com.example.jose.updated.controller.UpdatedCallback;
@@ -37,6 +37,11 @@ import com.example.jose.updated.model.Page;
 import com.example.jose.updated.model.UpdatedConstants;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +50,7 @@ import io.realm.Realm;
 
 public class MainActivity extends BaseActivity implements UpdatedCallback, SwipeRefreshLayout.OnRefreshListener, ButtonListener {
     private FirebaseUser firebaseUser;
+    private DatabaseReference databaseReference;
     private FragmentManager fragmentManager;
     private PageAdapter adapter;
     private RecyclerView recyclerView;
@@ -53,33 +59,34 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
     private Button untrackButton;
     private ProgressBar progressBar;
     private ViewGroup buttonLayout;
-    private RealmDatabaseHelper realmDatabaseHelper;
+    private DatabaseHelper databaseHelper;
     private SwipeRefreshLayout swipeRefreshLayout;
-    public static UpdateBroadcastReceiver updateBroadcastReceiver;
+    private UpdateBroadcastReceiver updateBroadcastReceiver;
     private boolean buttonsHidden = true;
     private boolean selectAllClicked = false;
     private boolean firstTime;
+    private List<Page> allPages;
+    private List<Page> firebaseQueryList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         firstTime = getSharedPreferences(UpdatedConstants.PREFS_NAME, 0).getBoolean(UpdatedConstants.FIRST_TIME_PREF_TAG, true);
-        Realm.init(getApplicationContext());
-        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
-        updateBroadcastReceiver = new UpdateBroadcastReceiver(this);
-        fragmentManager = getFragmentManager();
-        realmDatabaseHelper = new RealmDatabaseHelper();
-        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (firebaseUser != null) {
-            loadPagesFromFirebase();
+        if(firstTime){
+            allPages = new ArrayList<>();
+            firebaseQueryList = new ArrayList<>();
         }
-        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
-        swipeRefreshLayout.setOnRefreshListener(this);
+        Realm.init(getApplicationContext());
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent, null));
-        } else {
-            swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
+
+        assignFields();
+
+        if (firebaseUser != null && firstTime) {
+            allPages.addAll(loadPagesFromFirebase());
+            allPages.addAll(databaseHelper.getAllPages());
+        }else{
+            allPages = databaseHelper.getAllPages();
         }
 
         localBroadcastManager.registerReceiver(updateBroadcastReceiver, new IntentFilter("com.example.jose.updated.controller.CUSTOM_INTENT"));
@@ -94,9 +101,29 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
         setupRecyclerView();
     }
 
-    private void loadPagesFromFirebase() {
-        //TODO download pages from firebase and add to realm
+    private void assignFields() {
+        updateBroadcastReceiver = new UpdateBroadcastReceiver(this);
+        fragmentManager = getFragmentManager();
+        databaseHelper = new DatabaseHelper();
+        databaseReference = FirebaseDatabase.getInstance().getReference();
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
     }
+
+    private List<Page> loadPagesFromFirebase() {
+        databaseReference.child("pages").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                firebaseQueryList = (ArrayList<Page>) dataSnapshot.getValue();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                showNetworkConnectionDialog();
+            }
+        });
+        return firebaseQueryList;
+    }
+
 
     private void setButtonClickListeners() {
         selectAllButton.setOnClickListener(new View.OnClickListener() {
@@ -118,13 +145,13 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
             @Override
             public void onClick(View v) {
                 if (adapter.getSelectedItemCount() > 0) {
-                    List<Page> allPages = realmDatabaseHelper.getAllPages();
+                    List<Page> allPages = databaseHelper.getAllPages();
                     List<Page> pagesToDelete = new ArrayList<>();
                     for (Integer i : adapter.getSelectedItemList()) {
                         pagesToDelete.add(allPages.get(i));
                     }
                     for (Page pageToDelete : pagesToDelete) {
-                        realmDatabaseHelper.removeFromPagesToTrack(pageToDelete);
+                        databaseHelper.removeFromPagesToTrack(pageToDelete);
                     }
                     adapter.notifyDataSetChanged();
                     toolbar.postInvalidate();
@@ -136,13 +163,13 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
             @Override
             public void onClick(View v) {
                 if (adapter.getSelectedItemCount() > 0) {
-                    List<Page> allPages = realmDatabaseHelper.getAllPages();
+                    List<Page> allPages = databaseHelper.getAllPages();
                     List<Page> pagesToUntrack = new ArrayList<>();
                     for (Integer i : adapter.getSelectedItemList()) {
                         pagesToUntrack.add(allPages.get(i));
                     }
                     for (Page pageToUntrack : pagesToUntrack) {
-                        realmDatabaseHelper.deactivatePage(pageToUntrack);
+                        databaseHelper.deactivatePage(pageToUntrack);
                     }
                     adapter.notifyDataSetChanged();
                 }
@@ -162,17 +189,28 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
         if (!firstTime) {
             addPagesTextView.setVisibility(View.GONE);
         }
+
         buttonLayout = (ViewGroup) findViewById(R.id.buttons_layout);
         selectAllButton = (Button) findViewById(R.id.select_all_button);
         deleteButton = (Button) findViewById(R.id.delete_all_button);
         untrackButton = (Button) findViewById(R.id.untrack_all_button);
         progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
+        swipeRefreshLayout.setOnRefreshListener(this);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent, null));
+        } else {
+            swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
+        }
+
     }
 
     private void setupRecyclerView() {
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-        adapter = new PageAdapter(this, this, realmDatabaseHelper);
+        adapter = new PageAdapter(this, this, databaseHelper);
+        adapter.setListOfPages(allPages);
         adapter.setSingleClickMode(false);
         adapter.setMultiChoiceToolbar(createMultiChoiceToolbar());
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 15, true));

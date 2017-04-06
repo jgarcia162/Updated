@@ -23,7 +23,6 @@ public class CustomWebChromeClient extends WebChromeClient {
     @Override
     public void onReceivedIcon(WebView view, Bitmap icon) {
         super.onReceivedIcon(view,icon);
-        page.setBitmapIcon(icon);
         imageContainer.setImageBitmap(icon);
     }
 }
