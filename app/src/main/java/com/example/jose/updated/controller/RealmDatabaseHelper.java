@@ -3,6 +3,7 @@ package com.example.jose.updated.controller;
 import android.content.Context;
 
 import com.example.jose.updated.model.Page;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.Date;
 import java.util.List;
@@ -49,6 +50,14 @@ public class RealmDatabaseHelper {
         realm.copyToRealmOrUpdate(page);
         realm.commitTransaction();
         realm.close();
+        if(FirebaseAuth.getInstance().getCurrentUser() != null){
+            //TODO add page to firebase
+            addPageToFirebase(page);
+        }
+    }
+
+    private void addPageToFirebase(Page page) {
+
     }
 
     public void addToUpdatedPages(Page page) {
@@ -143,6 +152,7 @@ public class RealmDatabaseHelper {
             newPage.setTimeOfLastUpdateInMilliSec(new Date().getTime());
             newPage.setIsActive(true);
             addToPagesToTrack(newPage);
+            addToAllPages(newPage);
         } catch (Exception e) {
             e.printStackTrace();
         }

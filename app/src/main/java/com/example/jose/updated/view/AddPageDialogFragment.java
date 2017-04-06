@@ -122,7 +122,6 @@ public class AddPageDialogFragment extends DialogFragment {
             this.dismiss();
         }
         callback.onItemInserted();
-        //TODO add page to firebase
     }
 
     @Override

@@ -75,15 +75,20 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
         }
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
         swipeRefreshLayout.setOnRefreshListener(this);
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent, null));
         } else {
             swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
         }
+
         localBroadcastManager.registerReceiver(updateBroadcastReceiver, new IntentFilter("com.example.jose.updated.controller.CUSTOM_INTENT"));
+
         Intent serviceIntent = new Intent(getApplicationContext(), NotificationService.class);
         startService(serviceIntent);
+
         getSharedPreferences(UpdatedConstants.PREFS_NAME, 0).edit().putBoolean(UpdatedConstants.FIRST_TIME_PREF_TAG, false).apply();
+
         setupViews();
         setButtonClickListeners();
         setupRecyclerView();
