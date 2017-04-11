@@ -140,7 +140,7 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                showNetworkConnectionDialog();
+
             }
         });
     }

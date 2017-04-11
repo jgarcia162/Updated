@@ -107,12 +107,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                 } else {
                     if (FirebaseAuth.getInstance().getCurrentUser() != null) {
                         FirebaseAuth.getInstance().signOut();
-                        Realm realm = Realm.getDefaultInstance();
-                        realm.beginTransaction();
-                        realm.deleteAll();
-                        realm.commitTransaction();
-                        realm.close();
-                    }
+                        new DatabaseHelper().emptyDatabase();                    }
                     Intent intent = new Intent(getBaseContext(), LoginActivity.class);
                     startActivity(intent);
                     Toast.makeText(getBaseContext(), R.string.logged_out, Toast.LENGTH_SHORT).show();

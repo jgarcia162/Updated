@@ -188,4 +188,12 @@ public class DatabaseHelper {
         realm.commitTransaction();
         realm.close();
     }
+
+    public void emptyDatabase() {
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        realm.deleteAll();
+        realm.commitTransaction();
+        realm.close();
+    }
 }

@@ -87,6 +87,10 @@
     <string name="skip">Skip</string>
     <string name="user_already_logged_in">is already logged in</string>
     <string name="logged_out">Logged Out</string>
+    <string name="new_user_failed_message">This username may already be taken or email is not valid</string>
+    <string name="new_user_failed_title">Failed to create user</string>
+    <string name="enter_valid_email">Please enter a valid email</string>
+    <string name="logging_in">Logging in...</string>
     <string-array name="frequency_spinner_array">
         <item>Minutes</item>
         <item>Hours</item>

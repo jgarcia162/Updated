@@ -21,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.jose.updated.R;
+import com.example.jose.updated.controller.DatabaseHelper;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -38,7 +39,7 @@ import static android.view.View.VISIBLE;
  * Created by Joe on 4/2/17.
  */
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity implements DialogInterface.OnDismissListener {
     private FirebaseAuth firebaseAuth;
     private FirebaseAuth.AuthStateListener authStateListener;
     private SharedPreferences preferences;
@@ -49,9 +50,14 @@ public class LoginActivity extends AppCompatActivity {
     private TextInputEditText emailEditText;
     private TextInputEditText passwordEditText;
     private TextView skipLoginTextView;
-    private TextView backTextView;
     private boolean newUserClicked = false;
     private boolean loginSkipped;
+    private boolean loginFieldsHidden = true;
+    private Animation slideOutLeft;
+    private Animation slideInRight;
+    private Animation slideOutRight;
+    private Animation slideInLeft;
+    private AlertDialog loggingInDialog;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -84,11 +90,16 @@ public class LoginActivity extends AppCompatActivity {
 
         findViews();
         setClickListeners();
+        createAnimations();
+        loggingInDialog = createLoggingInDialog();
     }
 
     private void openMainActivity() {
         Intent intent = new Intent(getBaseContext(), MainActivity.class);
         intent.putExtra("loginSkipped", loginSkipped);
+        if(loggingInDialog.isShowing()){
+            loggingInDialog.dismiss();
+        }
         startActivity(intent);
     }
 
@@ -100,7 +111,6 @@ public class LoginActivity extends AppCompatActivity {
         emailEditText = (TextInputEditText) findViewById(R.id.enter_email_edittext);
         passwordEditText = (TextInputEditText) findViewById(R.id.enter_password_edittext);
         skipLoginTextView = (TextView) findViewById(R.id.skip_login_text_view);
-        backTextView = (TextView) findViewById(R.id.back_text_view);
     }
 
     private void setClickListeners() {
@@ -133,7 +143,7 @@ public class LoginActivity extends AppCompatActivity {
                 String email = String.valueOf(emailEditText.getText());
                 String password = String.valueOf(passwordEditText.getText());
                 if (TextUtils.isEmpty(email)) {
-                    Toast.makeText(LoginActivity.this, "Please enter a valid email", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, R.string.enter_valid_email, Toast.LENGTH_SHORT).show();
                 } else if (TextUtils.isEmpty(password) || !checkValidPassword(password)) {
                     showInvalidPasswordDialog();
                 } else {
@@ -142,33 +152,22 @@ public class LoginActivity extends AppCompatActivity {
                     } else {
                         loginWithEmail(email, password);
                     }
+                    loggingInDialog.show();
                 }
-            }
-        });
-
-        backTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                hideEditTextAndShowButtons();
             }
         });
     }
 
     private void hideEditTextAndShowButtons() {
-        Animation slideOutLeft = AnimationUtils.loadAnimation(getBaseContext(), R.anim.slide_out_left);
-        slideOutLeft.setDuration(500);
-        Animation slideInRight = AnimationUtils.loadAnimation(getBaseContext(), R.anim.slide_in_right);
-        slideInRight.setDuration(500);
+        loginFieldsHidden = true;
 
         emailEditText.setVisibility(GONE);
         passwordEditText.setVisibility(GONE);
         loginButton.setVisibility(GONE);
-        backTextView.setVisibility(GONE);
-        backTextView.setClickable(false);
 
-        googleLoginButton.startAnimation(slideInRight);
-        emailLoginButton.startAnimation(slideInRight);
-        newUserLoginButton.startAnimation(slideInRight);
+        googleLoginButton.startAnimation(slideInLeft);
+        emailLoginButton.startAnimation(slideInLeft);
+        newUserLoginButton.startAnimation(slideInLeft);
 
         googleLoginButton.setVisibility(VISIBLE);
         emailLoginButton.setVisibility(VISIBLE);
@@ -178,26 +177,43 @@ public class LoginActivity extends AppCompatActivity {
         emailLoginButton.setClickable(true);
         newUserLoginButton.setClickable(true);
 
-        emailEditText.startAnimation(slideOutLeft);
-        passwordEditText.startAnimation(slideOutLeft);
-        loginButton.startAnimation(slideOutLeft);
+        emailEditText.startAnimation(slideOutRight);
+        passwordEditText.startAnimation(slideOutRight);
+        loginButton.startAnimation(slideOutRight);
+    }
+
+    private void createAnimations() {
+        slideOutLeft = AnimationUtils.loadAnimation(getBaseContext(), R.anim.slide_out_left);
+        slideOutLeft.setDuration(500);
+        slideInRight = AnimationUtils.loadAnimation(getBaseContext(), R.anim.slide_in_right);
+        slideInRight.setDuration(500);
+
+        slideOutRight = AnimationUtils.loadAnimation(getBaseContext(), R.anim.slide_out_right);
+        slideOutRight.setDuration(500);
+        slideInLeft = AnimationUtils.loadAnimation(getBaseContext(), R.anim.slide_in_left);
+        slideInLeft.setDuration(500);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (loginFieldsHidden) {
+            super.onBackPressed();
+        }else{
+            hideEditTextAndShowButtons();
+            loginFieldsHidden = true;
+        }
     }
 
     private void showEditTextAndHideButtons() {
-        Animation slideOutRight = AnimationUtils.loadAnimation(getBaseContext(), R.anim.slide_out_right);
-        slideOutRight.setDuration(500);
-        Animation slideInLeft = AnimationUtils.loadAnimation(getBaseContext(), R.anim.slide_in_left);
-        slideInLeft.setDuration(500);
+        loginFieldsHidden = false;
 
         emailEditText.setVisibility(VISIBLE);
         passwordEditText.setVisibility(VISIBLE);
         loginButton.setVisibility(VISIBLE);
-        backTextView.setVisibility(VISIBLE);
-        backTextView.setClickable(true);
 
-        googleLoginButton.startAnimation(slideOutRight);
-        emailLoginButton.startAnimation(slideOutRight);
-        newUserLoginButton.startAnimation(slideOutRight);
+        googleLoginButton.startAnimation(slideOutLeft);
+        emailLoginButton.startAnimation(slideOutLeft);
+        newUserLoginButton.startAnimation(slideOutLeft);
 
         googleLoginButton.setVisibility(INVISIBLE);
         emailLoginButton.setVisibility(INVISIBLE);
@@ -206,18 +222,24 @@ public class LoginActivity extends AppCompatActivity {
         newUserLoginButton.setClickable(false);
         emailLoginButton.setClickable(false);
 
-        emailEditText.startAnimation(slideInLeft);
-        passwordEditText.startAnimation(slideInLeft);
-        loginButton.startAnimation(slideInLeft);
+        emailEditText.startAnimation(slideInRight);
+        passwordEditText.startAnimation(slideInRight);
+        loginButton.startAnimation(slideInRight);
     }
 
     private void showInvalidPasswordDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.CustomDialogStyle);
         builder.setMessage(R.string.invalid_password_dialog_message);
+        builder.setNegativeButton(R.string.dismiss, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
         AlertDialog dialog = builder.create();
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.setOnDismissListener(this);
         dialog.show();
-
     }
 
     private boolean checkValidPassword(String password) {
@@ -227,15 +249,38 @@ public class LoginActivity extends AppCompatActivity {
     private void showLoginFailedDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.CustomDialogStyle);
         builder.setMessage(R.string.login_failed_message);
+        builder.setNegativeButton(R.string.dismiss, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
         AlertDialog dialog = builder.create();
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.setOnDismissListener(this);
+        dialog.show();
+    }
+
+    private void showNewUserFailedDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.CustomDialogStyle);
+        builder.setTitle(R.string.new_user_failed_title);
+        builder.setMessage(R.string.new_user_failed_message);
+        builder.setNegativeButton(R.string.dismiss, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.setOnDismissListener(this);
         dialog.show();
     }
 
     private void loginWithEmail(final String email, String password) {
         if (firebaseAuth.getCurrentUser() != null) {
             showUserAlreadyLoggedInDialog();
-        }else {
+        } else {
             firebaseAuth.signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                         @Override
@@ -245,7 +290,7 @@ public class LoginActivity extends AppCompatActivity {
                             // signed in user can be handled in the listener.
                             if (!task.isSuccessful()) {
                                 showLoginFailedDialog();
-                            }else{
+                            } else {
                                 loginSkipped = false;
                                 openMainActivity();
                             }
@@ -254,9 +299,18 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    private AlertDialog createLoggingInDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.CustomDialogStyle);
+        AlertDialog dialog = builder.create();
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.setView(dialog.getLayoutInflater().inflate(R.layout.logging_in_dialog,null));
+        dialog.setOnDismissListener(this);
+        return dialog;
+    }
+
     private void showUserAlreadyLoggedInDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.CustomDialogStyle);
-        builder.setMessage(firebaseAuth.getCurrentUser().getEmail().concat(" "+getResources().getString((R.string.user_already_logged_in))));
+        builder.setMessage(firebaseAuth.getCurrentUser().getEmail().concat(" " + getResources().getString((R.string.user_already_logged_in))));
         builder.setNegativeButton(R.string.skip_log_in, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -269,13 +323,19 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 firebaseAuth.signOut();
+                new DatabaseHelper().emptyDatabase();
                 Toast.makeText(getApplicationContext(), R.string.logged_out, Toast.LENGTH_SHORT).show();
             }
         });
         AlertDialog dialog = builder.create();
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.setOnDismissListener(this);
         dialog.show();
+        if(loggingInDialog.isShowing()){
+            loggingInDialog.dismiss();
+        }
     }
+
 
     private void createNewUser(String email, String password) {
         firebaseAuth.createUserWithEmailAndPassword(email, password)
@@ -283,8 +343,8 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (!task.isSuccessful()) {
-                            showLoginFailedDialog();
-                        }else{
+                            showNewUserFailedDialog();
+                        } else {
                             loginSkipped = false;
                             openMainActivity();
                         }
@@ -332,5 +392,12 @@ public class LoginActivity extends AppCompatActivity {
         AlertDialog dialog = builder.create();
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.show();
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        if(loggingInDialog.isShowing()){
+            loggingInDialog.dismiss();
+        }
     }
 }
