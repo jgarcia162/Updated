@@ -13,7 +13,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -25,6 +24,7 @@ import com.example.jose.updated.view.LoginActivity;
 import com.example.jose.updated.view.SecondActivity;
 import com.google.firebase.auth.FirebaseAuth;
 
+import io.realm.Realm;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
@@ -53,6 +53,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setToolbar();
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
+        Realm.init(getApplicationContext());
     }
 
     @Override
@@ -94,7 +95,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         return true;
     }
 
-    private void showLogoutDialog() {
+    public void showLogoutDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.CustomDialogStyle);
         builder.setTitle(R.string.logout_dialog_title);
         builder.setMessage(R.string.logout_dialog_message);
@@ -104,10 +105,17 @@ public abstract class BaseActivity extends AppCompatActivity {
                 if (!isNetworkConnected()) {
                     showNetworkConnectionDialog();
                 } else {
-                    FirebaseAuth.getInstance().signOut();
-                    Log.d("LOG OUT", "onClick: " + (FirebaseAuth.getInstance().getCurrentUser() == null));
+                    if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+                        FirebaseAuth.getInstance().signOut();
+                        Realm realm = Realm.getDefaultInstance();
+                        realm.beginTransaction();
+                        realm.deleteAll();
+                        realm.commitTransaction();
+                        realm.close();
+                    }
                     Intent intent = new Intent(getBaseContext(), LoginActivity.class);
                     startActivity(intent);
+                    Toast.makeText(getBaseContext(), R.string.logged_out, Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -152,7 +160,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     public void showNetworkConnectionDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.CustomDialogStyle);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext(), R.style.CustomDialogStyle);
         builder.setMessage(R.string.network_connection_error);
         builder.setPositiveButton(R.string.dismiss, new DialogInterface.OnClickListener() {
             @Override

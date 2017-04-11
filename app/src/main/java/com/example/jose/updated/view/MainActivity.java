@@ -75,8 +75,6 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
         super.onCreate(savedInstanceState);
         loginSkipped = getIntent().getExtras().getBoolean("loginSkipped");
         firstTime = getSharedPreferences(UpdatedConstants.PREFS_NAME, 0).getBoolean(UpdatedConstants.FIRST_TIME_PREF_TAG, true);
-        Realm.init(getApplicationContext());
-
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
 
         assignFields();
@@ -102,6 +100,7 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
         } else if (loginSkipped) {
             allPages = databaseHelper.getAllPages();
         } else {
+
             Realm realm = Realm.getDefaultInstance();
             realm.beginTransaction();
             realm.deleteAll();

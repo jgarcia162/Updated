@@ -1,5 +1,6 @@
 package com.example.jose.updated.view;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -26,6 +27,9 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
+
 import static android.view.View.GONE;
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
@@ -49,10 +53,20 @@ public class LoginActivity extends AppCompatActivity {
     private boolean newUserClicked = false;
     private boolean loginSkipped;
 
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
+                .setDefaultFontPath("fonts/ghms.ttf")
+                .setFontAttrId(R.attr.fontPath)
+                .build()
+        );
+
         setContentView(R.layout.activity_login);
 
         firebaseAuth = FirebaseAuth.getInstance();
@@ -74,7 +88,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void openMainActivity() {
         Intent intent = new Intent(getBaseContext(), MainActivity.class);
-        intent.putExtra("loginSkipped",loginSkipped);
+        intent.putExtra("loginSkipped", loginSkipped);
         startActivity(intent);
     }
 
@@ -218,21 +232,49 @@ public class LoginActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    private void loginWithEmail(String email, String password) {
-        firebaseAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        // If sign in fails, display a message to the user. If sign in succeeds
-                        // the auth state listener will be notified and logic to handle the
-                        // signed in user can be handled in the listener.
-                        loginSkipped = false;
-                        openMainActivity();
-                        if (!task.isSuccessful()) {
-                            showLoginFailedDialog();
+    private void loginWithEmail(final String email, String password) {
+        if (firebaseAuth.getCurrentUser() != null) {
+            showUserAlreadyLoggedInDialog();
+        }else {
+            firebaseAuth.signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            // If sign in fails, display a message to the user. If sign in succeeds
+                            // the auth state listener will be notified and logic to handle the
+                            // signed in user can be handled in the listener.
+                            if (!task.isSuccessful()) {
+                                showLoginFailedDialog();
+                            }else{
+                                loginSkipped = false;
+                                openMainActivity();
+                            }
                         }
-                    }
-                });
+                    });
+        }
+    }
+
+    private void showUserAlreadyLoggedInDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.CustomDialogStyle);
+        builder.setMessage(firebaseAuth.getCurrentUser().getEmail().concat(" "+getResources().getString((R.string.user_already_logged_in))));
+        builder.setNegativeButton(R.string.skip_log_in, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                loginSkipped = true;
+                openMainActivity();
+            }
+        });
+        builder.setPositiveButton(R.string.logout, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                firebaseAuth.signOut();
+                Toast.makeText(getApplicationContext(), R.string.logged_out, Toast.LENGTH_SHORT).show();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.show();
     }
 
     private void createNewUser(String email, String password) {
@@ -240,17 +282,12 @@ public class LoginActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        loginSkipped = false;
-                        openMainActivity();
-                        // Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
-                        // If sign in fails, display a message to the user. If sign in succeeds
-                        // the auth state listener will be notified and logic to handle the
-                        // signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
                             showLoginFailedDialog();
+                        }else{
+                            loginSkipped = false;
+                            openMainActivity();
                         }
-
-                        // ...
                     }
 
 
