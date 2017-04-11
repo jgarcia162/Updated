@@ -12,6 +12,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -54,6 +55,7 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
     private FragmentManager fragmentManager;
     private PageAdapter adapter;
     private RecyclerView recyclerView;
+    private TextView addPagesTextView;
     private Button selectAllButton;
     private Button deleteButton;
     private Button untrackButton;
@@ -65,29 +67,24 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
     private boolean buttonsHidden = true;
     private boolean selectAllClicked = false;
     private boolean firstTime;
+    private boolean loginSkipped;
     private List<Page> allPages;
-    private List<Page> firebaseQueryList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        loginSkipped = getIntent().getExtras().getBoolean("loginSkipped");
         firstTime = getSharedPreferences(UpdatedConstants.PREFS_NAME, 0).getBoolean(UpdatedConstants.FIRST_TIME_PREF_TAG, true);
-        if(firstTime){
-            allPages = new ArrayList<>();
-            firebaseQueryList = new ArrayList<>();
-        }
         Realm.init(getApplicationContext());
 
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
 
         assignFields();
 
-        if (firebaseUser != null && firstTime) {
-            allPages.addAll(loadPagesFromFirebase());
-            allPages.addAll(databaseHelper.getAllPages());
-        }else{
-            allPages = databaseHelper.getAllPages();
-        }
+        Log.d("FIREBASE USER", "onCreate: " + (firebaseUser == null));
+
+        setupViews();
+        loadPages();
 
         localBroadcastManager.registerReceiver(updateBroadcastReceiver, new IntentFilter("com.example.jose.updated.controller.CUSTOM_INTENT"));
 
@@ -96,24 +93,53 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
 
         getSharedPreferences(UpdatedConstants.PREFS_NAME, 0).edit().putBoolean(UpdatedConstants.FIRST_TIME_PREF_TAG, false).apply();
 
-        setupViews();
         setButtonClickListeners();
-        setupRecyclerView();
+    }
+
+    private void loadPages() {
+        if (loginSkipped && firstTime) {
+            allPages = new ArrayList<>();
+            setupRecyclerView();
+        } else if (loginSkipped) {
+            allPages = databaseHelper.getAllPages();
+            setupRecyclerView();
+        } else {
+//            Realm realm = Realm.getDefaultInstance();
+//            realm.beginTransaction();
+//            realm.deleteAll();
+//            realm.close();
+
+            if (databaseReference.child("pages").getKey() == null) {
+                databaseReference.child("pages").setValue(new ArrayList<>());
+            }
+            allPages = new ArrayList<>();
+            loadPagesFromFirebase();
+        }
     }
 
     private void assignFields() {
         updateBroadcastReceiver = new UpdateBroadcastReceiver(this);
         fragmentManager = getFragmentManager();
         databaseHelper = new DatabaseHelper();
-        databaseReference = FirebaseDatabase.getInstance().getReference();
-        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (!loginSkipped) {
+            databaseReference = FirebaseDatabase.getInstance().getReference();
+            firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        }
     }
 
-    private List<Page> loadPagesFromFirebase() {
+    private void loadPagesFromFirebase() {
+        progressBar.setVisibility(View.VISIBLE);
         databaseReference.child("pages").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                firebaseQueryList = (ArrayList<Page>) dataSnapshot.getValue();
+                //TODO parse JSON
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    allPages.add(snapshot.getValue(Page.class));
+                }
+                List<?> jsonArray = (List<?>) dataSnapshot.getValue();
+                Log.d("DATA SNAP",jsonArray.get(0).getClass().getSimpleName());
+                setupRecyclerView();
+                progressBar.setVisibility(View.GONE);
             }
 
             @Override
@@ -121,9 +147,7 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
                 showNetworkConnectionDialog();
             }
         });
-        return firebaseQueryList;
     }
-
 
     private void setButtonClickListeners() {
         selectAllButton.setOnClickListener(new View.OnClickListener() {
@@ -185,7 +209,7 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
     }
 
     private void setupViews() {
-        TextView addPagesTextView = (TextView) findViewById(R.id.add_pages_text_view);
+        addPagesTextView = (TextView) findViewById(R.id.add_pages_text_view);
         if (!firstTime) {
             addPagesTextView.setVisibility(View.GONE);
         }
@@ -206,7 +230,7 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
 
     }
 
-    private void setupRecyclerView() {
+    private synchronized void setupRecyclerView() {
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         adapter = new PageAdapter(this, this, databaseHelper);
@@ -244,7 +268,9 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
     @Override
     protected void onResume() {
         super.onResume();
-        adapter.notifyDataSetChanged();
+        if (adapter != null) {
+            adapter.notifyDataSetChanged();
+        }
     }
 
     @Override
@@ -261,12 +287,15 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
 
     @Override
     public void onUpdateDetected() {
-        adapter.notifyDataSetChanged();
+        onResume();
     }
 
 
     @Override
     public void onItemInserted() {
+        if (addPagesTextView.getVisibility() != View.GONE) {
+            addPagesTextView.setVisibility(View.GONE);
+        }
         adapter.notifyItemInserted(adapter.getItemCount() - 1);
     }
 

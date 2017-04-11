@@ -45,7 +45,7 @@ public class NotificationService extends Service {
     private Looper mServiceLooper;
     private String TAG = this.getClass().getCanonicalName();
 
-    //TODO keep service alive in bakcground after app is closed, ask for help
+    //TODO keep service alive in bakcground
     NotificationService() {
 
     }

@@ -41,7 +41,6 @@ public class DatabaseHelper {
     public List<Page> getUpdatedPages() {
         Realm realm = Realm.getDefaultInstance();
         List<Page> updatedPages = realm.where(Page.class).equalTo("isUpdated", true).findAll();
-        realm.close();
         return updatedPages;
     }
 

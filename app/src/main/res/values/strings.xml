@@ -84,6 +84,7 @@
     <string name="cancel">Cancel</string>
     <string name="network_connection_error">Network Connection Error</string>
     <string name="dismiss">Dismiss</string>
+    <string name="skip">Skip</string>
     <string-array name="frequency_spinner_array">
         <item>Minutes</item>
         <item>Hours</item>

@@ -13,6 +13,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -104,6 +105,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                     showNetworkConnectionDialog();
                 } else {
                     FirebaseAuth.getInstance().signOut();
+                    Log.d("LOG OUT", "onClick: " + (FirebaseAuth.getInstance().getCurrentUser() == null));
                     Intent intent = new Intent(getBaseContext(), LoginActivity.class);
                     startActivity(intent);
                 }

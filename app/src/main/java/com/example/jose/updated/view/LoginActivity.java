@@ -47,6 +47,7 @@ public class LoginActivity extends AppCompatActivity {
     private TextView skipLoginTextView;
     private TextView backTextView;
     private boolean newUserClicked = false;
+    private boolean loginSkipped;
 
 
     @Override
@@ -61,6 +62,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 if (user != null) {
                     //user is logged in
+                    loginSkipped = false;
                     openMainActivity();
                 }
             }
@@ -72,6 +74,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void openMainActivity() {
         Intent intent = new Intent(getBaseContext(), MainActivity.class);
+        intent.putExtra("loginSkipped",loginSkipped);
         startActivity(intent);
     }
 
@@ -223,6 +226,7 @@ public class LoginActivity extends AppCompatActivity {
                         // If sign in fails, display a message to the user. If sign in succeeds
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
+                        loginSkipped = false;
                         openMainActivity();
                         if (!task.isSuccessful()) {
                             showLoginFailedDialog();
@@ -236,6 +240,7 @@ public class LoginActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
+                        loginSkipped = false;
                         openMainActivity();
                         // Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
                         // If sign in fails, display a message to the user. If sign in succeeds
@@ -272,14 +277,14 @@ public class LoginActivity extends AppCompatActivity {
 
     public void showSkipLoginDialog(View view) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.CustomDialogStyle);
-        builder.setPositiveButton("Skip", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(R.string.skip, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(intent);
+                loginSkipped = true;
+                openMainActivity();
             }
         });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();

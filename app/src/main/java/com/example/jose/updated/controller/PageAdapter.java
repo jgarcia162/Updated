@@ -22,11 +22,12 @@ import com.example.jose.updated.R;
 import com.example.jose.updated.model.Page;
 import com.example.jose.updated.view.PageViewHolder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PageAdapter extends MultiChoiceAdapter<PageViewHolder>{
     private DatabaseHelper databaseHelper;
-    private List<Page> listOfPages;
+    private List<Page> listOfPages = new ArrayList<>();
     private int lastPosition;
     private Context context;
     private ButtonListener listener;
