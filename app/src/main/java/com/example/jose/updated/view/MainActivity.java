@@ -99,15 +99,14 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
     private void loadPages() {
         if (loginSkipped && firstTime) {
             allPages = new ArrayList<>();
-            setupRecyclerView();
         } else if (loginSkipped) {
             allPages = databaseHelper.getAllPages();
-            setupRecyclerView();
         } else {
-//            Realm realm = Realm.getDefaultInstance();
-//            realm.beginTransaction();
-//            realm.deleteAll();
-//            realm.close();
+            Realm realm = Realm.getDefaultInstance();
+            realm.beginTransaction();
+            realm.deleteAll();
+            realm.commitTransaction();
+            realm.close();
 
             if (databaseReference.child("pages").getKey() == null) {
                 databaseReference.child("pages").setValue(new ArrayList<>());
@@ -115,6 +114,7 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
             allPages = new ArrayList<>();
             loadPagesFromFirebase();
         }
+        setupRecyclerView();
     }
 
     private void assignFields() {
@@ -132,13 +132,10 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
         databaseReference.child("pages").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                //TODO parse JSON
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    allPages.add(snapshot.getValue(Page.class));
+                    databaseHelper.addToAllPages(snapshot.getValue(Page.class));
                 }
-                List<?> jsonArray = (List<?>) dataSnapshot.getValue();
-                Log.d("DATA SNAP",jsonArray.get(0).getClass().getSimpleName());
-                setupRecyclerView();
+                adapter.notifyDataSetChanged();
                 progressBar.setVisibility(View.GONE);
             }
 
@@ -234,13 +231,11 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         adapter = new PageAdapter(this, this, databaseHelper);
-        adapter.setListOfPages(allPages);
         adapter.setSingleClickMode(false);
         adapter.setMultiChoiceToolbar(createMultiChoiceToolbar());
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 15, true));
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(layoutManager);
-        adapter.notifyDataSetChanged();
     }
 
     @Override

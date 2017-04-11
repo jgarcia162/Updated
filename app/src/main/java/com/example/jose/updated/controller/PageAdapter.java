@@ -22,12 +22,11 @@ import com.example.jose.updated.R;
 import com.example.jose.updated.model.Page;
 import com.example.jose.updated.view.PageViewHolder;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class PageAdapter extends MultiChoiceAdapter<PageViewHolder>{
     private DatabaseHelper databaseHelper;
-    private List<Page> listOfPages = new ArrayList<>();
+    private List<Page> listOfPages;
     private int lastPosition;
     private Context context;
     private ButtonListener listener;
@@ -36,6 +35,7 @@ public class PageAdapter extends MultiChoiceAdapter<PageViewHolder>{
         this.context = context;
         this.listener = listener;
         this.databaseHelper = databaseHelper;
+        listOfPages = databaseHelper.getAllPages();
         lastPosition = -1;
     }
 
@@ -66,7 +66,6 @@ public class PageAdapter extends MultiChoiceAdapter<PageViewHolder>{
             lastPosition = position;
         }
     }
-    
 
     @Override
     public void setActive(@NonNull View view, boolean state) {
@@ -138,9 +137,5 @@ public class PageAdapter extends MultiChoiceAdapter<PageViewHolder>{
     private void pageClicked(PageViewHolder holder,int position) {
         Page page = listOfPages.get(position);
         openInBrowser(page, holder);
-    }
-
-    public void setListOfPages(List<Page> listOfPages) {
-        this.listOfPages = listOfPages;
     }
 }
