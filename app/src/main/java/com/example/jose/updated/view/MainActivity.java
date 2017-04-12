@@ -6,11 +6,13 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,13 +28,21 @@ import com.davidecirillo.multichoicerecyclerview.MultiChoiceToolbar;
 import com.example.jose.updated.R;
 import com.example.jose.updated.controller.BaseActivity;
 import com.example.jose.updated.controller.ButtonListener;
+import com.example.jose.updated.controller.DatabaseHelper;
 import com.example.jose.updated.controller.NotificationService;
 import com.example.jose.updated.controller.PageAdapter;
-import com.example.jose.updated.controller.RealmDatabaseHelper;
 import com.example.jose.updated.controller.UpdateBroadcastReceiver;
 import com.example.jose.updated.controller.UpdateRefresher;
 import com.example.jose.updated.controller.UpdatedCallback;
 import com.example.jose.updated.model.Page;
+import com.example.jose.updated.model.UpdatedConstants;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,42 +50,99 @@ import java.util.List;
 import io.realm.Realm;
 
 public class MainActivity extends BaseActivity implements UpdatedCallback, SwipeRefreshLayout.OnRefreshListener, ButtonListener {
+    private FirebaseUser firebaseUser;
+    private DatabaseReference databaseReference;
     private FragmentManager fragmentManager;
     private PageAdapter adapter;
     private RecyclerView recyclerView;
-    private StaggeredGridLayoutManager layoutManager;
     private TextView addPagesTextView;
     private Button selectAllButton;
     private Button deleteButton;
     private Button untrackButton;
     private ProgressBar progressBar;
     private ViewGroup buttonLayout;
-    private AddPageDialogFragment addPageDialogFragment;
-    private RealmDatabaseHelper realmDatabaseHelper;
+    private DatabaseHelper databaseHelper;
     private SwipeRefreshLayout swipeRefreshLayout;
-    public static UpdateBroadcastReceiver updateBroadcastReceiver;
+    private UpdateBroadcastReceiver updateBroadcastReceiver;
     private boolean buttonsHidden = true;
     private boolean selectAllClicked = false;
+    private boolean firstTime;
+    private boolean loginSkipped;
+    private List<Page> allPages;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Realm.init(getApplicationContext());
+        loginSkipped = getIntent().getExtras().getBoolean("loginSkipped");
+        firstTime = getSharedPreferences(UpdatedConstants.PREFS_NAME, 0).getBoolean(UpdatedConstants.FIRST_TIME_PREF_TAG, true);
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
-        updateBroadcastReceiver = new UpdateBroadcastReceiver(this);
-        fragmentManager = getFragmentManager();
-        realmDatabaseHelper = new RealmDatabaseHelper();
-        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
-        swipeRefreshLayout.setOnRefreshListener(this);
+
+        assignFields();
+
+        Log.d("FIREBASE USER", "onCreate: " + (firebaseUser == null));
+
         setupViews();
-        setupRecyclerView();
-        if (adapter.getItemCount() > 0)
-            addPagesTextView.setVisibility(View.GONE);
-        setButtonClickListeners();
-        addPageDialogFragment = new AddPageDialogFragment();
+        loadPages();
+
         localBroadcastManager.registerReceiver(updateBroadcastReceiver, new IntentFilter("com.example.jose.updated.controller.CUSTOM_INTENT"));
+
         Intent serviceIntent = new Intent(getApplicationContext(), NotificationService.class);
         startService(serviceIntent);
+
+        getSharedPreferences(UpdatedConstants.PREFS_NAME, 0).edit().putBoolean(UpdatedConstants.FIRST_TIME_PREF_TAG, false).apply();
+
+        setButtonClickListeners();
+    }
+
+    private void loadPages() {
+        if (loginSkipped && firstTime) {
+            allPages = new ArrayList<>();
+        } else if (loginSkipped) {
+            allPages = databaseHelper.getAllPages();
+        } else {
+
+            Realm realm = Realm.getDefaultInstance();
+            realm.beginTransaction();
+            realm.deleteAll();
+            realm.commitTransaction();
+            realm.close();
+
+            if (databaseReference.child("pages").getKey() == null) {
+                databaseReference.child("pages").setValue(new ArrayList<>());
+            }
+            allPages = new ArrayList<>();
+            loadPagesFromFirebase();
+        }
+        setupRecyclerView();
+    }
+
+    private void assignFields() {
+        updateBroadcastReceiver = new UpdateBroadcastReceiver(this);
+        fragmentManager = getFragmentManager();
+        databaseHelper = new DatabaseHelper();
+        if (!loginSkipped) {
+            databaseReference = FirebaseDatabase.getInstance().getReference();
+            firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        }
+    }
+
+    private void loadPagesFromFirebase() {
+        progressBar.setVisibility(View.VISIBLE);
+        databaseReference.child("pages").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    databaseHelper.addToAllPages(snapshot.getValue(Page.class));
+                }
+                adapter.notifyDataSetChanged();
+                progressBar.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void setButtonClickListeners() {
@@ -98,13 +165,13 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
             @Override
             public void onClick(View v) {
                 if (adapter.getSelectedItemCount() > 0) {
-                    List<Page> allPages = realmDatabaseHelper.getAllPages();
+                    List<Page> allPages = databaseHelper.getAllPages();
                     List<Page> pagesToDelete = new ArrayList<>();
                     for (Integer i : adapter.getSelectedItemList()) {
                         pagesToDelete.add(allPages.get(i));
                     }
                     for (Page pageToDelete : pagesToDelete) {
-                        realmDatabaseHelper.removeFromPagesToTrack(pageToDelete);
+                        databaseHelper.removeFromPagesToTrack(pageToDelete);
                     }
                     adapter.notifyDataSetChanged();
                     toolbar.postInvalidate();
@@ -116,13 +183,13 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
             @Override
             public void onClick(View v) {
                 if (adapter.getSelectedItemCount() > 0) {
-                    List<Page> allPages = realmDatabaseHelper.getAllPages();
+                    List<Page> allPages = databaseHelper.getAllPages();
                     List<Page> pagesToUntrack = new ArrayList<>();
                     for (Integer i : adapter.getSelectedItemList()) {
                         pagesToUntrack.add(allPages.get(i));
                     }
                     for (Page pageToUntrack : pagesToUntrack) {
-                        realmDatabaseHelper.deactivatePage(pageToUntrack);
+                        databaseHelper.deactivatePage(pageToUntrack);
                     }
                     adapter.notifyDataSetChanged();
                 }
@@ -139,23 +206,44 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
 
     private void setupViews() {
         addPagesTextView = (TextView) findViewById(R.id.add_pages_text_view);
+        if (!firstTime) {
+            addPagesTextView.setVisibility(View.GONE);
+        }
+
         buttonLayout = (ViewGroup) findViewById(R.id.buttons_layout);
         selectAllButton = (Button) findViewById(R.id.select_all_button);
         deleteButton = (Button) findViewById(R.id.delete_all_button);
         untrackButton = (Button) findViewById(R.id.untrack_all_button);
         progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
+        swipeRefreshLayout.setOnRefreshListener(this);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent, null));
+        } else {
+            swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
+        }
+
     }
 
-    private void setupRecyclerView() {
+    private synchronized void setupRecyclerView() {
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-        adapter = new PageAdapter(this, this);
+        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        adapter = new PageAdapter(this, this, databaseHelper);
         adapter.setSingleClickMode(false);
         adapter.setMultiChoiceToolbar(createMultiChoiceToolbar());
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 15, true));
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(layoutManager);
-        adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (adapter.getSelectedItemCount() > 0) {
+            adapter.deselectAll();
+        } else {
+            super.onBackPressed();
+        }
     }
 
     private MultiChoiceToolbar createMultiChoiceToolbar() {
@@ -165,6 +253,7 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
     }
 
     public void showAddPageDialog() {
+        AddPageDialogFragment addPageDialogFragment = new AddPageDialogFragment();
         addPageDialogFragment.show(fragmentManager, "addPageFragment");
         addPageDialogFragment.setCallback(this);
     }
@@ -173,7 +262,14 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
     @Override
     protected void onResume() {
         super.onResume();
-        adapter.notifyDataSetChanged();
+        if (adapter != null) {
+            adapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -185,19 +281,22 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
 
     @Override
     public void onUpdateDetected() {
-        adapter.notifyDataSetChanged();
+        onResume();
     }
 
 
     @Override
     public void onItemInserted() {
+        if (addPagesTextView.getVisibility() != View.GONE) {
+            addPagesTextView.setVisibility(View.GONE);
+        }
         adapter.notifyItemInserted(adapter.getItemCount() - 1);
     }
 
     @Override
     public void onRefresh() {
         if (!isNetworkConnected()) {
-            super.buildAlertDialog();
+            super.showNetworkConnectionDialog();
             resetSwipeRefreshLayout();
         } else {
             try {

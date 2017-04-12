@@ -19,7 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.jose.updated.R;
-import com.example.jose.updated.controller.RealmDatabaseHelper;
+import com.example.jose.updated.controller.DatabaseHelper;
 import com.example.jose.updated.model.Page;
 
 import static com.example.jose.updated.model.UpdatedConstants.PREFS_NAME;
@@ -39,10 +39,10 @@ public class PageDetailsFragment extends Fragment {
     private Page page;
     private Bundle bundle;
     private SharedPreferences preferences;
-    private RealmDatabaseHelper realmDatabaseHelper;
+    private DatabaseHelper databaseHelper;
 
     public PageDetailsFragment() {
-        realmDatabaseHelper = new RealmDatabaseHelper();
+        databaseHelper = new DatabaseHelper();
     }
 
     @Override
@@ -51,7 +51,7 @@ public class PageDetailsFragment extends Fragment {
         if (bundle == null) {
             bundle = getArguments();
             String pageUrl = bundle.getString("page");
-            page = realmDatabaseHelper.getPageFromUrl(pageUrl);
+            page = databaseHelper.getPageFromUrl(pageUrl);
         }
         preferences = getContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
     }
@@ -109,14 +109,14 @@ public class PageDetailsFragment extends Fragment {
         String title = String.valueOf(pageTitle.getText());
         boolean isActive = trackingSwitch.isChecked();
         String notes = String.valueOf(notesEditText.getText());
-        realmDatabaseHelper.savePageSettings(page,title,notes,isActive);
+        databaseHelper.savePageSettings(page,title,notes,isActive);
     }
 
     public void deletePage(){
         if(page.isUpdated()){
-            realmDatabaseHelper.removeFromUpdatedPages(page);
+            databaseHelper.removeFromUpdatedPages(page);
         }
-        realmDatabaseHelper.removeFromPagesToTrack(page);
+        databaseHelper.removeFromPagesToTrack(page);
         getActivity().onBackPressed();
     }
 

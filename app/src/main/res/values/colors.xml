@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#39A0ED</color>
-    <color name="colorPrimaryDark">#435363</color>
+    <color name="colorPrimary">#024a80</color>
+    <color name="colorPrimaryDark">#01162b</color>
     <color name="colorAccent">#D12A2F</color>
     <color name="mainActivityBackground">#E7E1E6</color>
     <color name="darkFontColor">#202830</color>
     <color name="lightFontColor">#E7E1E6</color>
+    <color name="cardBackgroundColor">#E7E1E6</color>
     <color name="grey">#4DFFFFFF</color>
     <color name="darkGrey">#464646</color>
     <color name="white">#FFFFFF</color>
-    <color name="editTextBackground">#CFE8EF</color>
+    <color name="editTextBackground">#a8c7df</color>
     <color name="transparent">#00232323</color>
 </resources>

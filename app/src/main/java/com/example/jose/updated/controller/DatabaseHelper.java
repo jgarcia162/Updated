@@ -3,6 +3,9 @@ package com.example.jose.updated.controller;
 import android.content.Context;
 
 import com.example.jose.updated.model.Page;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Date;
 import java.util.List;
@@ -13,16 +16,15 @@ import io.realm.Realm;
  * Created by Joe on 1/14/17.
  */
 
-public class RealmDatabaseHelper {
+public class DatabaseHelper {
     private Context context;
     private UpdateRefresher refresher;
-    private String TAG = this.getClass().getSimpleName();
 
-    public RealmDatabaseHelper() {
+    public DatabaseHelper() {
         refresher = new UpdateRefresher();
     }
 
-    public RealmDatabaseHelper(Context context) {
+    public DatabaseHelper(Context context) {
         this.context = context;
     }
 
@@ -39,7 +41,6 @@ public class RealmDatabaseHelper {
     public List<Page> getUpdatedPages() {
         Realm realm = Realm.getDefaultInstance();
         List<Page> updatedPages = realm.where(Page.class).equalTo("isUpdated", true).findAll();
-        realm.close();
         return updatedPages;
     }
 
@@ -49,6 +50,14 @@ public class RealmDatabaseHelper {
         realm.copyToRealmOrUpdate(page);
         realm.commitTransaction();
         realm.close();
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            updateFirebaseContents();
+        }
+    }
+
+    private void updateFirebaseContents() {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+        databaseReference.child("pages").setValue(getAllPages());
     }
 
     public void addToUpdatedPages(Page page) {
@@ -58,7 +67,7 @@ public class RealmDatabaseHelper {
         page.setUpdated(true);
         realm.copyToRealmOrUpdate(page);
         realm.commitTransaction();
-        List<Page> updatedPages = realm.where(Page.class).equalTo("isUpdated",true).findAll();
+        List<Page> updatedPages = realm.where(Page.class).equalTo("isUpdated", true).findAll();
         realm.close();
         setUpdatedPages(updatedPages);
     }
@@ -97,6 +106,9 @@ public class RealmDatabaseHelper {
         pageToDelete.deleteFromRealm();
         realm.commitTransaction();
         realm.close();
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            updateFirebaseContents();
+        }
     }
 
     public int getSizeOfUpdatedPages() {
@@ -143,6 +155,7 @@ public class RealmDatabaseHelper {
             newPage.setTimeOfLastUpdateInMilliSec(new Date().getTime());
             newPage.setIsActive(true);
             addToPagesToTrack(newPage);
+            addToAllPages(newPage);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -172,6 +185,14 @@ public class RealmDatabaseHelper {
         pageToUpdate.setNotes(notes);
         pageToUpdate.setIsActive(isActive);
         realm.copyToRealmOrUpdate(pageToUpdate);
+        realm.commitTransaction();
+        realm.close();
+    }
+
+    public void emptyDatabase() {
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        realm.deleteAll();
         realm.commitTransaction();
         realm.close();
     }

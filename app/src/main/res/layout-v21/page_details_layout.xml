@@ -3,13 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginEnd="20dp"
-    android:layout_marginStart="20dp">
+    android:paddingStart="30dp"
+    android:paddingEnd="30dp"
+    android:background="@drawable/background">
 
     <android.support.design.widget.TextInputEditText
         android:id="@+id/details_page_title_tv"
         android:layout_width="wrap_content"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
         android:background="@color/transparent"
@@ -17,6 +18,7 @@
         android:textAlignment="center"
         android:textSize="30sp"
         android:textColor="@color/darkFontColor"
+        android:maxLength="17"
         tools:text="Page Title" />
 
     <TextView
@@ -25,9 +27,10 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/details_page_title_tv"
         android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
         android:gravity="center"
         android:text="@string/page_active_tv"
-        android:textSize="15sp"
+        android:textSize="19sp"
         android:textStyle="bold"
         android:textColor="@color/darkFontColor"/>
 
@@ -37,7 +40,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/details_page_title_tv"
         android:layout_centerHorizontal="true"
-        android:layout_toEndOf="@id/page_active_tv" />
+        android:layout_toEndOf="@id/page_active_tv"
+        android:layout_marginTop="30dp"/>
 
     <TextView
         android:id="@+id/details_timelastupdated_tv"
@@ -45,7 +49,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/page_active_switch"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="30dp"
+        android:layout_centerHorizontal="true"
         android:text="@string/details_last_updated"
         android:textSize="20sp"
         android:textStyle="bold|italic"
@@ -57,7 +62,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/details_timelastupdated_tv"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
         android:background="@color/transparent"
+        android:maxLines="3"
         android:text="@string/details_url_tv_text"
         android:textColor="@color/darkFontColor"/>
 
@@ -66,6 +74,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/details_url_tv"
+        android:layout_marginTop="30dp"
         android:layout_centerHorizontal="true"
         android:orientation="vertical">
 
@@ -73,23 +82,23 @@
             android:id="@+id/details_notes_title_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
             android:layout_gravity="center_horizontal"
             android:text="@string/details_notes_title_text"
-            android:textSize="20sp"
+            android:textSize="24sp"
             android:textColor="@color/darkFontColor"/>
         <EditText
             android:id="@+id/details_notes_et"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="10dp"
-            android:layout_margin="10dp"
             android:background="@drawable/edit_text_depth_drawable"
             android:gravity="start"
             android:inputType="text|textMultiLine"
             android:maxLines="10"
             android:scrollHorizontally="false"
             android:textColor="@color/darkFontColor"
+            android:textSize="16sp"
             android:hint="@string/add_notes_text"/>
     </LinearLayout>
     <Button
@@ -99,7 +108,6 @@
         android:layout_height="wrap_content"
         android:layout_above="@id/delete_page_button"
         android:layout_centerHorizontal="true"
-        android:layout_margin="10dp"
         android:text="@string/save_page_settings_text" />
 
     <Button
@@ -108,11 +116,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/empty_space"
-        android:layout_margin="10dp"
+        android:layout_marginTop="10dp"
         android:text="@string/delete_page_button" />
     <android.support.v4.widget.Space
         android:id="@+id/empty_space"
         android:layout_width="match_parent"
-        android:layout_height="20dp"
+        android:layout_height="40dp"
         android:layout_alignParentBottom="true"/>
 </RelativeLayout>

@@ -11,7 +11,7 @@ import android.view.View;
 
 import com.example.jose.updated.R;
 import com.example.jose.updated.controller.BaseActivity;
-import com.example.jose.updated.controller.RealmDatabaseHelper;
+import com.example.jose.updated.controller.DatabaseHelper;
 import com.example.jose.updated.model.Page;
 
 /**
@@ -20,7 +20,7 @@ import com.example.jose.updated.model.Page;
 public class SecondActivity extends BaseActivity {
     private FragmentManager fragmentManager;
     private int container;
-    private RealmDatabaseHelper realmDatabaseHelper;
+    private DatabaseHelper databaseHelper;
     private Toolbar toolbar;
 
     @Override
@@ -29,7 +29,7 @@ public class SecondActivity extends BaseActivity {
         setContentView(R.layout.second_activity);
         toolbar = (Toolbar)findViewById(R.id.toolbar);
         setToolbar();
-        realmDatabaseHelper = new RealmDatabaseHelper();
+        databaseHelper = new DatabaseHelper();
         fragmentManager = getSupportFragmentManager();
         container = R.id.second_activity_fragment_container;
         Intent intent = getIntent();
@@ -53,7 +53,7 @@ public class SecondActivity extends BaseActivity {
     private void loadPageDetailsFragment(Intent intent) {
         Bundle bundle = intent.getBundleExtra("page_bundle");
         String pageUrl = bundle.getString("page");
-        Page page = realmDatabaseHelper.getPageFromUrl(pageUrl);
+        Page page = databaseHelper.getPageFromUrl(pageUrl);
         PageDetailsFragment pageDetailsFragment;
         if (page != null) {
             String pageTag = page.getTitle() + "_fragment";

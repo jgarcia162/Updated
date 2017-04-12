@@ -17,6 +17,7 @@
         android:textAlignment="center"
         android:textSize="30sp"
         android:textColor="@color/darkFontColor"
+        android:maxLength="17"
         tools:text="Page Title" />
 
     <TextView

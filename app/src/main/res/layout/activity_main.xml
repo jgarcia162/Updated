@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/mainActivityBackground"
+    android:background="@drawable/background"
     tools:context=".view.MainActivity">
 
     <include layout="@layout/toolbar" />
@@ -77,8 +77,5 @@
             android:layout_gravity="center_horizontal|center_vertical"
             android:text="@string/add_pages_text"
             android:visibility="visible"/>
-
     </FrameLayout>
 </LinearLayout>
-
-

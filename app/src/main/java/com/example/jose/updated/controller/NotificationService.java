@@ -29,8 +29,8 @@ import io.realm.Realm;
 import static com.example.jose.updated.model.UpdatedConstants.DEFAULT_NOTIFICATIONS_ACTIVE;
 import static com.example.jose.updated.model.UpdatedConstants.DEFAULT_UPDATE_FREQUENCY;
 import static com.example.jose.updated.model.UpdatedConstants.PREFS_NAME;
-import static com.example.jose.updated.model.UpdatedConstants.STOP_NOTIFICATION_PREFERENCE_TAG;
-import static com.example.jose.updated.model.UpdatedConstants.UPDATE_FREQUENCY_PREFERENCE_TAG;
+import static com.example.jose.updated.model.UpdatedConstants.STOP_NOTIFICATION_PREF_TAG;
+import static com.example.jose.updated.model.UpdatedConstants.UPDATE_FREQUENCY_PREF_TAG;
 
 public class NotificationService extends Service {
     private boolean started = false;
@@ -45,7 +45,7 @@ public class NotificationService extends Service {
     private Looper mServiceLooper;
     private String TAG = this.getClass().getCanonicalName();
 
-    //TODO keep service alive in bakcground after app is closed, ask for help
+    //TODO keep service alive in bakcground
     NotificationService() {
 
     }
@@ -55,7 +55,7 @@ public class NotificationService extends Service {
         super.onCreate();
         localBroadcastManager = LocalBroadcastManager.getInstance(this);
         preferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        timerLength = preferences.getLong(UPDATE_FREQUENCY_PREFERENCE_TAG, DEFAULT_UPDATE_FREQUENCY);
+        timerLength = preferences.getLong(UPDATE_FREQUENCY_PREF_TAG, DEFAULT_UPDATE_FREQUENCY);
         notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         HandlerThread thread = new HandlerThread("ServiceStartArguments",
                 Process.THREAD_PRIORITY_BACKGROUND);
@@ -69,7 +69,7 @@ public class NotificationService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
 //        localBroadcastManager = LocalBroadcastManager.getInstance(this);
 //        preferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-//        timerLength = preferences.getLong(UPDATE_FREQUENCY_PREFERENCE_TAG, DEFAULT_UPDATE_FREQUENCY);
+//        timerLength = preferences.getLong(UPDATE_FREQUENCY_PREF_TAG, DEFAULT_UPDATE_FREQUENCY);
 //        notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         setStarted(true);
         createTimerTask();
@@ -113,7 +113,7 @@ public class NotificationService extends Service {
         Log.d(TAG, "refresh: "+ updatedPages.toArray().length);
         realm.close();
         if (updatedPages.size() > 0) {
-            if (preferences.getBoolean(STOP_NOTIFICATION_PREFERENCE_TAG, DEFAULT_NOTIFICATIONS_ACTIVE)) {
+            if (preferences.getBoolean(STOP_NOTIFICATION_PREF_TAG, DEFAULT_NOTIFICATIONS_ACTIVE)) {
                 createNotification(getNamesOfUpdatedPages(updatedPages));
             }
             Intent broadcastIntent = new Intent();

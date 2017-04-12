@@ -9,13 +9,13 @@ import android.support.annotation.NonNull;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.CheckBox;
-import android.widget.Toast;
 
 import com.davidecirillo.multichoicerecyclerview.MultiChoiceAdapter;
 import com.example.jose.updated.R;
@@ -25,15 +25,17 @@ import com.example.jose.updated.view.PageViewHolder;
 import java.util.List;
 
 public class PageAdapter extends MultiChoiceAdapter<PageViewHolder>{
-    private RealmDatabaseHelper realmDatabaseHelper = new RealmDatabaseHelper();
-    private List<Page> listOfPages = realmDatabaseHelper.getAllPages();
+    private DatabaseHelper databaseHelper;
+    private List<Page> listOfPages;
     private int lastPosition;
     private Context context;
     private ButtonListener listener;
 
-    public PageAdapter(Context context, ButtonListener listener) {
+    public PageAdapter(Context context, ButtonListener listener,DatabaseHelper databaseHelper) {
         this.context = context;
         this.listener = listener;
+        this.databaseHelper = databaseHelper;
+        listOfPages = databaseHelper.getAllPages();
         lastPosition = -1;
     }
 
@@ -57,7 +59,6 @@ public class PageAdapter extends MultiChoiceAdapter<PageViewHolder>{
     }
 
     private void setAnimation(View viewToAnimate, int position) {
-        // If the bound view wasn't previously displayed on screen, it's animated
         if (position > lastPosition) {
             Animation animation = AnimationUtils.loadAnimation(context, R.anim.slide_in_bottom);
             animation.setDuration(500);
@@ -65,19 +66,25 @@ public class PageAdapter extends MultiChoiceAdapter<PageViewHolder>{
             lastPosition = position;
         }
     }
-    
 
     @Override
     public void setActive(@NonNull View view, boolean state) {
         CardView card = (CardView) view.findViewById(R.id.item_layout);
         CheckBox checkBox = (CheckBox) view.findViewById(R.id.check_box);
+        TypedValue elevationTypedValue = new TypedValue();
+        TypedValue translationtypedValue = new TypedValue();
         if (state) {
             if (getSelectedItemCount() > 0) {
                 listener.showButtons();
             }
             checkBox.setVisibility(View.VISIBLE);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                card.setCardElevation(8f);
+                context.getResources().getValue(R.dimen.selected_card_elevation_float,elevationTypedValue,true);
+                context.getResources().getValue(R.dimen.selected_card_translationz_float,translationtypedValue,true);
+                float elevation = elevationTypedValue.getFloat();
+                float translation = translationtypedValue.getFloat();
+                card.setCardElevation(elevation);
+                card.setTranslationZ(translation);
             }
         } else {
             if (getSelectedItemCount() < 1) {
@@ -85,7 +92,12 @@ public class PageAdapter extends MultiChoiceAdapter<PageViewHolder>{
             }
             checkBox.setVisibility(View.GONE);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                card.setCardElevation(R.dimen.cardview_default_elevation);
+                context.getResources().getValue(R.dimen.selected_card_elevation_float,elevationTypedValue,true);
+                context.getResources().getValue(R.dimen.selected_card_translationz_float,translationtypedValue,true);
+                float elevation = elevationTypedValue.getFloat();
+                float translation = translationtypedValue.getFloat();
+                card.setCardElevation(elevation);
+                card.setTranslationZ(-translation);
             }
         }
     }
@@ -107,14 +119,13 @@ public class PageAdapter extends MultiChoiceAdapter<PageViewHolder>{
                 context.getResources(), R.drawable.ic_arrow_back_white_24dp));
         builder.addDefaultShareMenuItem();
         builder.setStartAnimations(context, R.anim.slide_in_bottom, R.anim.slide_out_bottom);
-        builder.enableUrlBarHiding();
         builder.setToolbarColor(ContextCompat.getColor(context, R.color.colorPrimary));
         // set toolbar color and/or setting custom actions before invoking build()
         CustomTabsIntent customTabsIntent = builder.build();
         customTabsIntent.intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         if (page.isUpdated()) {
             holder.updatedStatusTextView.setText(R.string.not_updated);
-            realmDatabaseHelper.removeFromUpdatedPages(page);
+            databaseHelper.removeFromUpdatedPages(page);
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
             customTabsIntent.intent.putExtra(Intent.EXTRA_REFERRER,
@@ -124,7 +135,6 @@ public class PageAdapter extends MultiChoiceAdapter<PageViewHolder>{
     }
 
     private void pageClicked(PageViewHolder holder,int position) {
-        Toast.makeText(context, "clicked " + position, Toast.LENGTH_SHORT).show();
         Page page = listOfPages.get(position);
         openInBrowser(page, holder);
     }

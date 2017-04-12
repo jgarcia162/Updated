@@ -11,17 +11,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.jose.updated.R;
-import com.example.jose.updated.controller.RealmDatabaseHelper;
+import com.example.jose.updated.controller.DatabaseHelper;
 import com.example.jose.updated.model.Page;
 
-public class PageViewHolder extends RecyclerView.ViewHolder{
+public class PageViewHolder extends RecyclerView.ViewHolder {
 
     private TextView pageTitleTextView;
     public TextView updatedStatusTextView;
     private TextView timeOfLastUpdateTextView;
     private Context context;
     private Page page;
-    private RealmDatabaseHelper realmDatabaseHelper;
+
     public PageViewHolder(View view) {
         super(view);
         updatedStatusTextView = (TextView) view.findViewById(R.id.update_status_text_view);
@@ -35,18 +35,17 @@ public class PageViewHolder extends RecyclerView.ViewHolder{
             }
         });
         context = view.getContext();
-        realmDatabaseHelper = new RealmDatabaseHelper();
     }
 
     public void bind(Page page) {
         this.page = page;
         pageTitleTextView.setText(page.getTitle());
-
-        if (realmDatabaseHelper.getUpdatedPages().contains(page)) {
+        DatabaseHelper databaseHelper = new DatabaseHelper();
+        if (databaseHelper.getUpdatedPages().contains(page)) {
             updatedStatusTextView.setText(R.string.page_updated);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                updatedStatusTextView.setTextColor(context.getResources().getColor(R.color.colorAccent,null));
-            }else{
+                updatedStatusTextView.setTextColor(context.getResources().getColor(R.color.colorAccent, null));
+            } else {
                 updatedStatusTextView.setTextColor(context.getResources().getColor(R.color.colorAccent));
             }
         } else {
@@ -59,14 +58,9 @@ public class PageViewHolder extends RecyclerView.ViewHolder{
     private void openPageDetails(int position) {
         Bundle bundle = new Bundle();
         bundle.putString("page", page.getPageUrl());
-        bundle.putInt("page_position",position);
+        bundle.putInt("page_position", position);
         Intent intent = new Intent(context, SecondActivity.class);
         intent.putExtra("page_bundle", bundle);
         context.startActivity(intent);
     }
-
-
-
-
-
 }
