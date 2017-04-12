@@ -112,7 +112,7 @@
                 android:layout_marginTop="15dp"
                 android:gravity="center"
                 android:text="@string/notifications_settings_title"
-                android:textSize="16sp"
+                android:textSize="20sp"
                 android:textStyle="normal" />
 
             <Switch
@@ -132,7 +132,7 @@
             android:layout_gravity="center"
             android:layout_marginTop="50dp"
             android:text="@string/contact_setting_title"
-            android:textSize="25sp" />
+            android:textSize="28sp" />
 
         <LinearLayout
             android:id="@+id/contact_icons"
