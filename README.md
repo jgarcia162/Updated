@@ -6,7 +6,8 @@ Updated lets you track your favorite sites. Receive notifications when the sites
 Project currently a work in progress. 
 
 Third party libraries and resources used include <br>
--[Realm Java 3.0.0](https://realm.io/) database <br>
+-[Realm Java 3.0.0](https://realm.io/) internal offline database <br>
+-[Firebase](https://firebase.google.com/) real-time online database <br>
 -[Twitter4J](http://twitter4j.org/) for Twitter integration<br>
 -[Calligraphy](https://github.com/chrisjenx/Calligraphy) library for easy integration of custom fonts <br>
 -[MultichoiceRecyclerView](https://github.com/dvdciri/MultiChoiceRecyclerView) library for a custom recyclerview with multichoice functionality <br>
