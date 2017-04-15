@@ -25,6 +25,7 @@ import com.example.jose.updated.view.SecondActivity;
 import com.google.firebase.auth.FirebaseAuth;
 
 import io.realm.Realm;
+import io.realm.RealmConfiguration;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
@@ -53,7 +54,18 @@ public abstract class BaseActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setToolbar();
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
-        Realm.init(getApplicationContext());
+        Realm.init(getBaseContext());
+        Realm realm;
+        try{
+            realm = Realm.getDefaultInstance();
+
+        }catch (Exception e){
+            // Get a Realm instance for this thread
+            RealmConfiguration config = new RealmConfiguration.Builder().deleteRealmIfMigrationNeeded()
+                    .build();
+            realm = Realm.getInstance(config);
+
+        }
     }
 
     @Override

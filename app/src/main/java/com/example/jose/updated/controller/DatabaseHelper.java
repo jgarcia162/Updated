@@ -50,14 +50,15 @@ public class DatabaseHelper {
         realm.copyToRealmOrUpdate(page);
         realm.commitTransaction();
         realm.close();
-        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-            updateFirebaseContents();
-        }
+        addToPagesToTrack(page);
+        updateFirebaseContents();
     }
 
     private void updateFirebaseContents() {
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-        databaseReference.child("pages").setValue(getAllPages());
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+            databaseReference.child("pages").setValue(getAllPages());
+        }
     }
 
     public void addToUpdatedPages(Page page) {
@@ -106,9 +107,7 @@ public class DatabaseHelper {
         pageToDelete.deleteFromRealm();
         realm.commitTransaction();
         realm.close();
-        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-            updateFirebaseContents();
-        }
+
     }
 
     public int getSizeOfUpdatedPages() {
@@ -154,7 +153,6 @@ public class DatabaseHelper {
             newPage.setContents(refresher.downloadHtml(newPage));
             newPage.setTimeOfLastUpdateInMilliSec(new Date().getTime());
             newPage.setIsActive(true);
-            addToPagesToTrack(newPage);
             addToAllPages(newPage);
         } catch (Exception e) {
             e.printStackTrace();
@@ -187,6 +185,9 @@ public class DatabaseHelper {
         realm.copyToRealmOrUpdate(pageToUpdate);
         realm.commitTransaction();
         realm.close();
+//        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+//            updateFirebaseContents();
+//        }
     }
 
     public void emptyDatabase() {

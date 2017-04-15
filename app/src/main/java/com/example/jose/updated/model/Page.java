@@ -15,10 +15,37 @@ public class Page extends RealmObject implements Parcelable{
     private String contents;
     private String nickname;
     private String notes;
+    private String formattedTimeOfLastUpdate;
     private long updateFrequency;
     private long timeOfLastUpdateInMilliSec;
-    private boolean isActive;
+    private boolean active;
     private boolean isUpdated;
+    private boolean managed;
+    private boolean loaded;
+    private boolean valid;
+
+    public void setFormattedTimeOfLastUpdate(String formattedTimeOfLastUpdate) {
+        this.formattedTimeOfLastUpdate = formattedTimeOfLastUpdate;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public void setManaged(boolean managed) {
+        this.managed = managed;
+    }
+
+    public void setLoaded(boolean loaded) {
+        this.loaded = loaded;
+    }
+
+    public void setValid(boolean valid) {
+        this.valid = valid;
+    }
+
+
+
 
     public Page() {
 
@@ -43,7 +70,7 @@ public class Page extends RealmObject implements Parcelable{
         notes = in.readString();
         timeOfLastUpdateInMilliSec = in.readLong();
         isUpdated = in.readByte() != 0;
-        isActive = in.readByte() != 0;
+        active = in.readByte() != 0;
     }
 
     public static final Creator<Page> CREATOR = new Creator<Page>() {
@@ -140,13 +167,13 @@ public class Page extends RealmObject implements Parcelable{
         dest.writeString(notes);
         dest.writeLong(timeOfLastUpdateInMilliSec);
         dest.writeByte((byte) (isUpdated ? 1 : 0));
-        dest.writeByte((byte) (isActive ? 1 : 0));
+        dest.writeByte((byte) (active ? 1 : 0));
     }
 
     public void setIsActive(boolean active){
-        this.isActive = active;
+        this.active = active;
     }
     public boolean isActive() {
-        return isActive;
+        return active;
     }
 }

@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,6 +36,7 @@ public class PageDetailsFragment extends Fragment {
     private Button saveSettingsButton;
     private Button deleteButton;
     private Switch trackingSwitch;
+    private ProgressBar progressBar;
     private PackageManager packageManager;
     private Page page;
     private Bundle bundle;
@@ -72,6 +74,7 @@ public class PageDetailsFragment extends Fragment {
         saveSettingsButton = (Button) view.findViewById(R.id.details_save_settings_button);
         deleteButton = (Button) view.findViewById(R.id.delete_page_button);
         notesEditText = (EditText) view.findViewById(R.id.details_notes_et);
+        progressBar = (ProgressBar) view.findViewById(R.id.details_page_progressbar);
     }
 
     @Override
@@ -109,7 +112,9 @@ public class PageDetailsFragment extends Fragment {
         String title = String.valueOf(pageTitle.getText());
         boolean isActive = trackingSwitch.isChecked();
         String notes = String.valueOf(notesEditText.getText());
+        progressBar.setVisibility(View.VISIBLE);
         databaseHelper.savePageSettings(page,title,notes,isActive);
+        progressBar.setVisibility(View.GONE);
     }
 
     public void deletePage(){

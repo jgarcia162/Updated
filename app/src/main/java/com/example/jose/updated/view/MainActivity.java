@@ -100,7 +100,6 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
         } else if (loginSkipped) {
             allPages = databaseHelper.getAllPages();
         } else {
-
             Realm realm = Realm.getDefaultInstance();
             realm.beginTransaction();
             realm.deleteAll();
@@ -241,8 +240,6 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
     public void onBackPressed() {
         if (adapter.getSelectedItemCount() > 0) {
             adapter.deselectAll();
-        } else {
-            super.onBackPressed();
         }
     }
 
