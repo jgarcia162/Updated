@@ -114,7 +114,9 @@ public class PageDetailsFragment extends Fragment {
         String notes = String.valueOf(notesEditText.getText());
         progressBar.setVisibility(View.VISIBLE);
         databaseHelper.savePageSettings(page,title,notes,isActive);
+        databaseHelper.updateFirebaseContents();
         progressBar.setVisibility(View.GONE);
+        getActivity().onBackPressed();
     }
 
     public void deletePage(){

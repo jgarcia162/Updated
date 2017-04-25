@@ -1,6 +1,7 @@
 package com.example.jose.updated.controller;
 
 import android.content.Context;
+import android.os.AsyncTask;
 
 import com.example.jose.updated.model.Page;
 import com.google.firebase.auth.FirebaseAuth;
@@ -54,11 +55,18 @@ public class DatabaseHelper {
         updateFirebaseContents();
     }
 
-    private void updateFirebaseContents() {
-        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-            databaseReference.child("pages").setValue(getAllPages());
-        }
+    public void updateFirebaseContents() {
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+                    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+                    databaseReference.child("pages").setValue(getAllPages());
+                }
+                return null;
+            }
+        };
+
     }
 
     public void addToUpdatedPages(Page page) {
@@ -85,6 +93,7 @@ public class DatabaseHelper {
         } finally {
             realm.commitTransaction();
             realm.close();
+            updateFirebaseContents();
         }
     }
 
@@ -104,10 +113,19 @@ public class DatabaseHelper {
         Realm realm = Realm.getDefaultInstance();
         Page pageToDelete = getPage(page);
         realm.beginTransaction();
+        pageToDelete.setIsActive(false);
+        realm.commitTransaction();
+        realm.close();
+        updateFirebaseContents();
+
+    }public void deletePage(Page page) {
+        Realm realm = Realm.getDefaultInstance();
+        Page pageToDelete = getPage(page);
+        realm.beginTransaction();
         pageToDelete.deleteFromRealm();
         realm.commitTransaction();
         realm.close();
-
+        updateFirebaseContents();
     }
 
     public int getSizeOfUpdatedPages() {
@@ -153,7 +171,7 @@ public class DatabaseHelper {
             newPage.setContents(refresher.downloadHtml(newPage));
             newPage.setTimeOfLastUpdateInMilliSec(new Date().getTime());
             newPage.setIsActive(true);
-            addToAllPages(newPage);
+            addToPagesToTrack(newPage);
         } catch (Exception e) {
             e.printStackTrace();
         }

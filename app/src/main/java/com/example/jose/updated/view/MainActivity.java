@@ -99,20 +99,29 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
             allPages = new ArrayList<>();
         } else if (loginSkipped) {
             allPages = databaseHelper.getAllPages();
+            Log.d("SKIPPED LOGIN", "loadPages: ");
         } else {
-            Realm realm = Realm.getDefaultInstance();
-            realm.beginTransaction();
-            realm.deleteAll();
-            realm.commitTransaction();
-            realm.close();
+            Log.d("LOADING FIREBASE", "loadPages: ");
+            //TODO put this in a new thread
+            Runnable runnable = new Runnable() {
+                @Override
+                public void run() {
+                    Realm realm = Realm.getDefaultInstance();
+                    realm.beginTransaction();
+                    realm.deleteAll();
+                    realm.commitTransaction();
+                    realm.close();
 
-            if (databaseReference.child("pages").getKey() == null) {
-                databaseReference.child("pages").setValue(new ArrayList<>());
-            }
-            allPages = new ArrayList<>();
-            loadPagesFromFirebase();
+                    if (databaseReference.child("pages") == null) {
+                        databaseReference.child("pages").setValue(new ArrayList<>());
+                    }
+                    allPages = new ArrayList<>();
+                    loadPagesFromFirebase();
+                    setupRecyclerView();
+                }
+            };
+            runnable.run();
         }
-        setupRecyclerView();
     }
 
     private void assignFields() {
@@ -131,7 +140,7 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    databaseHelper.addToAllPages(snapshot.getValue(Page.class));
+                    databaseHelper.addToPagesToTrack(snapshot.getValue(Page.class));
                 }
                 adapter.notifyDataSetChanged();
                 progressBar.setVisibility(View.GONE);
@@ -170,7 +179,7 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
                         pagesToDelete.add(allPages.get(i));
                     }
                     for (Page pageToDelete : pagesToDelete) {
-                        databaseHelper.removeFromPagesToTrack(pageToDelete);
+                        databaseHelper.deletePage(pageToDelete);
                     }
                     adapter.notifyDataSetChanged();
                     toolbar.postInvalidate();
@@ -188,7 +197,7 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
                         pagesToUntrack.add(allPages.get(i));
                     }
                     for (Page pageToUntrack : pagesToUntrack) {
-                        databaseHelper.deactivatePage(pageToUntrack);
+                        databaseHelper.removeFromPagesToTrack(pageToUntrack);
                     }
                     adapter.notifyDataSetChanged();
                 }
@@ -369,5 +378,6 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
         }
         return super.onOptionsItemSelected(item);
     }
+
 }
 
