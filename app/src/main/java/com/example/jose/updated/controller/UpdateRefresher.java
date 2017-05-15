@@ -25,6 +25,10 @@ public class UpdateRefresher {
         DatabaseHelper databaseHelper = new DatabaseHelper();
         List<Page> allPages = databaseHelper.getAllPages();
         for (Page page : allPages) {
+            if(page.getTitle().equals("Suicide Project")){
+//                Log.d(TAG, "refreshUpdate: "+page.getContents());
+                System.out.println(page.getContents());
+            }
             if (!page.isUpdated()) {
                 if (isPageUpdated(page)) {
                     databaseHelper.addToUpdatedPages(page);

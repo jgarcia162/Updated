@@ -20,13 +20,21 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.jose.updated.BuildConfig;
 import com.example.jose.updated.R;
 import com.example.jose.updated.controller.DatabaseHelper;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
@@ -34,6 +42,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 import static android.view.View.GONE;
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
+import static com.example.jose.updated.model.UpdatedConstants.GOOGLE_SIGN_IN_REQUEST_CODE;
 
 /**
  * Created by Joe on 4/2/17.
@@ -97,7 +106,7 @@ public class LoginActivity extends AppCompatActivity implements DialogInterface.
     private void openMainActivity() {
         Intent intent = new Intent(getBaseContext(), MainActivity.class);
         intent.putExtra("loginSkipped", loginSkipped);
-        if(loggingInDialog.isShowing()){
+        if (loggingInDialog.isShowing()) {
             loggingInDialog.dismiss();
         }
         startActivity(intent);
@@ -152,7 +161,6 @@ public class LoginActivity extends AppCompatActivity implements DialogInterface.
                     } else {
                         loginWithEmail(email, password);
                     }
-                    loggingInDialog.show();
                 }
             }
         });
@@ -198,7 +206,7 @@ public class LoginActivity extends AppCompatActivity implements DialogInterface.
     public void onBackPressed() {
         if (loginFieldsHidden) {
             super.onBackPressed();
-        }else{
+        } else {
             hideEditTextAndShowButtons();
             loginFieldsHidden = true;
         }
@@ -278,6 +286,7 @@ public class LoginActivity extends AppCompatActivity implements DialogInterface.
     }
 
     private void loginWithEmail(final String email, String password) {
+        loggingInDialog.show();
         if (firebaseAuth.getCurrentUser() != null) {
             showUserAlreadyLoggedInDialog();
         } else {
@@ -299,11 +308,11 @@ public class LoginActivity extends AppCompatActivity implements DialogInterface.
         }
     }
 
-    private AlertDialog createLoggingInDialog(){
+    private AlertDialog createLoggingInDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.CustomDialogStyle);
         AlertDialog dialog = builder.create();
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        dialog.setView(dialog.getLayoutInflater().inflate(R.layout.logging_in_dialog,null));
+        dialog.setView(dialog.getLayoutInflater().inflate(R.layout.logging_in_dialog, null));
         dialog.setOnDismissListener(this);
         return dialog;
     }
@@ -331,7 +340,7 @@ public class LoginActivity extends AppCompatActivity implements DialogInterface.
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.setOnDismissListener(this);
         dialog.show();
-        if(loggingInDialog.isShowing()){
+        if (loggingInDialog.isShowing()) {
             loggingInDialog.dismiss();
         }
     }
@@ -355,8 +364,53 @@ public class LoginActivity extends AppCompatActivity implements DialogInterface.
     }
 
     private void loginWithGoogle() {
+        loggingInDialog.show();
+        GoogleApiClient.Builder clientBuilder = new GoogleApiClient.Builder(getBaseContext());
+        GoogleApiClient googleApiClient = clientBuilder.build();
+        GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(BuildConfig.defaultWebClientId)
+                .requestEmail()
+                .build();
+        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
+        startActivityForResult(signInIntent,GOOGLE_SIGN_IN_REQUEST_CODE);
 
     }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+        if (requestCode == GOOGLE_SIGN_IN_REQUEST_CODE) {
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            if (result.isSuccess()) {
+                // Google Sign In was successful, authenticate with Firebase
+                GoogleSignInAccount account = result.getSignInAccount();
+                firebaseAuthWithGoogle(account);
+            } else {
+                // Google Sign In failed, update UI appropriately
+                // ...
+                showLoginFailedDialog();
+            }
+        }
+    }
+
+    private void firebaseAuthWithGoogle(GoogleSignInAccount account) {
+        AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
+        firebaseAuth.signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        // If sign in fails, display a message to the user. If sign in succeeds
+                        // the auth state listener will be notified and logic to handle the
+                        // signed in user can be handled in the listener.
+                        openMainActivity();
+                        if (!task.isSuccessful()) {
+                            showLoginFailedDialog();
+                        }
+                    }
+                });
+    }
+
 
     @Override
     protected void onStart() {
@@ -396,7 +450,7 @@ public class LoginActivity extends AppCompatActivity implements DialogInterface.
 
     @Override
     public void onDismiss(DialogInterface dialog) {
-        if(loggingInDialog.isShowing()){
+        if (loggingInDialog.isShowing()) {
             loggingInDialog.dismiss();
         }
     }

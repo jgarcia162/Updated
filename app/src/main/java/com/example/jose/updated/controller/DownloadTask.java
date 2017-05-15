@@ -21,6 +21,7 @@ class DownloadTask extends AsyncTask<String,Void,String>{
             URL url = new URL(strings[0]);
             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
             BufferedReader reader = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
+
             StringBuilder builder = new StringBuilder();
             String line;
             while((line = reader.readLine()) != null){
@@ -36,6 +37,7 @@ class DownloadTask extends AsyncTask<String,Void,String>{
 
     @Override
     protected void onPostExecute(String taskResult) {
+
     }
 
 

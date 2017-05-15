@@ -24,7 +24,7 @@
             style="@style/UpdatedButtonsStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_above="@id/reset_defaults_button"
+            android:layout_above="@+id/reset_defaults_button"
             android:text="@string/save_settings_text" />
 
         <Button

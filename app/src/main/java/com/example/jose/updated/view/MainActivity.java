@@ -1,13 +1,17 @@
 package com.example.jose.updated.view;
 
 import android.app.FragmentManager;
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
@@ -69,7 +73,9 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
     private boolean firstTime;
     private boolean loginSkipped;
     private List<Page> allPages;
+    private SharedPreferences preferences;
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,7 +83,7 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
         firstTime = getSharedPreferences(UpdatedConstants.PREFS_NAME, 0).getBoolean(UpdatedConstants.FIRST_TIME_PREF_TAG, true);
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
 
-        assignFields();
+        initializeFields();
 
         Log.d("FIREBASE USER", "onCreate: " + (firebaseUser == null));
 
@@ -86,12 +92,22 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
 
         localBroadcastManager.registerReceiver(updateBroadcastReceiver, new IntentFilter("com.example.jose.updated.controller.CUSTOM_INTENT"));
 
-        Intent serviceIntent = new Intent(getApplicationContext(), NotificationService.class);
-        startService(serviceIntent);
-
-        getSharedPreferences(UpdatedConstants.PREFS_NAME, 0).edit().putBoolean(UpdatedConstants.FIRST_TIME_PREF_TAG, false).apply();
+        startJobService();
+        preferences = getSharedPreferences(UpdatedConstants.PREFS_NAME, 0);
+        preferences.edit().putBoolean(UpdatedConstants.FIRST_TIME_PREF_TAG, false).apply();
 
         setButtonClickListeners();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void startJobService() {
+        ComponentName serviceName = new ComponentName(getApplicationContext(), NotificationService.class);
+        JobInfo jobInfo = new JobInfo.Builder(1, serviceName)
+                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED)
+                .setPeriodic(10000)//preferences.getLong(UPDATE_FREQUENCY_PREF_TAG, DEFAULT_UPDATE_FREQUENCY))
+                .build();
+        JobScheduler scheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        scheduler.schedule(jobInfo);
     }
 
     private void loadPages() {
@@ -99,27 +115,33 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
             allPages = new ArrayList<>();
         } else if (loginSkipped) {
             allPages = databaseHelper.getAllPages();
+            setupRecyclerView();
+            Log.d("SKIPPED LOGIN", "loadPages: ");
         } else {
-
+            Log.d("LOADING FIREBASE", "loadPages: ");
+            //TODO put this in a new thread
             Realm realm = Realm.getDefaultInstance();
             realm.beginTransaction();
             realm.deleteAll();
             realm.commitTransaction();
             realm.close();
 
-            if (databaseReference.child("pages").getKey() == null) {
+            if (databaseReference.child("pages") == null) {
                 databaseReference.child("pages").setValue(new ArrayList<>());
             }
+
             allPages = new ArrayList<>();
+            setupRecyclerView();
             loadPagesFromFirebase();
         }
-        setupRecyclerView();
     }
 
-    private void assignFields() {
+
+    private void initializeFields() {
         updateBroadcastReceiver = new UpdateBroadcastReceiver(this);
         fragmentManager = getFragmentManager();
         databaseHelper = new DatabaseHelper();
+
         if (!loginSkipped) {
             databaseReference = FirebaseDatabase.getInstance().getReference();
             firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -132,17 +154,19 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    databaseHelper.addToAllPages(snapshot.getValue(Page.class));
+                    databaseHelper.addToPagesToTrack(snapshot.getValue(Page.class));
                 }
-                adapter.notifyDataSetChanged();
                 progressBar.setVisibility(View.GONE);
+                adapter.notifyDataSetChanged();
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
+                Log.d("DATABASE ERROR", "onCancelled: " + databaseError.getDetails());
+                Log.d("DATABASE ERROR", "onCancelled: " + databaseError.getMessage());
             }
         });
+
     }
 
     private void setButtonClickListeners() {
@@ -171,7 +195,7 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
                         pagesToDelete.add(allPages.get(i));
                     }
                     for (Page pageToDelete : pagesToDelete) {
-                        databaseHelper.removeFromPagesToTrack(pageToDelete);
+                        databaseHelper.deletePage(pageToDelete);
                     }
                     adapter.notifyDataSetChanged();
                     toolbar.postInvalidate();
@@ -189,7 +213,7 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
                         pagesToUntrack.add(allPages.get(i));
                     }
                     for (Page pageToUntrack : pagesToUntrack) {
-                        databaseHelper.deactivatePage(pageToUntrack);
+                        databaseHelper.removeFromPagesToTrack(pageToUntrack);
                     }
                     adapter.notifyDataSetChanged();
                 }
@@ -241,8 +265,6 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
     public void onBackPressed() {
         if (adapter.getSelectedItemCount() > 0) {
             adapter.deselectAll();
-        } else {
-            super.onBackPressed();
         }
     }
 
@@ -290,7 +312,7 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
         if (addPagesTextView.getVisibility() != View.GONE) {
             addPagesTextView.setVisibility(View.GONE);
         }
-        adapter.notifyItemInserted(adapter.getItemCount() - 1);
+        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -372,5 +394,6 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
         }
         return super.onOptionsItemSelected(item);
     }
+
 }
 

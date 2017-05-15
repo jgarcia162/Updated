@@ -1,6 +1,8 @@
 package com.example.jose.updated.controller;
 
 import android.content.Context;
+import android.os.AsyncTask;
+import android.util.Log;
 
 import com.example.jose.updated.model.Page;
 import com.google.firebase.auth.FirebaseAuth;
@@ -50,14 +52,29 @@ public class DatabaseHelper {
         realm.copyToRealmOrUpdate(page);
         realm.commitTransaction();
         realm.close();
-        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-            updateFirebaseContents();
-        }
+        addToPagesToTrack(page);
+        updateFirebaseContents();
     }
 
-    private void updateFirebaseContents() {
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-        databaseReference.child("pages").setValue(getAllPages());
+    public void updateFirebaseContents() {
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+                    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+                    databaseReference.child("pages").setValue(getAllPages());
+                }
+                Log.d("DONE ADDING", "doInBackground: ");
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                Log.d("DONE ADDING", "doInBackground: ");
+            }
+        };
+
     }
 
     public void addToUpdatedPages(Page page) {
@@ -84,6 +101,7 @@ public class DatabaseHelper {
         } finally {
             realm.commitTransaction();
             realm.close();
+            updateFirebaseContents();
         }
     }
 
@@ -103,12 +121,21 @@ public class DatabaseHelper {
         Realm realm = Realm.getDefaultInstance();
         Page pageToDelete = getPage(page);
         realm.beginTransaction();
+        pageToDelete.setIsActive(false);
+        realm.commitTransaction();
+        realm.close();
+        updateFirebaseContents();
+
+    }
+
+    public void deletePage(Page page) {
+        Realm realm = Realm.getDefaultInstance();
+        Page pageToDelete = getPage(page);
+        realm.beginTransaction();
         pageToDelete.deleteFromRealm();
         realm.commitTransaction();
         realm.close();
-        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-            updateFirebaseContents();
-        }
+        updateFirebaseContents();
     }
 
     public int getSizeOfUpdatedPages() {
@@ -155,7 +182,6 @@ public class DatabaseHelper {
             newPage.setTimeOfLastUpdateInMilliSec(new Date().getTime());
             newPage.setIsActive(true);
             addToPagesToTrack(newPage);
-            addToAllPages(newPage);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -175,6 +201,9 @@ public class DatabaseHelper {
         realm.copyToRealmOrUpdate(pageToUpdate);
         realm.commitTransaction();
         realm.close();
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            updateFirebaseContents();
+        }
     }
 
     public void savePageSettings(Page page, String title, String notes, boolean isActive) {
@@ -187,6 +216,9 @@ public class DatabaseHelper {
         realm.copyToRealmOrUpdate(pageToUpdate);
         realm.commitTransaction();
         realm.close();
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            updateFirebaseContents();
+        }
     }
 
     public void emptyDatabase() {

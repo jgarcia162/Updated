@@ -17,4 +17,5 @@ public class UpdatedConstants {
     public static final String STOP_NOTIFICATION_PREF_TAG = "stop_notifications";
     public static final String SPINNER_NUMBER_PREF_TAG = "spinner_number";
     public static final int DEFAULT_SPINNER_NUMBER = 24;
+    public static final int GOOGLE_SIGN_IN_REQUEST_CODE = 2;
 }
