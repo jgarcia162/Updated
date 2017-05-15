@@ -77,7 +77,7 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
         firstTime = getSharedPreferences(UpdatedConstants.PREFS_NAME, 0).getBoolean(UpdatedConstants.FIRST_TIME_PREF_TAG, true);
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
 
-        assignFields();
+        initializeFields();
 
         Log.d("FIREBASE USER", "onCreate: " + (firebaseUser == null));
 
@@ -99,35 +99,33 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
             allPages = new ArrayList<>();
         } else if (loginSkipped) {
             allPages = databaseHelper.getAllPages();
+            setupRecyclerView();
             Log.d("SKIPPED LOGIN", "loadPages: ");
         } else {
             Log.d("LOADING FIREBASE", "loadPages: ");
             //TODO put this in a new thread
-            Runnable runnable = new Runnable() {
-                @Override
-                public void run() {
-                    Realm realm = Realm.getDefaultInstance();
-                    realm.beginTransaction();
-                    realm.deleteAll();
-                    realm.commitTransaction();
-                    realm.close();
+            Realm realm = Realm.getDefaultInstance();
+            realm.beginTransaction();
+            realm.deleteAll();
+            realm.commitTransaction();
+            realm.close();
 
-                    if (databaseReference.child("pages") == null) {
-                        databaseReference.child("pages").setValue(new ArrayList<>());
-                    }
-                    allPages = new ArrayList<>();
-                    loadPagesFromFirebase();
-                    setupRecyclerView();
-                }
-            };
-            runnable.run();
+            if (databaseReference.child("pages") == null) {
+                databaseReference.child("pages").setValue(new ArrayList<>());
+            }
+
+            allPages = new ArrayList<>();
+            setupRecyclerView();
+            loadPagesFromFirebase();
         }
     }
 
-    private void assignFields() {
+
+    private void initializeFields() {
         updateBroadcastReceiver = new UpdateBroadcastReceiver(this);
         fragmentManager = getFragmentManager();
         databaseHelper = new DatabaseHelper();
+
         if (!loginSkipped) {
             databaseReference = FirebaseDatabase.getInstance().getReference();
             firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -142,15 +140,17 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     databaseHelper.addToPagesToTrack(snapshot.getValue(Page.class));
                 }
-                adapter.notifyDataSetChanged();
                 progressBar.setVisibility(View.GONE);
+                adapter.notifyDataSetChanged();
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
+                Log.d("DATABASE ERROR", "onCancelled: " + databaseError.getDetails());
+                Log.d("DATABASE ERROR", "onCancelled: " + databaseError.getMessage());
             }
         });
+
     }
 
     private void setButtonClickListeners() {
@@ -296,7 +296,7 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
         if (addPagesTextView.getVisibility() != View.GONE) {
             addPagesTextView.setVisibility(View.GONE);
         }
-        adapter.notifyItemInserted(adapter.getItemCount() - 1);
+        adapter.notifyDataSetChanged();
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.example.jose.updated.controller;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.example.jose.updated.model.Page;
 import com.google.firebase.auth.FirebaseAuth;
@@ -63,7 +64,14 @@ public class DatabaseHelper {
                     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
                     databaseReference.child("pages").setValue(getAllPages());
                 }
+                Log.d("DONE ADDING", "doInBackground: ");
                 return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                Log.d("DONE ADDING", "doInBackground: ");
             }
         };
 
@@ -118,7 +126,9 @@ public class DatabaseHelper {
         realm.close();
         updateFirebaseContents();
 
-    }public void deletePage(Page page) {
+    }
+
+    public void deletePage(Page page) {
         Realm realm = Realm.getDefaultInstance();
         Page pageToDelete = getPage(page);
         realm.beginTransaction();
@@ -191,6 +201,9 @@ public class DatabaseHelper {
         realm.copyToRealmOrUpdate(pageToUpdate);
         realm.commitTransaction();
         realm.close();
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            updateFirebaseContents();
+        }
     }
 
     public void savePageSettings(Page page, String title, String notes, boolean isActive) {
@@ -203,9 +216,9 @@ public class DatabaseHelper {
         realm.copyToRealmOrUpdate(pageToUpdate);
         realm.commitTransaction();
         realm.close();
-//        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-//            updateFirebaseContents();
-//        }
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            updateFirebaseContents();
+        }
     }
 
     public void emptyDatabase() {

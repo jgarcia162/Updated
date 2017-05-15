@@ -202,6 +202,7 @@ public class SettingsFragment extends Fragment {
             preferences.edit().putBoolean(STOP_NOTIFICATION_PREF_TAG, !stopNotifications).apply();
             Toast.makeText(getContext(), R.string.settings_saved_text, Toast.LENGTH_SHORT).show();
         }
+        getActivity().onBackPressed();
     }
 
     private int getIndex(Spinner spinner, String myString) {

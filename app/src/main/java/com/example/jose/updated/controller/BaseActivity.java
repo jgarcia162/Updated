@@ -8,6 +8,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
@@ -24,8 +25,11 @@ import com.example.jose.updated.view.LoginActivity;
 import com.example.jose.updated.view.SecondActivity;
 import com.google.firebase.auth.FirebaseAuth;
 
+import io.realm.DynamicRealm;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
+import io.realm.RealmMigration;
+import io.realm.RealmSchema;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
@@ -45,6 +49,15 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Realm.init(getBaseContext());
+        RealmConfiguration config = new RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().build();
+
+//        RealmConfiguration config = new RealmConfiguration.Builder().schemaVersion(2).migration(getRealmMigrationWithSchema()).build();
+//        RealmMigration migration = getRealmMigrationWithSchema();
+       // Realm.deleteRealm(config);
+       // Realm.setDefaultConfiguration(config);
+        //TODO fix realm migration issue to add id field to page object
+
         CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
                 .setDefaultFontPath("fonts/ghms.ttf")
                 .setFontAttrId(R.attr.fontPath)
@@ -54,18 +67,21 @@ public abstract class BaseActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setToolbar();
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
-        Realm.init(getBaseContext());
-        Realm realm;
-        try{
-            realm = Realm.getDefaultInstance();
 
-        }catch (Exception e){
-            // Get a Realm instance for this thread
-            RealmConfiguration config = new RealmConfiguration.Builder().deleteRealmIfMigrationNeeded()
-                    .build();
-            realm = Realm.getInstance(config);
+    }
 
-        }
+    @NonNull
+    private RealmMigration getRealmMigrationWithSchema() {
+        return new RealmMigration() {
+                @Override
+                public void migrate(DynamicRealm realm, long oldVersion, long newVersion) {
+                    RealmSchema schema = realm.getSchema();
+                    if(oldVersion == 1){
+                        schema.get("Page").addField("idKey",int.class);
+                        oldVersion++;
+                    }
+                }
+            };
     }
 
     @Override
