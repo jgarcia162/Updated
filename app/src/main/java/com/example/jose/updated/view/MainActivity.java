@@ -1,13 +1,17 @@
 package com.example.jose.updated.view;
 
 import android.app.FragmentManager;
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
@@ -69,7 +73,9 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
     private boolean firstTime;
     private boolean loginSkipped;
     private List<Page> allPages;
+    private SharedPreferences preferences;
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,12 +92,22 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
 
         localBroadcastManager.registerReceiver(updateBroadcastReceiver, new IntentFilter("com.example.jose.updated.controller.CUSTOM_INTENT"));
 
-        Intent serviceIntent = new Intent(getApplicationContext(), NotificationService.class);
-        startService(serviceIntent);
-
-        getSharedPreferences(UpdatedConstants.PREFS_NAME, 0).edit().putBoolean(UpdatedConstants.FIRST_TIME_PREF_TAG, false).apply();
+        startJobService();
+        preferences = getSharedPreferences(UpdatedConstants.PREFS_NAME, 0);
+        preferences.edit().putBoolean(UpdatedConstants.FIRST_TIME_PREF_TAG, false).apply();
 
         setButtonClickListeners();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void startJobService() {
+        ComponentName serviceName = new ComponentName(getApplicationContext(), NotificationService.class);
+        JobInfo jobInfo = new JobInfo.Builder(1, serviceName)
+                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED)
+                .setPeriodic(10000)//preferences.getLong(UPDATE_FREQUENCY_PREF_TAG, DEFAULT_UPDATE_FREQUENCY))
+                .build();
+        JobScheduler scheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        scheduler.schedule(jobInfo);
     }
 
     private void loadPages() {
