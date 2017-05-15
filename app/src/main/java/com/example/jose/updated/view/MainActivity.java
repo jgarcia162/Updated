@@ -33,7 +33,7 @@ import com.example.jose.updated.R;
 import com.example.jose.updated.controller.BaseActivity;
 import com.example.jose.updated.controller.ButtonListener;
 import com.example.jose.updated.controller.DatabaseHelper;
-import com.example.jose.updated.controller.NotificationService;
+import com.example.jose.updated.controller.NotificationJobService;
 import com.example.jose.updated.controller.PageAdapter;
 import com.example.jose.updated.controller.UpdateBroadcastReceiver;
 import com.example.jose.updated.controller.UpdateRefresher;
@@ -52,6 +52,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.Realm;
+
+import static com.example.jose.updated.model.UpdatedConstants.DEFAULT_UPDATE_FREQUENCY;
+import static com.example.jose.updated.model.UpdatedConstants.UPDATE_FREQUENCY_PREF_TAG;
 
 public class MainActivity extends BaseActivity implements UpdatedCallback, SwipeRefreshLayout.OnRefreshListener, ButtonListener {
     private FirebaseUser firebaseUser;
@@ -101,10 +104,10 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void startJobService() {
-        ComponentName serviceName = new ComponentName(getApplicationContext(), NotificationService.class);
+        ComponentName serviceName = new ComponentName(getApplicationContext(), NotificationJobService.class);
         JobInfo jobInfo = new JobInfo.Builder(1, serviceName)
                 .setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED)
-                .setPeriodic(10000)//preferences.getLong(UPDATE_FREQUENCY_PREF_TAG, DEFAULT_UPDATE_FREQUENCY))
+                .setPeriodic(preferences.getLong(UPDATE_FREQUENCY_PREF_TAG, DEFAULT_UPDATE_FREQUENCY))
                 .build();
         JobScheduler scheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
         scheduler.schedule(jobInfo);
