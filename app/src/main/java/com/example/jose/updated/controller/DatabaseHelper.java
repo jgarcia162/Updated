@@ -1,7 +1,7 @@
 package com.example.jose.updated.controller;
 
 import android.content.Context;
-import android.os.AsyncTask;
+import android.os.Handler;
 import android.util.Log;
 
 import com.example.jose.updated.model.Page;
@@ -57,24 +57,18 @@ public class DatabaseHelper {
     }
 
     public void updateFirebaseContents() {
-        new AsyncTask<Void, Void, Void>() {
+        Handler handler = new Handler();
+        Runnable runnable = new Runnable() {
             @Override
-            protected Void doInBackground(Void... params) {
+            public void run() {
                 if (FirebaseAuth.getInstance().getCurrentUser() != null) {
                     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
                     databaseReference.child("pages").setValue(getAllPages());
                 }
                 Log.d("DONE ADDING", "doInBackground: ");
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
-                Log.d("DONE ADDING", "doInBackground: ");
             }
         };
-
+        handler.post(runnable);
     }
 
     public void addToUpdatedPages(Page page) {

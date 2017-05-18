@@ -61,6 +61,10 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
     private DatabaseReference databaseReference;
     private FragmentManager fragmentManager;
     private PageAdapter adapter;
+    private DatabaseHelper databaseHelper;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private UpdateBroadcastReceiver updateBroadcastReceiver;
+    private SharedPreferences preferences;
     private RecyclerView recyclerView;
     private TextView addPagesTextView;
     private Button selectAllButton;
@@ -68,15 +72,11 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
     private Button untrackButton;
     private ProgressBar progressBar;
     private ViewGroup buttonLayout;
-    private DatabaseHelper databaseHelper;
-    private SwipeRefreshLayout swipeRefreshLayout;
-    private UpdateBroadcastReceiver updateBroadcastReceiver;
     private boolean buttonsHidden = true;
     private boolean selectAllClicked = false;
     private boolean firstTime;
     private boolean loginSkipped;
     private List<Page> allPages;
-    private SharedPreferences preferences;
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -95,9 +95,10 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
 
         localBroadcastManager.registerReceiver(updateBroadcastReceiver, new IntentFilter("com.example.jose.updated.controller.CUSTOM_INTENT"));
 
-        startJobService();
         preferences = getSharedPreferences(UpdatedConstants.PREFS_NAME, 0);
         preferences.edit().putBoolean(UpdatedConstants.FIRST_TIME_PREF_TAG, false).apply();
+        startJobService();
+
 
         setButtonClickListeners();
     }
