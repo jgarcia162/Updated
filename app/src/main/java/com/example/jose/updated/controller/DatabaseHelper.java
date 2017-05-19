@@ -64,8 +64,8 @@ public class DatabaseHelper {
                 if (FirebaseAuth.getInstance().getCurrentUser() != null) {
                     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
                     databaseReference.child("pages").setValue(getAllPages());
-                }
                 Log.d("DONE ADDING", "doInBackground: ");
+                }
             }
         };
         handler.post(runnable);
@@ -95,7 +95,8 @@ public class DatabaseHelper {
         } finally {
             realm.commitTransaction();
             realm.close();
-            updateFirebaseContents();
+            //TODO update contents another way
+//            updateFirebaseContents();
         }
     }
 
@@ -179,7 +180,6 @@ public class DatabaseHelper {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     public Page getPageFromUrl(String pageUrl) {

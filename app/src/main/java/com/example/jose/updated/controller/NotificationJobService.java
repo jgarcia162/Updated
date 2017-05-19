@@ -44,7 +44,6 @@ public class NotificationJobService extends JobService {
 
     }
 
-
     @Override
     public void onCreate() {
         super.onCreate();

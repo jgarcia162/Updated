@@ -11,6 +11,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.RequiresApi;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -88,8 +89,6 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
 
         initializeFields();
 
-        Log.d("FIREBASE USER", "onCreate: " + (firebaseUser == null));
-
         setupViews();
         loadPages();
 
@@ -122,21 +121,29 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
             setupRecyclerView();
             Log.d("SKIPPED LOGIN", "loadPages: ");
         } else {
+            Handler handler = new Handler();
+            Runnable runnable = new Runnable() {
+                @Override
+                public void run() {
+
+                    Realm realm = Realm.getDefaultInstance();
+                    realm.beginTransaction();
+                    realm.deleteAll();
+                    realm.commitTransaction();
+                    realm.close();
+
+                    if (databaseReference.child("pages") == null) {
+                        databaseReference.child("pages").setValue(new ArrayList<>());
+                    }
+
+                    allPages = new ArrayList<>();
+                    setupRecyclerView();
+                    loadPagesFromFirebase();
+                }
+            };
+            handler.post(runnable);
             Log.d("LOADING FIREBASE", "loadPages: ");
             //TODO put this in a new thread
-            Realm realm = Realm.getDefaultInstance();
-            realm.beginTransaction();
-            realm.deleteAll();
-            realm.commitTransaction();
-            realm.close();
-
-            if (databaseReference.child("pages") == null) {
-                databaseReference.child("pages").setValue(new ArrayList<>());
-            }
-
-            allPages = new ArrayList<>();
-            setupRecyclerView();
-            loadPagesFromFirebase();
         }
     }
 
@@ -158,6 +165,7 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    //TODO
                     databaseHelper.addToPagesToTrack(snapshot.getValue(Page.class));
                 }
                 progressBar.setVisibility(View.GONE);
