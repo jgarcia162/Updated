@@ -138,4 +138,8 @@ public class PageAdapter extends MultiChoiceAdapter<PageViewHolder>{
         Page page = listOfPages.get(position);
         openInBrowser(page, holder);
     }
+
+    public void setData(List<Page> data){
+        listOfPages = data;
+    }
 }

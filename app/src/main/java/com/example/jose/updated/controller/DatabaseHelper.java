@@ -64,7 +64,7 @@ public class DatabaseHelper {
                 if (FirebaseAuth.getInstance().getCurrentUser() != null) {
                     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
                     databaseReference.child("pages").setValue(getAllPages());
-                Log.d("DONE ADDING", "doInBackground: ");
+                    Log.d("DONE ADDING", "doInBackground: ");
                 }
             }
         };
@@ -96,20 +96,22 @@ public class DatabaseHelper {
             realm.commitTransaction();
             realm.close();
             //TODO update contents another way
-//            updateFirebaseContents();
+            updateFirebaseContents();
         }
     }
 
     public void removeFromUpdatedPages(Page page) {
-        Realm realm = Realm.getDefaultInstance();
-        Page pageToRemove = realm.where(Page.class)
-                .equalTo("title", page.getTitle())
-                .findFirst();
-        realm.beginTransaction();
-        pageToRemove.setUpdated(false);
-        realm.copyToRealmOrUpdate(pageToRemove);
-        realm.commitTransaction();
-        realm.close();
+        if (page.isUpdated()) {
+            Realm realm = Realm.getDefaultInstance();
+            Page pageToRemove = realm.where(Page.class)
+                    .equalTo("title", page.getTitle())
+                    .findFirst();
+            realm.beginTransaction();
+            pageToRemove.setUpdated(false);
+            realm.copyToRealmOrUpdate(pageToRemove);
+            realm.commitTransaction();
+            realm.close();
+        }
     }
 
     public void removeFromPagesToTrack(Page page) {
@@ -176,7 +178,7 @@ public class DatabaseHelper {
             newPage.setContents(refresher.downloadHtml(newPage));
             newPage.setTimeOfLastUpdateInMilliSec(new Date().getTime());
             newPage.setIsActive(true);
-            addToPagesToTrack(newPage);
+            addToAllPages(newPage);
         } catch (Exception e) {
             e.printStackTrace();
         }
