@@ -25,6 +25,8 @@ import com.example.jose.updated.model.Page;
 
 import java.util.Date;
 
+import io.realm.Realm;
+
 public class AddPageDialogFragment extends DialogFragment {
     private Button addPageButton, previewButton;
     private WebView pagePreviewWebView;
@@ -104,7 +106,7 @@ public class AddPageDialogFragment extends DialogFragment {
                 if (TextUtils.isEmpty(titleText)) {
                     titleText = getString(R.string.untitled_page_text);
                 }
-                databaseHelper.createPage(titleText, urlText, new Date().getTime());
+                createAndAddNewPage(urlText, titleText, new Date().getTime());
                 newPage = null;
                 resetTextFields();
                 this.dismiss();
@@ -116,12 +118,21 @@ public class AddPageDialogFragment extends DialogFragment {
                 Toast.makeText(getActivity(), R.string.invalid_url_string, Toast.LENGTH_SHORT).show();
                 return;
             }
-            databaseHelper.createPage(newPage.getTitle(), newPage.getPageUrl(), newPage.getTimeOfLastUpdateInMilliSec());
+            createAndAddNewPage(newPage.getPageUrl(), newPage.getTitle(), newPage.getTimeOfLastUpdateInMilliSec());
             newPage = null;
             resetTextFields();
             this.dismiss();
         }
         callback.onItemInserted();
+    }
+
+    private void createAndAddNewPage(String urlText, String titleText, long updateTime) {
+        Page page = new Page();
+        page.setTitle(titleText);
+        page.setPageUrl(urlText);
+        page.setTimeOfLastUpdateInMilliSec(updateTime);
+        page.setIdKey((long) Realm.getDefaultInstance().where(Page.class).max("idKey") + 1);
+        databaseHelper.addToAllPages(page);
     }
 
     @Override

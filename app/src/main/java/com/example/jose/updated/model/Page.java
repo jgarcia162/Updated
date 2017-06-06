@@ -11,7 +11,7 @@ import io.realm.annotations.PrimaryKey;
 public class Page extends RealmObject implements Parcelable{
 
     @PrimaryKey
-    private int idKey;
+    private long idKey;
     private String pageUrl;
     private String title;
     private String contents;
@@ -27,11 +27,11 @@ public class Page extends RealmObject implements Parcelable{
     private boolean valid;
 
 
-    public int getIdKey() {
+    public long getIdKey() {
         return idKey;
     }
 
-    public void setIdKey(int idKey) {
+    public void setIdKey(long idKey) {
         this.idKey = idKey;
     }
 
@@ -172,7 +172,7 @@ public class Page extends RealmObject implements Parcelable{
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(idKey);
+        dest.writeLong(idKey);
         dest.writeString(title);
         dest.writeString(contents);
         dest.writeString(pageUrl);

@@ -166,7 +166,7 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
                 firebaseUser = firebaseAuth.getCurrentUser();
                 if (firebaseUser != null) {
                     //Todo listener not needed
-                    attachChildEventListener();
+//                    attachChildEventListener();
                 } else {
                     detachChildListener();
                 }
@@ -205,9 +205,6 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
                 for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
                     databaseHelper.addToAllPages(snapshot.getValue(Page.class));
                 }
-                // allPages.add(dataSnapshot.getValue(Page.class));
-                // adapter.setData(allPages);
-                Toast.makeText(MainActivity.this, "List size: " + allPages.size(), Toast.LENGTH_SHORT).show();
                 adapter.notifyDataSetChanged();
             }
 
@@ -310,7 +307,7 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
     private synchronized void setupRecyclerView() {
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-        adapter = new PageAdapter(this, this, databaseHelper);
+        adapter = new PageAdapter(this, this);
         adapter.setSingleClickMode(false);
         adapter.setMultiChoiceToolbar(createMultiChoiceToolbar());
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 15, true));

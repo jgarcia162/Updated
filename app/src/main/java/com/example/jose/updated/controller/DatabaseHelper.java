@@ -21,9 +21,11 @@ import io.realm.Realm;
 public class DatabaseHelper {
     private Context context;
     private UpdateRefresher refresher;
+    private Realm realm;
 
     public DatabaseHelper() {
         refresher = new UpdateRefresher();
+        realm = Realm.getDefaultInstance();
     }
 
     public DatabaseHelper(Context context) {
@@ -31,28 +33,26 @@ public class DatabaseHelper {
     }
 
     public List<Page> getAllPages() {
-        Realm realm = Realm.getDefaultInstance();
         return realm.where(Page.class).findAll();
     }
 
     public List<Page> getPagesToTrack() {
-        Realm realm = Realm.getDefaultInstance();
         return realm.where(Page.class).equalTo("isActive", true).findAll();
     }
 
     public List<Page> getUpdatedPages() {
-        Realm realm = Realm.getDefaultInstance();
-        List<Page> updatedPages = realm.where(Page.class).equalTo("isUpdated", true).findAll();
-        return updatedPages;
+        return realm.where(Page.class).equalTo("isUpdated", true).findAll();
     }
 
     public void addToAllPages(Page page) {
-        Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
-        realm.copyToRealmOrUpdate(page);
-        realm.commitTransaction();
-        realm.close();
-        addToPagesToTrack(page);
+        final Page pageToAdd = page;
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                realm.copyToRealmOrUpdate(pageToAdd);
+            }
+        });
+//        addToPagesToTrack(page);
         updateFirebaseContents();
     }
 
@@ -64,7 +64,9 @@ public class DatabaseHelper {
                 if (FirebaseAuth.getInstance().getCurrentUser() != null) {
                     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
                     databaseReference.child("pages").setValue(getAllPages());
-                    Log.d("DONE ADDING", "doInBackground: ");
+                    for (Page page : getAllPages()) {
+                        Log.d("UPDATE FB", "run: " + page.getTitle());
+                    }
                 }
             }
         };
@@ -72,15 +74,17 @@ public class DatabaseHelper {
     }
 
     public void addToUpdatedPages(Page page) {
-        Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
-        page.setTimeOfLastUpdateInMilliSec(new Date().getTime());
-        page.setUpdated(true);
-        realm.copyToRealmOrUpdate(page);
-        realm.commitTransaction();
-        List<Page> updatedPages = realm.where(Page.class).equalTo("isUpdated", true).findAll();
-        realm.close();
-        setUpdatedPages(updatedPages);
+        final Page pageToAdd = page;
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                pageToAdd.setTimeOfLastUpdateInMilliSec(new Date().getTime());
+                pageToAdd.setUpdated(true);
+                realm.copyToRealmOrUpdate(pageToAdd);
+                List<Page> updatedPages = realm.where(Page.class).equalTo("isUpdated", true).findAll();
+                setUpdatedPages(updatedPages);
+            }
+        });
     }
 
     public void addToPagesToTrack(Page page) {
@@ -122,7 +126,6 @@ public class DatabaseHelper {
         realm.commitTransaction();
         realm.close();
         updateFirebaseContents();
-
     }
 
     public void deletePage(Page page) {

@@ -52,11 +52,10 @@ public abstract class BaseActivity extends AppCompatActivity {
         Realm.init(getBaseContext());
         RealmConfiguration config = new RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().build();
 
-//        RealmConfiguration config = new RealmConfiguration.Builder().schemaVersion(2).migration(getRealmMigrationWithSchema()).build();
 //        RealmMigration migration = getRealmMigrationWithSchema();
-       // Realm.deleteRealm(config);
-       // Realm.setDefaultConfiguration(config);
-        //TODO fix realm migration issue to add id field to page object
+//        RealmConfiguration config = new RealmConfiguration.Builder().schemaVersion(0).migration(migration).build();
+//        Realm.deleteRealm(config);
+        Realm.setDefaultConfiguration(config);
 
         CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
                 .setDefaultFontPath("fonts/ghms.ttf")
@@ -76,8 +75,8 @@ public abstract class BaseActivity extends AppCompatActivity {
                 @Override
                 public void migrate(DynamicRealm realm, long oldVersion, long newVersion) {
                     RealmSchema schema = realm.getSchema();
-                    if(oldVersion == 1){
-                        schema.get("Page").addField("idKey",int.class);
+                    if(oldVersion == 0){
+                        schema.get("Page").addField("idKey",long.class);
                         oldVersion++;
                     }
                 }

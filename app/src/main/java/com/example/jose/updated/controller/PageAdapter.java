@@ -25,16 +25,15 @@ import com.example.jose.updated.view.PageViewHolder;
 import java.util.List;
 
 public class PageAdapter extends MultiChoiceAdapter<PageViewHolder>{
-    private DatabaseHelper databaseHelper;
+    private DatabaseHelper databaseHelper = new DatabaseHelper();
     private List<Page> listOfPages;
     private int lastPosition;
     private Context context;
     private ButtonListener listener;
 
-    public PageAdapter(Context context, ButtonListener listener,DatabaseHelper databaseHelper) {
+    public PageAdapter(Context context, ButtonListener listener) {
         this.context = context;
         this.listener = listener;
-        this.databaseHelper = databaseHelper;
         listOfPages = databaseHelper.getAllPages();
         lastPosition = -1;
     }
