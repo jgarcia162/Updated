@@ -11,6 +11,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -33,7 +35,7 @@ import com.example.jose.updated.R;
 import com.example.jose.updated.controller.BaseActivity;
 import com.example.jose.updated.controller.ButtonListener;
 import com.example.jose.updated.controller.DatabaseHelper;
-import com.example.jose.updated.controller.NotificationService;
+import com.example.jose.updated.controller.NotificationJobService;
 import com.example.jose.updated.controller.PageAdapter;
 import com.example.jose.updated.controller.UpdateBroadcastReceiver;
 import com.example.jose.updated.controller.UpdateRefresher;
@@ -53,11 +55,21 @@ import java.util.List;
 
 import io.realm.Realm;
 
+import static com.example.jose.updated.model.UpdatedConstants.DEFAULT_UPDATE_FREQUENCY;
+import static com.example.jose.updated.model.UpdatedConstants.UPDATE_FREQUENCY_PREF_TAG;
+
 public class MainActivity extends BaseActivity implements UpdatedCallback, SwipeRefreshLayout.OnRefreshListener, ButtonListener {
+    private FirebaseAuth firebaseAuth;
+    private FirebaseAuth.AuthStateListener authStateListener;
     private FirebaseUser firebaseUser;
     private DatabaseReference databaseReference;
+    private ValueEventListener valueEventListener;
     private FragmentManager fragmentManager;
     private PageAdapter adapter;
+    private DatabaseHelper databaseHelper;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private UpdateBroadcastReceiver updateBroadcastReceiver;
+    private SharedPreferences preferences;
     private RecyclerView recyclerView;
     private TextView addPagesTextView;
     private Button selectAllButton;
@@ -65,15 +77,11 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
     private Button untrackButton;
     private ProgressBar progressBar;
     private ViewGroup buttonLayout;
-    private DatabaseHelper databaseHelper;
-    private SwipeRefreshLayout swipeRefreshLayout;
-    private UpdateBroadcastReceiver updateBroadcastReceiver;
     private boolean buttonsHidden = true;
     private boolean selectAllClicked = false;
     private boolean firstTime;
     private boolean loginSkipped;
     private List<Page> allPages;
-    private SharedPreferences preferences;
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -85,26 +93,23 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
 
         initializeFields();
 
-        Log.d("FIREBASE USER", "onCreate: " + (firebaseUser == null));
-
         setupViews();
         loadPages();
 
         localBroadcastManager.registerReceiver(updateBroadcastReceiver, new IntentFilter("com.example.jose.updated.controller.CUSTOM_INTENT"));
 
-        startJobService();
         preferences = getSharedPreferences(UpdatedConstants.PREFS_NAME, 0);
         preferences.edit().putBoolean(UpdatedConstants.FIRST_TIME_PREF_TAG, false).apply();
-
+        startJobService();
         setButtonClickListeners();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void startJobService() {
-        ComponentName serviceName = new ComponentName(getApplicationContext(), NotificationService.class);
+        ComponentName serviceName = new ComponentName(getApplicationContext(), NotificationJobService.class);
         JobInfo jobInfo = new JobInfo.Builder(1, serviceName)
                 .setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED)
-                .setPeriodic(10000)//preferences.getLong(UPDATE_FREQUENCY_PREF_TAG, DEFAULT_UPDATE_FREQUENCY))
+                .setPeriodic(preferences.getLong(UPDATE_FREQUENCY_PREF_TAG, DEFAULT_UPDATE_FREQUENCY))
                 .build();
         JobScheduler scheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
         scheduler.schedule(jobInfo);
@@ -116,26 +121,30 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
         } else if (loginSkipped) {
             allPages = databaseHelper.getAllPages();
             setupRecyclerView();
-            Log.d("SKIPPED LOGIN", "loadPages: ");
         } else {
-            Log.d("LOADING FIREBASE", "loadPages: ");
-            //TODO put this in a new thread
-            Realm realm = Realm.getDefaultInstance();
-            realm.beginTransaction();
-            realm.deleteAll();
-            realm.commitTransaction();
-            realm.close();
+            Log.d("SKIPPED LOGIN", "loadPages: ");
+            Handler handler = new Handler();
+            Runnable runnable = new Runnable() {
+                @Override
+                public void run() {
+                    Realm realm = Realm.getDefaultInstance();
+                    realm.beginTransaction();
+                    realm.deleteAll();
+                    realm.commitTransaction();
+                    realm.close();
 
-            if (databaseReference.child("pages") == null) {
-                databaseReference.child("pages").setValue(new ArrayList<>());
-            }
+                    if (databaseReference.child("pages") == null) {
+                        databaseReference.child("pages").setValue(new ArrayList<>());
+                    }
 
-            allPages = new ArrayList<>();
-            setupRecyclerView();
-            loadPagesFromFirebase();
+                    allPages = new ArrayList<>();
+                    setupRecyclerView();
+                    loadPagesFromFirebase();
+                }
+            };
+            handler.post(runnable);
         }
     }
-
 
     private void initializeFields() {
         updateBroadcastReceiver = new UpdateBroadcastReceiver(this);
@@ -144,29 +153,74 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
 
         if (!loginSkipped) {
             databaseReference = FirebaseDatabase.getInstance().getReference();
-            firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+            firebaseAuth = FirebaseAuth.getInstance();
+            firebaseUser = firebaseAuth.getCurrentUser();
+            attachAuthStateListener();
         }
+    }
+
+    private void attachAuthStateListener() {
+        authStateListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                firebaseUser = firebaseAuth.getCurrentUser();
+                if (firebaseUser != null) {
+                    //Todo listener not needed
+//                    attachChildEventListener();
+                } else {
+                    detachChildListener();
+                }
+            }
+        };
     }
 
     private void loadPagesFromFirebase() {
         progressBar.setVisibility(View.VISIBLE);
-        databaseReference.child("pages").addValueEventListener(new ValueEventListener() {
+        attachChildEventListener();
+        progressBar.setVisibility(View.GONE);
+//        databaseReference.child("pages").addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+//
+//                    databaseHelper.addToPagesToTrack(snapshot.getValue(Page.class));
+//                }
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//                Log.d("DATABASE ERROR", "onCancelled: " + databaseError.getDetails());
+//                Log.d("DATABASE ERROR", "onCancelled: " + databaseError.getMessage());
+//            }
+//        });
+
+    }
+
+    private void attachChildEventListener() {
+        databaseHelper.emptyDatabase();
+        valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    databaseHelper.addToPagesToTrack(snapshot.getValue(Page.class));
+                for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
+                    databaseHelper.addToAllPages(snapshot.getValue(Page.class));
                 }
-                progressBar.setVisibility(View.GONE);
                 adapter.notifyDataSetChanged();
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Log.d("DATABASE ERROR", "onCancelled: " + databaseError.getDetails());
-                Log.d("DATABASE ERROR", "onCancelled: " + databaseError.getMessage());
-            }
-        });
 
+            }
+        };
+        databaseReference.child("pages").addListenerForSingleValueEvent(valueEventListener);
+    }
+
+    private void detachChildListener() {
+        if (valueEventListener != null) {
+            databaseReference.removeEventListener(valueEventListener);
+            valueEventListener = null;
+        }
     }
 
     private void setButtonClickListeners() {
@@ -253,7 +307,7 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
     private synchronized void setupRecyclerView() {
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-        adapter = new PageAdapter(this, this, databaseHelper);
+        adapter = new PageAdapter(this, this);
         adapter.setSingleClickMode(false);
         adapter.setMultiChoiceToolbar(createMultiChoiceToolbar());
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 15, true));
@@ -287,6 +341,16 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
         if (adapter != null) {
             adapter.notifyDataSetChanged();
         }
+        firebaseAuth.addAuthStateListener(authStateListener);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (valueEventListener != null) {
+            firebaseAuth.removeAuthStateListener(authStateListener);
+        }
+        detachChildListener();
     }
 
     @Override

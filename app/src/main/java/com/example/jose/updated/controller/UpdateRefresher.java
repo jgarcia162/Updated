@@ -1,9 +1,14 @@
 package com.example.jose.updated.controller;
 
 import android.content.Context;
+import android.os.AsyncTask;
 
 import com.example.jose.updated.model.Page;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.List;
 
 import io.realm.Realm;
@@ -25,10 +30,6 @@ public class UpdateRefresher {
         DatabaseHelper databaseHelper = new DatabaseHelper();
         List<Page> allPages = databaseHelper.getAllPages();
         for (Page page : allPages) {
-            if(page.getTitle().equals("Suicide Project")){
-//                Log.d(TAG, "refreshUpdate: "+page.getContents());
-                System.out.println(page.getContents());
-            }
             if (!page.isUpdated()) {
                 if (isPageUpdated(page)) {
                     databaseHelper.addToUpdatedPages(page);
@@ -74,5 +75,37 @@ public class UpdateRefresher {
         }
     }
 
+    private class DownloadTask extends AsyncTask<String,Void,String> {
 
+        private String TAG = this.getClass().getSimpleName();
+
+        DownloadTask(){
+
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+            try{
+                URL url = new URL(strings[0]);
+                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
+
+                StringBuilder builder = new StringBuilder();
+                String line;
+                while((line = reader.readLine()) != null){
+                    builder.append(line).append("\n");
+                }
+                reader.close();
+                return builder.toString();
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+            return "Error";
+        }
+
+        @Override
+        protected void onPostExecute(String taskResult) {
+
+        }
+    }
 }

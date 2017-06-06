@@ -27,7 +27,7 @@ import static com.example.jose.updated.model.UpdatedConstants.PREFS_NAME;
 import static com.example.jose.updated.model.UpdatedConstants.STOP_NOTIFICATION_PREF_TAG;
 import static com.example.jose.updated.model.UpdatedConstants.UPDATE_FREQUENCY_PREF_TAG;
 
-public class NotificationService extends JobService {
+public class NotificationJobService extends JobService {
     private boolean started = false;
     private Handler handler;
     private HandlerThread handlerThread;
@@ -40,10 +40,9 @@ public class NotificationService extends JobService {
     private Runnable runnable;
     private String TAG = this.getClass().getCanonicalName();
 
-    NotificationService() {
+    NotificationJobService() {
 
     }
-
 
     @Override
     public void onCreate() {
