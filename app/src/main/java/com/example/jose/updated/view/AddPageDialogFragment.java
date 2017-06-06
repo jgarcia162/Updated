@@ -131,7 +131,15 @@ public class AddPageDialogFragment extends DialogFragment {
         page.setTitle(titleText);
         page.setPageUrl(urlText);
         page.setTimeOfLastUpdateInMilliSec(updateTime);
-        page.setIdKey((long) Realm.getDefaultInstance().where(Page.class).max("idKey") + 1);
+        Realm realm = Realm.getDefaultInstance();
+        Number id = realm.where(Page.class).max("idKey");
+        if(id != null){
+            long key = (long) id;
+            page.setIdKey(key +1);
+        }else{
+            page.setIdKey(0);
+        }
+        page.setIsActive(true);
         databaseHelper.addToAllPages(page);
     }
 
