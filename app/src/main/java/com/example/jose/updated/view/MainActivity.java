@@ -18,7 +18,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -122,7 +121,6 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
             allPages = databaseHelper.getAllPages();
             setupRecyclerView();
         } else {
-            Log.d("SKIPPED LOGIN", "loadPages: ");
             Handler handler = new Handler();
             Runnable runnable = new Runnable() {
                 @Override
@@ -202,7 +200,7 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
         valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     databaseHelper.addToAllPages(snapshot.getValue(Page.class));
                 }
                 adapter.notifyDataSetChanged();
@@ -341,7 +339,9 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
         if (adapter != null) {
             adapter.notifyDataSetChanged();
         }
-        firebaseAuth.addAuthStateListener(authStateListener);
+        if (firebaseAuth != null) {
+            firebaseAuth.addAuthStateListener(authStateListener);
+        }
     }
 
     @Override
