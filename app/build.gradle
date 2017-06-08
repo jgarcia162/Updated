@@ -17,7 +17,9 @@ android {
         debug {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            buildConfigField "String", "defaultWebClientId", "\"429736523079-2v79dopili26cakkj37t03g5ea93ob0a.apps.googleusercontent.com\""
+            buildConfigField "String", "defaultWebClientId", "\"1087699534650-7ahcmrqb4q59ein69u0mpqf9grk5r8ef.apps.googleusercontent.com\""
+//            buildConfigField "String", "defaultWebClientId", "\"429736523079-2v79dopili26cakkj37t03g5ea93ob0a.apps.googleusercontent.com\""
+            buildConfigField "String", "androidClientID", "\"1087699534650-fmrdfv8lsn8rhe0nqdrhipea7ar27kvc.apps.googleusercontent.com\""
             buildConfigField "String", "twitterConsumerSecret", "\"kyWoitJ4j2TPeN1PtbTH8nmuhz9JSUelaZYWXeTg4sgr0K5Dtb\""
             buildConfigField "String", "twitterConsumerKey", "\"lfIGDxjsZvUiz7BYu0le3qhtE\""
             buildConfigField "String", "twitterCallbackUrl", "\"https://twitter.com/direct_messages/create/seeyagarcia\""
@@ -27,7 +29,10 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            buildConfigField "String", "defaultWebClientId", "\"429736523079-2v79dopili26cakkj37t03g5ea93ob0a.apps.googleusercontent.com\""
+            buildConfigField "String", "defaultWebClientId", "\"1087699534650-7ahcmrqb4q59ein69u0mpqf9grk5r8ef.apps.googleusercontent.com\""
+//            buildConfigField "String", "defaultWebClientId", "\"429736523079-2v79dopili26cakkj37t03g5ea93ob0a.apps.googleusercontent.com\""
+            buildConfigField "String", "androidClientID", "\"1087699534650-fmrdfv8lsn8rhe0nqdrhipea7ar27kvc.apps.googleusercontent.com\""
+
             buildConfigField "String", "twitterConsumerSecret", "\"kyWoitJ4j2TPeN1PtbTH8nmuhz9JSUelaZYWXeTg4sgr0K5Dtb\""
             buildConfigField "String", "twitterConsumerKey", "\"lfIGDxjsZvUiz7BYu0le3qhtE\""
             buildConfigField "String", "twitterCallbackUrl", "\"https://twitter.com/direct_messages/create/seeyagarcia\""
@@ -37,14 +42,14 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:25.3.0'
-    compile 'com.android.support:design:25.3.0'
+    compile 'com.android.support:appcompat-v7:25.3.1'
+    compile 'com.android.support:design:25.3.1'
     compile 'commons-codec:commons-codec:1.10'
-    compile 'com.android.support:cardview-v7:25.3.0'
-    compile 'com.android.support:recyclerview-v7:25.3.0'
+    compile 'com.android.support:cardview-v7:25.3.1'
+    compile 'com.android.support:recyclerview-v7:25.3.1'
     compile 'com.squareup.okhttp3:okhttp:3.6.0'
-    compile 'com.android.support:support-v4:25.3.0'
-    compile 'com.android.support:customtabs:25.3.0'
+    compile 'com.android.support:support-v4:25.3.1'
+    compile 'com.android.support:customtabs:25.3.1'
     compile 'com.davidecirillo.multichoicerecyclerview:multichoicerecyclerview:2.3.0'
     compile 'io.reactivex:rxandroid:1.0.1'
     compile 'io.reactivex:rxjava:1.0.14'
@@ -53,6 +58,7 @@ dependencies {
     compile 'com.google.firebase:firebase-auth:10.2.1'
     compile 'com.google.firebase:firebase-database:10.2.1'
     compile 'com.google.android.gms:play-services-auth:10.2.1'
+
     testCompile 'junit:junit:4.12'
 }
 

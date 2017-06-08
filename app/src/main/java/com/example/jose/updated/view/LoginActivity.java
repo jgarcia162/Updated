@@ -13,6 +13,7 @@ import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -51,6 +52,8 @@ import static com.example.jose.updated.model.UpdatedConstants.GOOGLE_SIGN_IN_REQ
 public class LoginActivity extends AppCompatActivity implements DialogInterface.OnDismissListener {
     private FirebaseAuth firebaseAuth;
     private FirebaseAuth.AuthStateListener authStateListener;
+    private GoogleSignInOptions googleSignInOptions;
+    private GoogleApiClient googleApiClient;
     private SharedPreferences preferences;
     private Button googleLoginButton;
     private Button emailLoginButton;
@@ -83,6 +86,9 @@ public class LoginActivity extends AppCompatActivity implements DialogInterface.
         );
 
         setContentView(R.layout.activity_login);
+
+        googleSignInOptions = getGoogleSignInOptions();
+        googleApiClient = getGoogleApiClient(googleSignInOptions);
 
         firebaseAuth = FirebaseAuth.getInstance();
         final FirebaseUser user = firebaseAuth.getCurrentUser();
@@ -365,15 +371,24 @@ public class LoginActivity extends AppCompatActivity implements DialogInterface.
 
     private void loginWithGoogle() {
         loggingInDialog.show();
-        GoogleApiClient.Builder clientBuilder = new GoogleApiClient.Builder(getBaseContext());
-        GoogleApiClient googleApiClient = clientBuilder.build();
-        GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(BuildConfig.defaultWebClientId)
-                .requestEmail()
-                .build();
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
         startActivityForResult(signInIntent,GOOGLE_SIGN_IN_REQUEST_CODE);
 
+    }
+
+    @NonNull
+    private GoogleApiClient getGoogleApiClient(GoogleSignInOptions googleSignInOptions) {
+        return new GoogleApiClient.Builder(getBaseContext())
+                .addApi(Auth.GOOGLE_SIGN_IN_API,googleSignInOptions)
+                .build();
+    }
+
+    @NonNull
+    private GoogleSignInOptions getGoogleSignInOptions() {
+        return new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    .requestIdToken(BuildConfig.defaultWebClientId)
+                    .requestEmail()
+                    .build();
     }
 
     @Override
@@ -389,6 +404,8 @@ public class LoginActivity extends AppCompatActivity implements DialogInterface.
             } else {
                 // Google Sign In failed, update UI appropriately
                 // ...
+                Log.d("GOOGLE LOGIN ", "onActivityResult: FAILED" + result.getStatus());
+
                 showLoginFailedDialog();
             }
         }
