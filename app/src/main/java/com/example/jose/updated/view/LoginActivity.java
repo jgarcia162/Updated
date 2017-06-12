@@ -13,7 +13,6 @@ import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -404,14 +403,12 @@ public class LoginActivity extends AppCompatActivity implements DialogInterface.
             } else {
                 // Google Sign In failed, update UI appropriately
                 // ...
-                Log.d("GOOGLE LOGIN ", "onActivityResult: FAILED" + result.getStatus());
-
                 showLoginFailedDialog();
             }
         }
     }
 
-    private void firebaseAuthWithGoogle(GoogleSignInAccount account) {
+    private void firebaseAuthWithGoogle(final GoogleSignInAccount account) {
         AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
         firebaseAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -420,6 +417,8 @@ public class LoginActivity extends AppCompatActivity implements DialogInterface.
                         // If sign in fails, display a message to the user. If sign in succeeds
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
+                        //TODO create new user with google if user doesn't exist
+                        loginSkipped = false;
                         openMainActivity();
                         if (!task.isSuccessful()) {
                             showLoginFailedDialog();

@@ -12,6 +12,7 @@ public class Page extends RealmObject implements Parcelable{
 
     @PrimaryKey
     private long idKey;
+    private String user;
     private String pageUrl;
     private String title;
     private String contents;
@@ -33,6 +34,15 @@ public class Page extends RealmObject implements Parcelable{
 
     public void setIdKey(long idKey) {
         this.idKey = idKey;
+    }
+
+
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
     }
 
     public void setFormattedTimeOfLastUpdate(String formattedTimeOfLastUpdate) {
@@ -75,6 +85,7 @@ public class Page extends RealmObject implements Parcelable{
 
     public Page(Parcel in) {
         idKey = in.readInt();
+        user = in.readString();
         title = in.readString();
         contents = in.readString();
         pageUrl = in.readString();
@@ -173,6 +184,7 @@ public class Page extends RealmObject implements Parcelable{
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong(idKey);
+        dest.writeString(user);
         dest.writeString(title);
         dest.writeString(contents);
         dest.writeString(pageUrl);
