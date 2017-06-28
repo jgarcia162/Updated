@@ -163,8 +163,7 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 firebaseUser = firebaseAuth.getCurrentUser();
                 if (firebaseUser != null) {
-                    //Todo listener not needed
-//                    attachChildEventListener();
+
                 } else {
                     detachChildListener();
                 }
@@ -200,8 +199,12 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
         valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                Page pageToAdd;
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    databaseHelper.addToAllPages(snapshot.getValue(Page.class));
+                    pageToAdd = snapshot.getValue(Page.class);
+                        if(pageToAdd.getUser().equals(firebaseUser.getEmail())){
+                            databaseHelper.addToAllPagesFromFirebase(pageToAdd);
+                    }
                 }
                 adapter.notifyDataSetChanged();
             }
@@ -211,7 +214,7 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
 
             }
         };
-        databaseReference.child("pages").addListenerForSingleValueEvent(valueEventListener);
+        databaseReference.addListenerForSingleValueEvent(valueEventListener);
     }
 
     private void detachChildListener() {

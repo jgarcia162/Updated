@@ -4,6 +4,11 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.format.DateUtils;
 
+import com.google.firebase.database.Exclude;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
@@ -12,6 +17,8 @@ public class Page extends RealmObject implements Parcelable{
 
     @PrimaryKey
     private long idKey;
+    private String firebaseKey;
+    private String user;
     private String pageUrl;
     private String title;
     private String contents;
@@ -33,6 +40,15 @@ public class Page extends RealmObject implements Parcelable{
 
     public void setIdKey(long idKey) {
         this.idKey = idKey;
+    }
+
+
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
     }
 
     public void setFormattedTimeOfLastUpdate(String formattedTimeOfLastUpdate) {
@@ -75,6 +91,8 @@ public class Page extends RealmObject implements Parcelable{
 
     public Page(Parcel in) {
         idKey = in.readInt();
+        firebaseKey = in.readString();
+        user = in.readString();
         title = in.readString();
         contents = in.readString();
         pageUrl = in.readString();
@@ -173,6 +191,8 @@ public class Page extends RealmObject implements Parcelable{
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong(idKey);
+        dest.writeString(firebaseKey);
+        dest.writeString(user);
         dest.writeString(title);
         dest.writeString(contents);
         dest.writeString(pageUrl);
@@ -183,10 +203,37 @@ public class Page extends RealmObject implements Parcelable{
         dest.writeByte((byte) (active ? 1 : 0));
     }
 
+    @Exclude
+    public Map<String, Object> toMap(){
+        Map<String,Object> map = new HashMap<>();
+        map.put("idKey",idKey);
+        map.put("firebaseKey",firebaseKey);
+        map.put("user",user);
+        map.put("pageUrl",pageUrl);
+        map.put("title",title);
+        map.put("contents",contents);
+        map.put("nickname",nickname);
+        map.put("notes",notes);
+        map.put("formattedTimeOfLastUpdate",formattedTimeOfLastUpdate);
+        map.put("updateFrequency",updateFrequency);
+        map.put("timeOfLastUpdateInMilliSec",timeOfLastUpdateInMilliSec);
+        map.put("active",active);
+        map.put("isUpdated",isUpdated);
+        return map;
+    }
+
     public void setIsActive(boolean active){
         this.active = active;
     }
     public boolean isActive() {
         return active;
+    }
+
+    public String getFirebaseKey() {
+        return firebaseKey;
+    }
+
+    public void setFirebaseKey(String firebaseKey) {
+        this.firebaseKey = firebaseKey;
     }
 }

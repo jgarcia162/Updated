@@ -2,7 +2,6 @@ package com.example.jose.updated.controller;
 
 import android.content.Context;
 import android.os.Handler;
-import android.util.Log;
 
 import com.example.jose.updated.model.Page;
 import com.google.firebase.auth.FirebaseAuth;
@@ -22,6 +21,7 @@ public class DatabaseHelper {
     private Context context;
     private UpdateRefresher refresher;
     private Realm realm;
+    private DatabaseReference databaseReference;
 
     public DatabaseHelper() {
         refresher = new UpdateRefresher();
@@ -52,21 +52,46 @@ public class DatabaseHelper {
                 realm.copyToRealmOrUpdate(pageToAdd);
             }
         });
-//        addToPagesToTrack(page);
-        updateFirebaseContents();
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            addPageToFirebase(page);
+        }
     }
 
-    public void updateFirebaseContents() {
+    public void addToAllPagesFromFirebase(Page page) {
+        final Page pageToAdd = page;
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                realm.copyToRealmOrUpdate(pageToAdd);
+            }
+        });
+    }
+
+    public void updatePageOnFirebase(final Page page) {
+        Handler handler = new Handler();
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                databaseReference = FirebaseDatabase.getInstance().getReference();
+                String key = page.getFirebaseKey();
+                DatabaseReference pageRef = databaseReference.child(key);
+                pageRef.setValue(page);
+            }
+        };
+        handler.post(runnable);
+    }
+
+    public void addPageToFirebase(final Page page) {
         Handler handler = new Handler();
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
                 if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-                    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-                    databaseReference.child("pages").setValue(getAllPages());
-                    for (Page page : getAllPages()) {
-                        Log.d("UPDATE FB", "run: " + page.getTitle());
-                    }
+                    databaseReference = FirebaseDatabase.getInstance().getReference();
+                    String key = databaseReference.push().getKey();
+                    page.setFirebaseKey(key);
+                    DatabaseReference pageRef = databaseReference.child(key);
+                    pageRef.setValue(page);
                 }
             }
         };
@@ -99,8 +124,6 @@ public class DatabaseHelper {
         } finally {
             realm.commitTransaction();
             realm.close();
-            //TODO update contents another way
-            updateFirebaseContents();
         }
     }
 
@@ -125,17 +148,25 @@ public class DatabaseHelper {
         pageToDelete.setIsActive(false);
         realm.commitTransaction();
         realm.close();
-        updateFirebaseContents();
     }
 
     public void deletePage(Page page) {
         Realm realm = Realm.getDefaultInstance();
         Page pageToDelete = getPage(page);
+        String key = pageToDelete.getFirebaseKey();
         realm.beginTransaction();
         pageToDelete.deleteFromRealm();
         realm.commitTransaction();
         realm.close();
-        updateFirebaseContents();
+        //TODO delete from fb
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            deleteFromFirebase(key);
+        }
+    }
+
+    private void deleteFromFirebase(String key) {
+        databaseReference = FirebaseDatabase.getInstance().getReference();
+        databaseReference.child(key).removeValue();
     }
 
     public int getSizeOfUpdatedPages() {
@@ -201,7 +232,7 @@ public class DatabaseHelper {
         realm.commitTransaction();
         realm.close();
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-            updateFirebaseContents();
+            updatePageOnFirebase(pageToUpdate);
         }
     }
 
@@ -216,7 +247,7 @@ public class DatabaseHelper {
         realm.commitTransaction();
         realm.close();
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-            updateFirebaseContents();
+            updatePageOnFirebase(pageToUpdate);
         }
     }
 
@@ -227,4 +258,5 @@ public class DatabaseHelper {
         realm.commitTransaction();
         realm.close();
     }
+
 }

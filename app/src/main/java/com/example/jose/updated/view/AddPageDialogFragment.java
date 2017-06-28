@@ -18,10 +18,12 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.jose.updated.R;
-import com.example.jose.updated.controller.PageAdapter;
 import com.example.jose.updated.controller.DatabaseHelper;
+import com.example.jose.updated.controller.PageAdapter;
 import com.example.jose.updated.controller.UpdatedCallback;
 import com.example.jose.updated.model.Page;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Date;
 
@@ -138,6 +140,12 @@ public class AddPageDialogFragment extends DialogFragment {
             page.setIdKey(key +1);
         }else{
             page.setIdKey(0);
+        }
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        if(firebaseUser != null){
+            page.setUser(firebaseUser.getEmail());
+        }else{
+            page.setUser("No User");
         }
         page.setIsActive(true);
         databaseHelper.addToAllPages(page);

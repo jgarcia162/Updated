@@ -51,6 +51,8 @@ import static com.example.jose.updated.model.UpdatedConstants.GOOGLE_SIGN_IN_REQ
 public class LoginActivity extends AppCompatActivity implements DialogInterface.OnDismissListener {
     private FirebaseAuth firebaseAuth;
     private FirebaseAuth.AuthStateListener authStateListener;
+    private GoogleSignInOptions googleSignInOptions;
+    private GoogleApiClient googleApiClient;
     private SharedPreferences preferences;
     private Button googleLoginButton;
     private Button emailLoginButton;
@@ -83,6 +85,9 @@ public class LoginActivity extends AppCompatActivity implements DialogInterface.
         );
 
         setContentView(R.layout.activity_login);
+
+        googleSignInOptions = getGoogleSignInOptions();
+        googleApiClient = getGoogleApiClient(googleSignInOptions);
 
         firebaseAuth = FirebaseAuth.getInstance();
         final FirebaseUser user = firebaseAuth.getCurrentUser();
@@ -365,15 +370,24 @@ public class LoginActivity extends AppCompatActivity implements DialogInterface.
 
     private void loginWithGoogle() {
         loggingInDialog.show();
-        GoogleApiClient.Builder clientBuilder = new GoogleApiClient.Builder(getBaseContext());
-        GoogleApiClient googleApiClient = clientBuilder.build();
-        GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(BuildConfig.defaultWebClientId)
-                .requestEmail()
-                .build();
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
         startActivityForResult(signInIntent,GOOGLE_SIGN_IN_REQUEST_CODE);
 
+    }
+
+    @NonNull
+    private GoogleApiClient getGoogleApiClient(GoogleSignInOptions googleSignInOptions) {
+        return new GoogleApiClient.Builder(getBaseContext())
+                .addApi(Auth.GOOGLE_SIGN_IN_API,googleSignInOptions)
+                .build();
+    }
+
+    @NonNull
+    private GoogleSignInOptions getGoogleSignInOptions() {
+        return new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    .requestIdToken(BuildConfig.defaultWebClientId)
+                    .requestEmail()
+                    .build();
     }
 
     @Override
@@ -394,7 +408,7 @@ public class LoginActivity extends AppCompatActivity implements DialogInterface.
         }
     }
 
-    private void firebaseAuthWithGoogle(GoogleSignInAccount account) {
+    private void firebaseAuthWithGoogle(final GoogleSignInAccount account) {
         AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
         firebaseAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -403,6 +417,8 @@ public class LoginActivity extends AppCompatActivity implements DialogInterface.
                         // If sign in fails, display a message to the user. If sign in succeeds
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
+                        //TODO create new user with google if user doesn't exist
+                        loginSkipped = false;
                         openMainActivity();
                         if (!task.isSuccessful()) {
                             showLoginFailedDialog();

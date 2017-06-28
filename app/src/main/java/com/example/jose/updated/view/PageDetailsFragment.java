@@ -107,23 +107,20 @@ public class PageDetailsFragment extends Fragment {
         urlTextView.setText(String.format(resources.getString(R.string.details_url_tv_text), page.getPageUrl()));
         notesEditText.setText(page.getNotes());
     }
-    
-    private void saveSettings(){
+
+    private void saveSettings() {
         String title = String.valueOf(pageTitle.getText());
         boolean isActive = trackingSwitch.isChecked();
         String notes = String.valueOf(notesEditText.getText());
         progressBar.setVisibility(View.VISIBLE);
-        databaseHelper.savePageSettings(page,title,notes,isActive);
-        databaseHelper.updateFirebaseContents();
+        databaseHelper.savePageSettings(page, title, notes, isActive);
+//        databaseHelper.updatePageOnFirebase(page);
         progressBar.setVisibility(View.GONE);
         getActivity().onBackPressed();
     }
 
-    public void deletePage(){
-        if(page.isUpdated()){
-            databaseHelper.removeFromUpdatedPages(page);
-        }
-        databaseHelper.removeFromPagesToTrack(page);
+    public void deletePage() {
+        databaseHelper.deletePage(page);
         getActivity().onBackPressed();
     }
 

@@ -76,7 +76,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                 public void migrate(DynamicRealm realm, long oldVersion, long newVersion) {
                     RealmSchema schema = realm.getSchema();
                     if(oldVersion == 0){
-                        schema.get("Page").addField("idKey",long.class);
+                        schema.get("Page").addField("user",String.class);
                         oldVersion++;
                     }
                 }
