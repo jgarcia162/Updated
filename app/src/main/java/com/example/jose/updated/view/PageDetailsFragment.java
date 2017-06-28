@@ -22,7 +22,6 @@ import android.widget.Toast;
 import com.example.jose.updated.R;
 import com.example.jose.updated.controller.DatabaseHelper;
 import com.example.jose.updated.model.Page;
-import com.google.firebase.auth.FirebaseAuth;
 
 import static com.example.jose.updated.model.UpdatedConstants.PREFS_NAME;
 
@@ -108,26 +107,20 @@ public class PageDetailsFragment extends Fragment {
         urlTextView.setText(String.format(resources.getString(R.string.details_url_tv_text), page.getPageUrl()));
         notesEditText.setText(page.getNotes());
     }
-    
-    private void saveSettings(){
+
+    private void saveSettings() {
         String title = String.valueOf(pageTitle.getText());
         boolean isActive = trackingSwitch.isChecked();
         String notes = String.valueOf(notesEditText.getText());
         progressBar.setVisibility(View.VISIBLE);
-        databaseHelper.savePageSettings(page,title,notes,isActive);
+        databaseHelper.savePageSettings(page, title, notes, isActive);
 //        databaseHelper.updatePageOnFirebase(page);
         progressBar.setVisibility(View.GONE);
         getActivity().onBackPressed();
     }
 
-    public void deletePage(){
-        if(page.isUpdated()){
-            databaseHelper.removeFromUpdatedPages(page);
-        }
-        databaseHelper.removeFromPagesToTrack(page);
-        if(FirebaseAuth.getInstance().getCurrentUser() != null){
-            databaseHelper.deletePage(page);
-        }
+    public void deletePage() {
+        databaseHelper.deletePage(page);
         getActivity().onBackPressed();
     }
 
