@@ -110,6 +110,7 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
             preferences.edit().putBoolean(UpdatedConstants.FIRST_TIME_PREF_TAG, false).apply();
         }else{
             preferences.edit().putBoolean(UpdatedConstants.FIRST_TIME_PREF_TAG, false).apply();
+            fakeButton.setVisibility(View.GONE);
         }
 
         loadPages();
@@ -123,16 +124,16 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
     private void showTutorial() {
         PreferencesManager preferencesManager = new PreferencesManager(MainActivity.this);
         preferencesManager.resetAll();
+        fakeButton.setVisibility(View.VISIBLE);
         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             @Override
             public void run() {
                 SpotlightSequence.getInstance(MainActivity.this, null)
-                        .addSpotlight(recyclerView, "Pages", "When you add a page you'll see them here", INTRO_REPEAT)
                         .addSpotlight(fakeButton, "New Pages", "Click the + to add a page", INTRO_SEQUENCE)
+                        .addSpotlight(recyclerView.getChildAt(0),"Pages","Click a page to view it, click the gear to edit",INTRO_REPEAT)
                         .startSequence();
             }
         }, 400);
-        fakeButton.setVisibility(View.GONE);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
