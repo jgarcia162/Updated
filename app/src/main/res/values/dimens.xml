@@ -1,23 +1,13 @@
 <resources>
     <!-- Default screen margins, per the Android Design guidelines. -->
-    <dimen name="activity_horizontal_margin">16dp</dimen>
-    <dimen name="activity_vertical_margin">16dp</dimen>
-    <dimen name="dialog_fragment_width">350dp</dimen>
-    <dimen name="dialog_fragment_height">450dp</dimen>
-    <dimen name="frequency_et_left_margin">20dp</dimen>
     <dimen name="top_half_paddingtop">20dp</dimen>
     <dimen name="settings_title_tv_text_size">28sp</dimen>
     <dimen name="settings_title_marginTop">30dp</dimen>
     <dimen name="settings_frequency_title_textsize">20sp</dimen>
-    <dimen name="button_padding">20dp</dimen>
-    <dimen name="button_height">40dp</dimen>
     <dimen name="default_button_elevation">3dp</dimen>
-    <dimen name="clicked_button_elevation">8dp</dimen>
     <dimen name="card_corner_radius">6dp</dimen>
     <dimen name="card_elevation">6dp</dimen>
-    <item name="card_elevation_float" format="float" type="dimen">6.0</item>
     <item name="selected_card_elevation_float" format="float" type="dimen">10.0</item>
     <item name="selected_card_translationz_float" format="float" type="dimen">30.0</item>
-    <dimen name="button_layout_padding">10dp</dimen>
     <dimen name="depth">4dp</dimen>
 </resources>
