@@ -61,7 +61,7 @@ import io.realm.Realm;
 import static com.example.jose.updated.model.UpdatedConstants.DEFAULT_UPDATE_FREQUENCY;
 import static com.example.jose.updated.model.UpdatedConstants.UPDATE_FREQUENCY_PREF_TAG;
 
-public class MainActivity extends BaseActivity implements UpdatedCallback, SwipeRefreshLayout.OnRefreshListener, ButtonListener {
+public class MainActivity extends BaseActivity implements UpdatedCallback, SwipeRefreshLayout.OnRefreshListener, ButtonListener, View.OnClickListener {
     private FirebaseAuth firebaseAuth;
     private FirebaseAuth.AuthStateListener authStateListener;
     private FirebaseUser firebaseUser;
@@ -89,6 +89,8 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
 
     private static final String INTRO_REPEAT = "repeat_intro";
     private static final String INTRO_SEQUENCE = "sequence_intro";
+    private Button startButton;
+    private Button skipButton;
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -98,19 +100,25 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
         loginSkipped = getIntent().getExtras().getBoolean("loginSkipped");
         firstTime = preferences.getBoolean(UpdatedConstants.FIRST_TIME_PREF_TAG, true);
         fakeButton = (Button) findViewById(R.id.fake_button);
+        startButton = (Button) findViewById(R.id.start_button);
+        skipButton = (Button) findViewById(R.id.skip_tutorial_button);
+        startButton.setOnClickListener(this);
+        skipButton.setOnClickListener(this);
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
 
         initializeFields();
 
         setupViews();
 
-        if (!firstTime) {
+        if (firstTime) {
             databaseHelper.createPage("Fake Page","http://www.google.com", new Date().getTime());
-            showTutorial();
+            startButton.setVisibility(View.VISIBLE);
+            skipButton.setVisibility(View.VISIBLE);
             preferences.edit().putBoolean(UpdatedConstants.FIRST_TIME_PREF_TAG, false).apply();
         }else{
-            preferences.edit().putBoolean(UpdatedConstants.FIRST_TIME_PREF_TAG, false).apply();
             fakeButton.setVisibility(View.GONE);
+            startButton.setVisibility(View.GONE);
+            skipButton.setVisibility(View.GONE);
         }
 
         loadPages();
@@ -495,5 +503,19 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onClick(View v) {
+        switch(v.getId()){
+            case R.id.start_button:
+                showTutorial();
+                break;
+            case R.id.skip_tutorial_button:
+                startButton.setVisibility(View.GONE);
+                skipButton.setVisibility(View.GONE);
+                databaseHelper.emptyDatabase();
+                adapter.notifyDataSetChanged();
+                break;
+        }
+    }
 }
 
