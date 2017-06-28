@@ -12,6 +12,7 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.content.LocalBroadcastManager;
@@ -48,8 +49,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.wooplr.spotlight.prefs.PreferencesManager;
+import com.wooplr.spotlight.utils.SpotlightSequence;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import io.realm.Realm;
@@ -81,26 +85,54 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
     private boolean firstTime;
     private boolean loginSkipped;
     private List<Page> allPages;
+    private Button fakeButton;
+
+    private static final String INTRO_REPEAT = "repeat_intro";
+    private static final String INTRO_SEQUENCE = "sequence_intro";
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        preferences = getSharedPreferences(UpdatedConstants.PREFS_NAME, 0);
         loginSkipped = getIntent().getExtras().getBoolean("loginSkipped");
-        firstTime = getSharedPreferences(UpdatedConstants.PREFS_NAME, 0).getBoolean(UpdatedConstants.FIRST_TIME_PREF_TAG, true);
+        firstTime = preferences.getBoolean(UpdatedConstants.FIRST_TIME_PREF_TAG, true);
+        fakeButton = (Button) findViewById(R.id.fake_button);
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
 
         initializeFields();
 
         setupViews();
+
+        if (!firstTime) {
+            databaseHelper.createPage("Fake Page","http://www.google.com", new Date().getTime());
+            showTutorial();
+            preferences.edit().putBoolean(UpdatedConstants.FIRST_TIME_PREF_TAG, false).apply();
+        }else{
+            preferences.edit().putBoolean(UpdatedConstants.FIRST_TIME_PREF_TAG, false).apply();
+        }
+
         loadPages();
 
         localBroadcastManager.registerReceiver(updateBroadcastReceiver, new IntentFilter("com.example.jose.updated.controller.CUSTOM_INTENT"));
 
-        preferences = getSharedPreferences(UpdatedConstants.PREFS_NAME, 0);
-        preferences.edit().putBoolean(UpdatedConstants.FIRST_TIME_PREF_TAG, false).apply();
         startJobService();
         setButtonClickListeners();
+    }
+
+    private void showTutorial() {
+        PreferencesManager preferencesManager = new PreferencesManager(MainActivity.this);
+        preferencesManager.resetAll();
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                SpotlightSequence.getInstance(MainActivity.this, null)
+                        .addSpotlight(recyclerView, "Pages", "When you add a page you'll see them here", INTRO_REPEAT)
+                        .addSpotlight(fakeButton, "New Pages", "Click the + to add a page", INTRO_SEQUENCE)
+                        .startSequence();
+            }
+        }, 400);
+        fakeButton.setVisibility(View.GONE);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -202,8 +234,8 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
                 Page pageToAdd;
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     pageToAdd = snapshot.getValue(Page.class);
-                        if(pageToAdd.getUser().equals(firebaseUser.getEmail())){
-                            databaseHelper.addToAllPagesFromFirebase(pageToAdd);
+                    if (pageToAdd.getUser().equals(firebaseUser.getEmail())) {
+                        databaseHelper.addToAllPagesFromFirebase(pageToAdd);
                     }
                 }
                 adapter.notifyDataSetChanged();

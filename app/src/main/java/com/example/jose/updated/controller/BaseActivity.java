@@ -3,6 +3,7 @@ package com.example.jose.updated.controller;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
@@ -21,8 +22,10 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.example.jose.updated.R;
+import com.example.jose.updated.model.UpdatedConstants;
 import com.example.jose.updated.view.LoginActivity;
 import com.example.jose.updated.view.SecondActivity;
+import com.example.jose.updated.view.SpotlightActivity;
 import com.google.firebase.auth.FirebaseAuth;
 
 import io.realm.DynamicRealm;
@@ -33,6 +36,8 @@ import io.realm.RealmSchema;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
+import static com.example.jose.updated.model.UpdatedConstants.FIRST_TIME_PREF_TAG;
+
 /**
  * Created by Joe on 2/18/17.
  */
@@ -40,6 +45,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 public abstract class BaseActivity extends AppCompatActivity {
     protected Toolbar toolbar;
     private SwipeRefreshLayout swipeRefreshLayout;
+
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -62,10 +68,17 @@ public abstract class BaseActivity extends AppCompatActivity {
                 .setFontAttrId(R.attr.fontPath)
                 .build()
         );
+
+        SharedPreferences preferences = getSharedPreferences(UpdatedConstants.PREFS_NAME, 0);
+
         setContentView(R.layout.activity_base);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setToolbar();
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
+        if(preferences.getBoolean(FIRST_TIME_PREF_TAG,true)){
+            Intent spotlightIntent = new Intent(this,SpotlightActivity.class);
+            startActivity(spotlightIntent);
+        }
 
     }
 

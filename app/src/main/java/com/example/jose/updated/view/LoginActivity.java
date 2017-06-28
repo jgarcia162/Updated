@@ -101,7 +101,6 @@ public class LoginActivity extends AppCompatActivity implements DialogInterface.
                 }
             }
         };
-
         findViews();
         setClickListeners();
         createAnimations();
