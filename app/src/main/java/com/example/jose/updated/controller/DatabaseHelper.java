@@ -53,17 +53,47 @@ public class DatabaseHelper {
             }
         });
 //        addToPagesToTrack(page);
-        updateFirebaseContents(page);
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            addPageToFirebase(page);
+        }
     }
 
-    public void updateFirebaseContents(final Page page) {
+    public void addToAllPagesFromFirebase(Page page) {
+        final Page pageToAdd = page;
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                realm.copyToRealmOrUpdate(pageToAdd);
+            }
+        });
+    }
+
+    //TODO
+    public void updatePageOnFirebase(final Page page) {
+        Handler handler = new Handler();
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                databaseReference = FirebaseDatabase.getInstance().getReference();
+                String key = page.getFirebaseKey();
+                DatabaseReference pageRef = databaseReference.child(key);
+                pageRef.setValue(page);
+            }
+        };
+        handler.post(runnable);
+    }
+
+    public void addPageToFirebase(final Page page) {
         Handler handler = new Handler();
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
                 if (FirebaseAuth.getInstance().getCurrentUser() != null) {
                     databaseReference = FirebaseDatabase.getInstance().getReference();
-                    databaseReference.child("pages").push().setValue(page);
+                    String key = databaseReference.push().getKey();
+                    page.setFirebaseKey(key);
+                    DatabaseReference pageRef = databaseReference.child(key);
+                    pageRef.setValue(page);
                 }
             }
         };
@@ -129,6 +159,8 @@ public class DatabaseHelper {
         pageToDelete.deleteFromRealm();
         realm.commitTransaction();
         realm.close();
+        //TODO delete from fb
+        //deleteFromFirebase();
 //        updateFirebaseContents();
     }
 
@@ -210,7 +242,7 @@ public class DatabaseHelper {
         realm.commitTransaction();
         realm.close();
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-//            updateFirebaseContents();
+            updatePageOnFirebase(pageToUpdate);
         }
     }
 
@@ -221,4 +253,5 @@ public class DatabaseHelper {
         realm.commitTransaction();
         realm.close();
     }
+
 }

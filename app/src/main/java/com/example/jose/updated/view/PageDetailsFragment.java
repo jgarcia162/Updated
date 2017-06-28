@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.example.jose.updated.R;
 import com.example.jose.updated.controller.DatabaseHelper;
 import com.example.jose.updated.model.Page;
+import com.google.firebase.auth.FirebaseAuth;
 
 import static com.example.jose.updated.model.UpdatedConstants.PREFS_NAME;
 
@@ -114,7 +115,7 @@ public class PageDetailsFragment extends Fragment {
         String notes = String.valueOf(notesEditText.getText());
         progressBar.setVisibility(View.VISIBLE);
         databaseHelper.savePageSettings(page,title,notes,isActive);
-//        databaseHelper.updateFirebaseContents();
+//        databaseHelper.updatePageOnFirebase(page);
         progressBar.setVisibility(View.GONE);
         getActivity().onBackPressed();
     }
@@ -124,6 +125,9 @@ public class PageDetailsFragment extends Fragment {
             databaseHelper.removeFromUpdatedPages(page);
         }
         databaseHelper.removeFromPagesToTrack(page);
+        if(FirebaseAuth.getInstance().getCurrentUser() != null){
+            databaseHelper.deletePage(page);
+        }
         getActivity().onBackPressed();
     }
 

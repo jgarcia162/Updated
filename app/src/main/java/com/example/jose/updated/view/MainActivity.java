@@ -203,7 +203,7 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     pageToAdd = snapshot.getValue(Page.class);
                         if(pageToAdd.getUser().equals(firebaseUser.getEmail())){
-                            databaseHelper.addToAllPages(pageToAdd);
+                            databaseHelper.addToAllPagesFromFirebase(pageToAdd);
                     }
                 }
                 adapter.notifyDataSetChanged();
@@ -214,7 +214,7 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
 
             }
         };
-        databaseReference.child("pages").addListenerForSingleValueEvent(valueEventListener);
+        databaseReference.addListenerForSingleValueEvent(valueEventListener);
     }
 
     private void detachChildListener() {
