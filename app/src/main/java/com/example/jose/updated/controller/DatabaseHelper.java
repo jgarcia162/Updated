@@ -158,7 +158,6 @@ public class DatabaseHelper {
         pageToDelete.deleteFromRealm();
         realm.commitTransaction();
         realm.close();
-        //TODO delete from fb
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             deleteFromFirebase(key);
         }
