@@ -75,7 +75,6 @@
     <string name="enter_valid_email">Please enter a valid email</string>
     <string name="logging_in">Logging in...</string>
     <string name="start_tutorial">Start Tutorial</string>
-    <string name="show_me_again">Show Me Again</string>
     <string-array name="frequency_spinner_array">
         <item>Minutes</item>
         <item>Hours</item>
