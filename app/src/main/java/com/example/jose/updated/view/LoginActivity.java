@@ -101,7 +101,6 @@ public class LoginActivity extends AppCompatActivity implements DialogInterface.
                 }
             }
         };
-
         findViews();
         setClickListeners();
         createAnimations();
@@ -417,7 +416,6 @@ public class LoginActivity extends AppCompatActivity implements DialogInterface.
                         // If sign in fails, display a message to the user. If sign in succeeds
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
-                        //TODO create new user with google if user doesn't exist
                         loginSkipped = false;
                         openMainActivity();
                         if (!task.isSuccessful()) {

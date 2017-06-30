@@ -12,6 +12,7 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.content.LocalBroadcastManager;
@@ -48,8 +49,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.wooplr.spotlight.prefs.PreferencesManager;
+import com.wooplr.spotlight.utils.SpotlightSequence;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import io.realm.Realm;
@@ -57,7 +61,7 @@ import io.realm.Realm;
 import static com.example.jose.updated.model.UpdatedConstants.DEFAULT_UPDATE_FREQUENCY;
 import static com.example.jose.updated.model.UpdatedConstants.UPDATE_FREQUENCY_PREF_TAG;
 
-public class MainActivity extends BaseActivity implements UpdatedCallback, SwipeRefreshLayout.OnRefreshListener, ButtonListener {
+public class MainActivity extends BaseActivity implements UpdatedCallback, SwipeRefreshLayout.OnRefreshListener, ButtonListener, View.OnClickListener {
     private FirebaseAuth firebaseAuth;
     private FirebaseAuth.AuthStateListener authStateListener;
     private FirebaseUser firebaseUser;
@@ -81,26 +85,63 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
     private boolean firstTime;
     private boolean loginSkipped;
     private List<Page> allPages;
+    private Button fakeButton;
+
+    private static final String INTRO_REPEAT = "repeat_intro";
+    private static final String INTRO_SEQUENCE = "sequence_intro";
+    private Button startButton;
+    private Button skipButton;
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        preferences = getSharedPreferences(UpdatedConstants.PREFS_NAME, 0);
         loginSkipped = getIntent().getExtras().getBoolean("loginSkipped");
-        firstTime = getSharedPreferences(UpdatedConstants.PREFS_NAME, 0).getBoolean(UpdatedConstants.FIRST_TIME_PREF_TAG, true);
+        firstTime = preferences.getBoolean(UpdatedConstants.FIRST_TIME_PREF_TAG, true);
+        fakeButton = (Button) findViewById(R.id.fake_button);
+        startButton = (Button) findViewById(R.id.start_button);
+        skipButton = (Button) findViewById(R.id.skip_tutorial_button);
+        startButton.setOnClickListener(this);
+        skipButton.setOnClickListener(this);
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
 
         initializeFields();
 
         setupViews();
+
+        if (firstTime) {
+            databaseHelper.createPage("Fake Page","http://www.google.com", new Date().getTime());
+            startButton.setVisibility(View.VISIBLE);
+            skipButton.setVisibility(View.VISIBLE);
+            preferences.edit().putBoolean(UpdatedConstants.FIRST_TIME_PREF_TAG, false).apply();
+        }else{
+            fakeButton.setVisibility(View.GONE);
+            startButton.setVisibility(View.GONE);
+            skipButton.setVisibility(View.GONE);
+        }
+
         loadPages();
 
         localBroadcastManager.registerReceiver(updateBroadcastReceiver, new IntentFilter("com.example.jose.updated.controller.CUSTOM_INTENT"));
 
-        preferences = getSharedPreferences(UpdatedConstants.PREFS_NAME, 0);
-        preferences.edit().putBoolean(UpdatedConstants.FIRST_TIME_PREF_TAG, false).apply();
         startJobService();
         setButtonClickListeners();
+    }
+
+    private void showTutorial() {
+        PreferencesManager preferencesManager = new PreferencesManager(MainActivity.this);
+        preferencesManager.resetAll();
+        fakeButton.setVisibility(View.VISIBLE);
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                SpotlightSequence.getInstance(MainActivity.this, null)
+                        .addSpotlight(fakeButton, "New Pages", "Click the + to add a page", INTRO_SEQUENCE)
+                        .addSpotlight(recyclerView.getChildAt(0),"Pages","Click a page to view it, click the gear to edit",INTRO_REPEAT)
+                        .startSequence();
+            }
+        }, 400);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -202,8 +243,8 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
                 Page pageToAdd;
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     pageToAdd = snapshot.getValue(Page.class);
-                        if(pageToAdd.getUser().equals(firebaseUser.getEmail())){
-                            databaseHelper.addToAllPagesFromFirebase(pageToAdd);
+                    if (pageToAdd.getUser().equals(firebaseUser.getEmail())) {
+                        databaseHelper.addToAllPagesFromFirebase(pageToAdd);
                     }
                 }
                 adapter.notifyDataSetChanged();
@@ -462,5 +503,19 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onClick(View v) {
+        switch(v.getId()){
+            case R.id.start_button:
+                showTutorial();
+                break;
+            case R.id.skip_tutorial_button:
+                startButton.setVisibility(View.GONE);
+                skipButton.setVisibility(View.GONE);
+                databaseHelper.emptyDatabase();
+                adapter.notifyDataSetChanged();
+                break;
+        }
+    }
 }
 
