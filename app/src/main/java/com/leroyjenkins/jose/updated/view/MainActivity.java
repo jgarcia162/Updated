@@ -89,6 +89,7 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
 
     private static final String INTRO_REPEAT = "repeat_intro";
     private static final String INTRO_SEQUENCE = "sequence_intro";
+    private static final String INTRO_RESET = "reset_intro";
     private Button startButton;
     private Button skipButton;
 
@@ -111,11 +112,11 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
         setupViews();
 
         if (firstTime) {
+            databaseHelper.createPage("Sample","https://www.google.com",new Date().getTime());
             startButton.setVisibility(View.VISIBLE);
             skipButton.setVisibility(View.VISIBLE);
             addPagesTextView.setVisibility(View.GONE);
             preferences.edit().putBoolean(UpdatedConstants.FIRST_TIME_PREF_TAG, false).apply();
-            databaseHelper.createPage("Sample","https://www.google.com",new Date().getTime());
         }else{
             fakeButton.setVisibility(View.GONE);
             startButton.setVisibility(View.GONE);
@@ -131,6 +132,7 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
     }
 
     private void showTutorial() {
+        showButtons();
         PreferencesManager preferencesManager = new PreferencesManager(MainActivity.this);
         preferencesManager.resetAll();
         fakeButton.setVisibility(View.VISIBLE);
@@ -140,6 +142,7 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
                 SpotlightSequence.getInstance(MainActivity.this, null)
                         .addSpotlight(fakeButton, "New Pages", "Click the + to add a page", INTRO_SEQUENCE)
                         .addSpotlight(recyclerView.getChildAt(0),"Pages","Click a page to view it, click the gear to edit",INTRO_REPEAT)
+                        .addSpotlight(buttonLayout,"Actions","Long-press a page to bring up button menu",INTRO_RESET)
                         .startSequence();
             }
         }, 400);
@@ -498,6 +501,7 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
                 skipButton.setVisibility(View.GONE);
                 databaseHelper.emptyDatabase();
                 adapter.notifyDataSetChanged();
+                hideButtons();
                 break;
         }
     }
