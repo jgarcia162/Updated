@@ -88,7 +88,6 @@ public class LoginActivity extends AppCompatActivity implements DialogInterface.
 
         googleSignInOptions = getGoogleSignInOptions();
         googleApiClient = getGoogleApiClient(googleSignInOptions);
-//        FirebaseApp.initializeApp(getBaseContext());
 
         firebaseAuth = FirebaseAuth.getInstance();
         final FirebaseUser user = firebaseAuth.getCurrentUser();

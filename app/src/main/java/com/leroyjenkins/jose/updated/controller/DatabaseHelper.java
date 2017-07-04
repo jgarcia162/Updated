@@ -53,6 +53,7 @@ public class DatabaseHelper {
             }
         });
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            page.setUser(FirebaseAuth.getInstance().getCurrentUser().getEmail());
             addPageToFirebase(page);
         }
     }

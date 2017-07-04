@@ -31,7 +31,7 @@ android {
             buildConfigField "String", "twitterCallbackUrl", "\"https://twitter.com/direct_messages/create/seeyagarcia\""
         }
         release {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             buildConfigField "String", "defaultWebClientId", "\"1087699534650-7ahcmrqb4q59ein69u0mpqf9grk5r8ef.apps.googleusercontent.com\""
             buildConfigField "String", "androidClientID", "\"1087699534650-fmrdfv8lsn8rhe0nqdrhipea7ar27kvc.apps.googleusercontent.com\""

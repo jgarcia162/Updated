@@ -111,13 +111,15 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
 
         setupViews();
 
-        if (firstTime) {
-            databaseHelper.createPage("Sample","https://www.google.com",new Date().getTime());
+        if (!firstTime) {
+            setupRecyclerView();
+            databaseHelper.createPage("Sample", "https://www.google.com", new Date().getTime());
+            adapter.notifyDataSetChanged();
             startButton.setVisibility(View.VISIBLE);
             skipButton.setVisibility(View.VISIBLE);
             addPagesTextView.setVisibility(View.GONE);
             preferences.edit().putBoolean(UpdatedConstants.FIRST_TIME_PREF_TAG, false).apply();
-        }else{
+        } else {
             fakeButton.setVisibility(View.GONE);
             startButton.setVisibility(View.GONE);
             skipButton.setVisibility(View.GONE);
@@ -141,8 +143,8 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
             public void run() {
                 SpotlightSequence.getInstance(MainActivity.this, null)
                         .addSpotlight(fakeButton, "New Pages", "Click the + to add a page", INTRO_SEQUENCE)
-                        .addSpotlight(recyclerView.getChildAt(0),"Pages","Click a page to view it, click the gear to edit",INTRO_REPEAT)
-                        .addSpotlight(buttonLayout,"Actions","Long-press a page to bring up button menu",INTRO_RESET)
+                        .addSpotlight(recyclerView.getChildAt(0), "Pages", "Click a page to view it, click the gear to edit", INTRO_REPEAT)
+                        .addSpotlight(buttonLayout, "Actions", "Long-press a page to bring up button menu", INTRO_RESET)
                         .startSequence();
             }
         }, 400);
@@ -492,7 +494,7 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
 
     @Override
     public void onClick(View v) {
-        switch(v.getId()){
+        switch (v.getId()) {
             case R.id.start_button:
                 showTutorial();
                 break;

@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:1087699534650:android:ddb64d46794c3e64",
         "android_client_info": {
-          "package_name": "com.leroyjenkins.jose.updated"
+          "package_name": "com.example.jose.updated"
         }
       },
       "oauth_client": [
@@ -18,7 +18,7 @@
           "client_id": "1087699534650-fmrdfv8lsn8rhe0nqdrhipea7ar27kvc.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.leroyjenkins.jose.updated",
+            "package_name": "com.example.jose.updated",
             "certificate_hash": "8e711e8618c4e5d661281d4573c896964f888bae"
           }
         },
@@ -61,6 +61,14 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "1087699534650-c4a1jj9idfmj2qp58i68o64vpl2v641j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.leroyjenkins.jose.updated",
+            "certificate_hash": "20f0d86e0a08c8b85141e190222a79ced7322800"
+          }
+        },
         {
           "client_id": "1087699534650-ib5c5aggfbn9p75nqdv2m95cep37hpla.apps.googleusercontent.com",
           "client_type": 1,
