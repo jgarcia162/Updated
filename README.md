@@ -13,3 +13,5 @@ Third party libraries and resources used include <br>
 -[MultichoiceRecyclerView](https://github.com/dvdciri/MultiChoiceRecyclerView) library for a custom recyclerview with multichoice functionality <br>
 -[Misti's Fonts](http://www.mistifonts.com) for custom font <br>
 -[Spotlight](https://github.com/wooplr/Spotlight) library implemented for simple tutorial intro
+
+Beta on [Google Play](https://play.google.com/apps/testing/com.leroyjenkins.jose.updated)
