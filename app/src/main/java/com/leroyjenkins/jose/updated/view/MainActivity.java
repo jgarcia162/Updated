@@ -111,7 +111,7 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
 
         setupViews();
 
-        if (!firstTime) {
+        if (firstTime) {
             setupRecyclerView();
             databaseHelper.createPage("Sample", "https://www.google.com", new Date().getTime());
             adapter.notifyDataSetChanged();
