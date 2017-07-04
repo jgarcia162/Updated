@@ -142,9 +142,9 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
             @Override
             public void run() {
                 SpotlightSequence.getInstance(MainActivity.this, null)
-                        .addSpotlight(fakeButton, "New Pages", "Click the + to add a page", INTRO_SEQUENCE)
-                        .addSpotlight(recyclerView.getChildAt(0), "Pages", "Click a page to view it, click the gear to edit", INTRO_REPEAT)
-                        .addSpotlight(buttonLayout, "Actions", "Long-press a page to bring up button menu", INTRO_RESET)
+                        .addSpotlight(fakeButton, getString(R.string.new_pages_text), getString(R.string.new_page_spotlight_text), INTRO_SEQUENCE)
+                        .addSpotlight(recyclerView.getChildAt(0), getString(R.string.pages), getString(R.string.page_spotlight_text), INTRO_REPEAT)
+                        .addSpotlight(buttonLayout, getString(R.string.actions_text), getString(R.string.long_press_spotlight_text), INTRO_RESET)
                         .startSequence();
             }
         }, 400);

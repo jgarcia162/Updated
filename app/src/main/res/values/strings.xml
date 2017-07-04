@@ -75,6 +75,12 @@
     <string name="enter_valid_email">Please enter a valid email</string>
     <string name="logging_in">Logging in...</string>
     <string name="start_tutorial">Start Tutorial</string>
+    <string name="new_page_spotlight_text">Click the + to add a page</string>
+    <string name="page_spotlight_text">Click a page to view it, click the gear to edit</string>
+    <string name="long_press_spotlight_text">Long-press a page to bring up button menu</string>
+    <string name="actions_text">Actions</string>
+    <string name="new_pages_text">New Pages</string>
+    <string name="pages">Pages</string>
     <string-array name="frequency_spinner_array">
         <item>Minutes</item>
         <item>Hours</item>
