@@ -35,8 +35,8 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.leroyjenkins.jose.updated.BuildConfig;
 import com.leroyjenkins.jose.updated.R;
 import com.leroyjenkins.jose.updated.controller.DatabaseHelper;
+import com.leroyjenkins.jose.updated.model.UpdatedConstants;
 
-import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 import static android.view.View.GONE;
@@ -78,14 +78,8 @@ public class LoginActivity extends AppCompatActivity implements DialogInterface.
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
-                .setDefaultFontPath("fonts/ghms.ttf")
-                .setFontAttrId(R.attr.fontPath)
-                .build()
-        );
-
         setContentView(R.layout.activity_login);
-
+        preferences = getSharedPreferences(UpdatedConstants.PREFS_NAME,0);
         googleSignInOptions = getGoogleSignInOptions();
         googleApiClient = getGoogleApiClient(googleSignInOptions);
 
@@ -104,6 +98,7 @@ public class LoginActivity extends AppCompatActivity implements DialogInterface.
         findViews();
         setClickListeners();
         createAnimations();
+
         loggingInDialog = createLoggingInDialog();
     }
 
@@ -305,6 +300,7 @@ public class LoginActivity extends AppCompatActivity implements DialogInterface.
                                 showLoginFailedDialog();
                             } else {
                                 loginSkipped = false;
+                                preferences.edit().putBoolean(UpdatedConstants.FIRST_TIME_PREF_TAG,false).apply();
                                 openMainActivity();
                             }
                         }
@@ -417,6 +413,7 @@ public class LoginActivity extends AppCompatActivity implements DialogInterface.
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
                         loginSkipped = false;
+                        preferences.edit().putBoolean(UpdatedConstants.FIRST_TIME_PREF_TAG,false).apply();
                         openMainActivity();
                         if (!task.isSuccessful()) {
                             showLoginFailedDialog();

@@ -30,7 +30,6 @@ import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.RealmMigration;
 import io.realm.RealmSchema;
-import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 /**
@@ -59,12 +58,6 @@ public abstract class BaseActivity extends AppCompatActivity {
 //        RealmConfiguration config = new RealmConfiguration.Builder().schemaVersion(0).migration(migration).build();
 //        Realm.deleteRealm(config);
         Realm.setDefaultConfiguration(config);
-
-        CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
-                .setDefaultFontPath("fonts/ghms.ttf")
-                .setFontAttrId(R.attr.fontPath)
-                .build()
-        );
 
         setContentView(R.layout.activity_base);
         toolbar = (Toolbar) findViewById(R.id.toolbar);

@@ -19,6 +19,7 @@ public class UpdateRefresher {
 
     }
 
+    //TODO use java regex to download source code
     public void refreshUpdate() {
         DatabaseHelper databaseHelper = new DatabaseHelper();
         List<Page> allPages = databaseHelper.getAllPages();
