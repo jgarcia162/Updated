@@ -12,7 +12,7 @@
 
     <RelativeLayout
         android:layout_width="200dp"
-        android:layout_height="wrap_content"
+        android:layout_height="175dp"
         android:background="@color/cardBackgroundColor">
 
         <TextView
@@ -20,37 +20,36 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
-            android:layout_marginTop="10dp"
-            android:layout_centerHorizontal="true"
             android:gravity="center"
             android:maxLength="20"
             android:textIsSelectable="true"
             android:textSize="25sp"
             android:textStyle="bold"
             tools:text="Page Title"
-            style="@style/UpdatedCustomFontStyle"/>
+            style="@style/UpdatedCustomFontStyle"
+            android:layout_below="@+id/check_box"
+            android:layout_centerHorizontal="true" />
 
         <ImageView
             android:id="@+id/page_icon"
             android:layout_width="match_parent"
             android:layout_height="100dp"
-            android:layout_below="@id/page_title_text_view"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
             android:src="@drawable/updated_logo"
             android:tint="@color/darkFontColor"
-            android:contentDescription="@string/image_logo">
+            android:contentDescription="@string/image_logo"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@+id/check_box">
         </ImageView>
 
         <TextView
             android:id="@+id/update_status_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_below="@id/page_icon"
             android:textIsSelectable="true"
             style="@style/UpdatedCustomFontStyle"
-            tools:text="UPDATED" />
+            tools:text="UPDATED"
+            android:layout_below="@+id/page_icon"
+            android:layout_centerHorizontal="true" />
 
         <TextView
             android:id="@+id/time_of_last_update_text_view"

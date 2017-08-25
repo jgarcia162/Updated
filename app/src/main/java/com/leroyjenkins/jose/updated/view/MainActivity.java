@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -363,6 +364,7 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
         AddPageDialogFragment addPageDialogFragment = new AddPageDialogFragment();
         addPageDialogFragment.show(fragmentManager, "addPageFragment");
         addPageDialogFragment.setCallback(this);
+
     }
 
     //needed to refresh adapter after deleting a page from its detail fragment
@@ -419,10 +421,23 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
             resetSwipeRefreshLayout();
         } else {
             try {
-                UpdateRefresher updateRefresher = new UpdateRefresher();
-                updateRefresher.refreshUpdate();
-                resetSwipeRefreshLayout();
-                Toast.makeText(getApplicationContext(), "Refreshed", Toast.LENGTH_SHORT).show();
+                final UpdateRefresher updateRefresher = new UpdateRefresher();
+
+                //TODO refresh pages in background thread
+                new AsyncTask<Void,Void,Void>(){
+                    @Override
+                    protected Void doInBackground(Void... params) {
+                        updateRefresher.refreshUpdate();
+                        return null;
+                    }
+
+                    @Override
+                    protected void onPostExecute(Void aVoid) {
+                        super.onPostExecute(aVoid);
+                        resetSwipeRefreshLayout();
+                        Toast.makeText(getApplicationContext(), "Refreshed", Toast.LENGTH_SHORT).show();
+                    }
+                }.execute();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -487,7 +502,6 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
         switch (item.getItemId()) {
             case R.id.add_page_menu:
                 showAddPageDialog();
-                break;
         }
         return super.onOptionsItemSelected(item);
     }
