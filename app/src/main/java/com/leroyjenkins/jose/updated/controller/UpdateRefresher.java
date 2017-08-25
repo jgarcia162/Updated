@@ -9,6 +9,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import io.realm.Realm;
 
@@ -62,7 +64,10 @@ public class UpdateRefresher {
         DownloadTask task = new DownloadTask();
         task.execute(page.getPageUrl());
         try {
-            return task.get();
+            String downloadedHtml = task.get();
+            Pattern p = Pattern.compile("<body(.*?)</body>");
+            Matcher m = p.matcher(downloadedHtml);
+            return m.group(1);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -95,11 +100,6 @@ public class UpdateRefresher {
                 e.printStackTrace();
             }
             return "Error";
-        }
-
-        @Override
-        protected void onPostExecute(String taskResult) {
-
         }
     }
 }
