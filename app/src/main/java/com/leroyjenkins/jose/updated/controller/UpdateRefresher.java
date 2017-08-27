@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,7 +22,6 @@ public class UpdateRefresher {
 
     }
 
-    //TODO use java regex to download source code
     public void refreshUpdate() {
         DatabaseHelper databaseHelper = new DatabaseHelper();
         List<Page> allPages = databaseHelper.getAllPages();
@@ -40,7 +40,7 @@ public class UpdateRefresher {
             try {
                 String htmlToCheck = downloadHtml(page);
                 Page currentlyStoredPage = databaseHelper.getPage(page);
-                if(htmlToCheck.equals("Error")){
+                if (htmlToCheck.equals("Error")) {
                     return false;
                 }
                 if (!htmlToCheck.equals(currentlyStoredPage.getContents())) {
@@ -64,42 +64,43 @@ public class UpdateRefresher {
         DownloadTask task = new DownloadTask();
         task.execute(page.getPageUrl());
         try {
-            String downloadedHtml = task.get();
-            Pattern p = Pattern.compile("<body(.*?)</body>");
-            Matcher m = p.matcher(downloadedHtml);
-            return m.group(1);
-        } catch (Exception e) {
+            return task.get();
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
-            return null;
         }
+        return "Error";
     }
 
-    private class DownloadTask extends AsyncTask<String,Void,String> {
+    private class DownloadTask extends AsyncTask<String, Void, String> {
 
         private String TAG = this.getClass().getSimpleName();
 
-        DownloadTask(){
+        DownloadTask() {
 
         }
 
         @Override
         protected String doInBackground(String... strings) {
-            try{
+            try {
                 URL url = new URL(strings[0]);
                 HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
 
                 StringBuilder builder = new StringBuilder();
                 String line;
-                while((line = reader.readLine()) != null){
+                while ((line = reader.readLine()) != null) {
                     builder.append(line).append("\n");
                 }
                 reader.close();
-                return builder.toString();
-            }catch(Exception e){
+                Pattern p = Pattern.compile("<body(.*?)</body>");
+                Matcher m = p.matcher(builder.toString());
+                return m.group(1);
+
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             return "Error";
         }
+
     }
 }
