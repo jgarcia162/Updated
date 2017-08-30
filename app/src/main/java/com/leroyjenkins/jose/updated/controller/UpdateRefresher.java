@@ -5,26 +5,25 @@ import android.os.AsyncTask;
 import com.leroyjenkins.jose.updated.model.Page;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import io.realm.Realm;
 
 
 public class UpdateRefresher {
+    private DatabaseHelper databaseHelper = new DatabaseHelper();
+    private List<Page> allPages = databaseHelper.getAllPages();
 
     public UpdateRefresher() {
 
     }
 
     public void refreshUpdate() {
-        DatabaseHelper databaseHelper = new DatabaseHelper();
-        List<Page> allPages = databaseHelper.getAllPages();
         for (Page page : allPages) {
             if (!page.isUpdated()) {
                 if (isPageUpdated(page)) {
@@ -47,10 +46,11 @@ public class UpdateRefresher {
                     Realm realm = Realm.getDefaultInstance();
                     realm.beginTransaction();
                     currentlyStoredPage.setUpdated(true);
+                    currentlyStoredPage.setContents(htmlToCheck);
+                    realm.copyToRealmOrUpdate(currentlyStoredPage);
                     realm.commitTransaction();
                     realm.close();
-                    databaseHelper.addToUpdatedPages(currentlyStoredPage);
-                    databaseHelper.updatePageHtml(currentlyStoredPage, htmlToCheck);
+                    databaseHelper.updatePageOnFirebase(currentlyStoredPage);
                     return true;
                 }
             } catch (Exception e) {
@@ -92,13 +92,12 @@ public class UpdateRefresher {
                     builder.append(line).append("\n");
                 }
                 reader.close();
-                Pattern p = Pattern.compile("<body(.*?)</body>");
-                Matcher m = p.matcher(builder.toString());
-                return m.group(1);
+                return builder.toString();
 
-            } catch (Exception e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
+
             return "Error";
         }
 

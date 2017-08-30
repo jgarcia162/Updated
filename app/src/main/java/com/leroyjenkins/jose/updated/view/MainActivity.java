@@ -9,7 +9,6 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,6 +19,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,7 +29,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.davidecirillo.multichoicerecyclerview.MultiChoiceToolbar;
 import com.google.firebase.auth.FirebaseAuth;
@@ -420,27 +419,28 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
             super.showNetworkConnectionDialog();
             resetSwipeRefreshLayout();
         } else {
-            try {
-                final UpdateRefresher updateRefresher = new UpdateRefresher();
+//            try {
+                UpdateRefresher updateRefresher = new UpdateRefresher();
 
+                updateRefresher.refreshUpdate();
                 //TODO refresh pages in background thread
-                new AsyncTask<Void,Void,Void>(){
-                    @Override
-                    protected Void doInBackground(Void... params) {
-                        updateRefresher.refreshUpdate();
-                        return null;
-                    }
-
-                    @Override
-                    protected void onPostExecute(Void aVoid) {
-                        super.onPostExecute(aVoid);
+                        Log.d("DO IN BG", "doInBackground: ");
                         resetSwipeRefreshLayout();
-                        Toast.makeText(getApplicationContext(), "Refreshed", Toast.LENGTH_SHORT).show();
-                    }
-                }.execute();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+//                new AsyncTask<Void,Void,Void>(){
+//                    @Override
+//                    protected Void doInBackground(Void... params) {
+//                        return null;
+//                    }
+//
+//                    @Override
+//                    protected void onPostExecute(Void aVoid) {
+//                        super.onPostExecute(aVoid);
+//                        Toast.makeText(getApplicationContext(), "Refreshed", Toast.LENGTH_SHORT).show();
+//                    }
+//                }.execute();
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
         }
     }
 
