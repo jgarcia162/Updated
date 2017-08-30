@@ -9,12 +9,15 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
+import android.support.design.widget.BaseTransientBottomBar;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
@@ -419,28 +422,29 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
             super.showNetworkConnectionDialog();
             resetSwipeRefreshLayout();
         } else {
-//            try {
-                UpdateRefresher updateRefresher = new UpdateRefresher();
+            try {
+                final UpdateRefresher updateRefresher = new UpdateRefresher();
 
-                updateRefresher.refreshUpdate();
                 //TODO refresh pages in background thread
-                        Log.d("DO IN BG", "doInBackground: ");
-                        resetSwipeRefreshLayout();
-//                new AsyncTask<Void,Void,Void>(){
-//                    @Override
-//                    protected Void doInBackground(Void... params) {
-//                        return null;
-//                    }
-//
-//                    @Override
-//                    protected void onPostExecute(Void aVoid) {
-//                        super.onPostExecute(aVoid);
-//                        Toast.makeText(getApplicationContext(), "Refreshed", Toast.LENGTH_SHORT).show();
-//                    }
-//                }.execute();
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
+                Log.d("DO IN BG", "doInBackground: ");
+                resetSwipeRefreshLayout();
+                new AsyncTask<Void, Void, Void>() {
+                    @Override
+                    protected Void doInBackground(Void... params) {
+                        updateRefresher.refreshUpdate();
+                        return null;
+                    }
+
+                    @Override
+                    protected void onPostExecute(Void aVoid) {
+                        super.onPostExecute(aVoid);
+                        Snackbar snackbar = Snackbar.make(findViewById(R.id.main_root_view), "Refreshed", BaseTransientBottomBar.LENGTH_SHORT);
+                        snackbar.show();
+                    }
+                }.execute();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
