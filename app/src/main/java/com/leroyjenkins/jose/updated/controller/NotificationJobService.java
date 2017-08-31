@@ -6,6 +6,7 @@ import android.app.job.JobParameters;
 import android.app.job.JobService;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Process;
@@ -58,8 +59,8 @@ public class NotificationJobService extends JobService {
 
     @Override
     public boolean onStartJob(JobParameters params) {
-        handler.postDelayed(runnable,refreshInterval);
-        jobFinished(params,true);
+        handler.postDelayed(runnable, refreshInterval);
+        jobFinished(params, true);
         return true;
     }
 
@@ -88,21 +89,33 @@ public class NotificationJobService extends JobService {
     }
 
     public void refresh() throws Exception {
-        UpdateRefresher refresher = new UpdateRefresher();
-        refresher.refreshUpdate();
-        Realm realm = Realm.getDefaultInstance();
-        List<Page> updatedPages = realm.where(Page.class).equalTo("isUpdated", true).findAll();
-        realm.close();
-        if (updatedPages.size() > 0) {
-            if (preferences.getBoolean(STOP_NOTIFICATION_PREF_TAG, DEFAULT_NOTIFICATIONS_ACTIVE)) {
-                updatedPagesTitles = getUpdatedPagesTitles(updatedPages);
-                createNotification(updatedPagesTitles);
+        final UpdateRefresher refresher = new UpdateRefresher();
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                refresher.refreshUpdate();
+                return null;
             }
-            Intent broadcastIntent = new Intent();
-            broadcastIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            broadcastIntent.setAction("com.example.jose.updated.controller.CUSTOM_INTENT");
-            localBroadcastManager.sendBroadcast(broadcastIntent);
-        }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+
+                Realm realm = Realm.getDefaultInstance();
+                List<Page> updatedPages = realm.where(Page.class).equalTo("isUpdated", true).findAll();
+                realm.close();
+                if (updatedPages.size() > 0) {
+                    if (preferences.getBoolean(STOP_NOTIFICATION_PREF_TAG, DEFAULT_NOTIFICATIONS_ACTIVE)) {
+                        updatedPagesTitles = getUpdatedPagesTitles(updatedPages);
+                        createNotification(updatedPagesTitles);
+                    }
+                    Intent broadcastIntent = new Intent();
+                    broadcastIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    broadcastIntent.setAction("com.example.jose.updated.controller.CUSTOM_INTENT");
+                    localBroadcastManager.sendBroadcast(broadcastIntent);
+                }
+            }
+        }.execute();
     }
 
     public void createNotification(String namesOfUpdatedPages) {
