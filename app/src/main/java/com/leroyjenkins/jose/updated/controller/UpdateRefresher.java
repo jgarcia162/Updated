@@ -96,8 +96,8 @@ public class UpdateRefresher {
 
             } catch (IOException e) {
                 e.printStackTrace();
-            }
 
+            }
             return "Error";
         }
 

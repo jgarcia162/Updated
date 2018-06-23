@@ -30,7 +30,6 @@ import static com.leroyjenkins.jose.updated.model.UpdatedConstants.UPDATE_FREQUE
 public class NotificationJobService extends JobService {
     private boolean started = false;
     private Handler handler;
-    private HandlerThread handlerThread;
     private NotificationManager notificationManager;
     public static final int NOTIFICATION_ID = 1;
     private long refreshInterval;
@@ -70,7 +69,7 @@ public class NotificationJobService extends JobService {
     }
 
     private void createHandlerThread() {
-        handlerThread = new HandlerThread("HandlerThread");
+        HandlerThread handlerThread = new HandlerThread("HandlerThread");
         handlerThread.start();
         handler = new Handler(handlerThread.getLooper());
     }
@@ -89,10 +88,10 @@ public class NotificationJobService extends JobService {
     }
 
     public void refresh() throws Exception {
-        final UpdateRefresher refresher = new UpdateRefresher();
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
+                UpdateRefresher refresher = new UpdateRefresher();
                 refresher.refreshUpdate();
                 return null;
             }

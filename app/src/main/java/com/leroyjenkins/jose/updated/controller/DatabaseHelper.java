@@ -24,7 +24,6 @@ public class DatabaseHelper {
     private DatabaseReference databaseReference;
 
     public DatabaseHelper() {
-        refresher = new UpdateRefresher();
         realm = Realm.getDefaultInstance();
     }
 

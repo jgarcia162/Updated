@@ -423,14 +423,13 @@ public class MainActivity extends BaseActivity implements UpdatedCallback, Swipe
             resetSwipeRefreshLayout();
         } else {
             try {
-                final UpdateRefresher updateRefresher = new UpdateRefresher();
-
                 //TODO refresh pages in background thread
                 Log.d("DO IN BG", "doInBackground: ");
                 resetSwipeRefreshLayout();
                 new AsyncTask<Void, Void, Void>() {
                     @Override
                     protected Void doInBackground(Void... params) {
+                        UpdateRefresher updateRefresher = new UpdateRefresher();
                         updateRefresher.refreshUpdate();
                         return null;
                     }
